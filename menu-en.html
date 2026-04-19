@@ -669,64 +669,9 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
         const waLink  = document.getElementById('link-whatsapp');
             if (waLink  && cfg.whatsapp)   waLink.href  = 'https://wa.me/' + cfg.whatsapp.replace(/\D/g,'');
         });
-        // ── Design & Appearance Listener ──────────────────────────
-        db.ref('settings/design').on('value', (snapshot) => {
-            const d = snapshot.val();
-            if (!d) return;
-
-            if (d.fontFamily) {
-                document.body.style.fontFamily = `"${d.fontFamily}", sans-serif`;
-                document.querySelectorAll('*').forEach(el => {
-                    if(!el.classList.contains('fa-solid') && !el.classList.contains('fa-brands')) el.style.fontFamily = `"${d.fontFamily}", sans-serif`;
-                });
-            }
-            if (typeof d.fontBold !== 'undefined') {
-                document.body.style.fontWeight = d.fontBold ? '700' : '400';
-            }
-            
-            if (d.pageBg) document.documentElement.style.setProperty('--bg', d.pageBg);
-            if (d.cardBg) document.documentElement.style.setProperty('--card-bg', d.cardBg);
-
-            let banner = document.getElementById('offer-banner');
-            if (d.bannerActive && d.bannerText) {
-                if (!banner) {
-                    banner = document.createElement('div');
-                    banner.id = 'offer-banner';
-                    banner.style.cssText = 'background:var(--gold); color:var(--dark, #000); text-align:center; padding:12px; font-weight:bold; position:sticky; top:0; z-index:2000; box-shadow:0 4px 15px rgba(0,0,0,0.5); font-size:1.05rem;';
-                    const hdr = document.getElementById('hdr');
-                    if(hdr) hdr.parentNode.insertBefore(banner, hdr);
-                }
-                banner.textContent = d.bannerText;
-                banner.style.display = 'block';
-            } else if (banner) {
-                banner.style.display = 'none';
-            }
-
-            // Header Visuals
-            const hdr = document.getElementById('hdr');
-            const logo = document.querySelector('.logo-wrap img');
-            const searchRow = document.getElementById('searchRow');
-
-            if (hdr) {
-                const bgImg = d.headerBg ? `url('${d.headerBg}')` : "url('images/sadu-pattern.jpg')";
-                const op = d.headerOpacity || '0.3';
-                hdr.style.background = `linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,${op})), ${bgImg} center / 120px repeat`;
-            }
-            if (logo && d.logoHeight) {
-                logo.style.height = d.logoHeight + 'px';
-            }
-            if (searchRow) {
-                searchRow.style.display = (d.showSearch === false) ? 'none' : 'block';
-            }
-
-            // Main Menu Labels (English labels would ideally have their own fields, but for now we follow the user's lead on total control)
-            // If the user provided English versions for these in the same object, we could use them.
-            // Since we put 'labelArabic' etc. in admin, we use them.
-            if (d.labelArabic) document.getElementById('pill-arabic').textContent = d.labelArabic;
-            if (d.labelIntl) document.getElementById('pill-intl').textContent = d.labelIntl;
-            if (d.labelDrinks) document.getElementById('pill-drinks').textContent = d.labelDrinks;
-            if (d.labelArgileh) document.getElementById('pill-argileh').textContent = d.labelArgileh;
-        });
+    <script src="js/design-sync.js"></script>
+    <script>
+        // ... (remaining listeners)
     </script>
     <a id="link-whatsapp" class="floating-wa" href="https://wa.me/962779688633" target="_blank" title="Contact us via WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>

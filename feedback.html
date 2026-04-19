@@ -193,6 +193,25 @@
         </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const _cfg = {
+            apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+            authDomain: "tallow-ahbabna.firebaseapp.com",
+            projectId: "tallow-ahbabna",
+            storageBucket: "tallow-ahbabna.firebasestorage.app",
+            messagingSenderId: "1025966646494",
+            appId: "1:1025966646494:web:f89373fad63d988f298e4f",
+            databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(_cfg);
+    </script>
+    <script src="js/design-sync.js"></script>
+    
     <script>
         // Set current date/time
         document.getElementById('dateTime').value = new Date().toLocaleString('ar-EG');

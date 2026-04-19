@@ -1512,80 +1512,9 @@
             if (mapLink && cfg.maps)       mapLink.href = cfg.maps;
         });
 
-        // ── Design & Appearance Listener ──────────────────────────
-        db.ref('settings/design').on('value', (snapshot) => {
-            const d = snapshot.val();
-            if (!d) return;
-
-            // Typography
-            if (d.fontFamily) {
-                document.body.style.fontFamily = `"${d.fontFamily}", sans-serif`;
-                document.querySelectorAll('*').forEach(el => {
-                    if(!el.classList.contains('fa-solid') && !el.classList.contains('fa-brands')) {
-                        el.style.fontFamily = `"${d.fontFamily}", sans-serif`;
-                    }
-                });
-            }
-            if (typeof d.fontBold !== 'undefined') {
-                document.body.style.fontWeight = d.fontBold ? '700' : '400';
-            }
-            
-            // Background & Card Colors
-            if (d.pageBg) document.documentElement.style.setProperty('--bg', d.pageBg);
-            if (d.cardBg) document.documentElement.style.setProperty('--card-bg', d.cardBg);
-
-            // Promotional Banner
-            let banner = document.getElementById('offer-banner');
-            if (d.bannerActive && d.bannerText) {
-                if (!banner) {
-                    banner = document.createElement('div');
-                    banner.id = 'offer-banner';
-                    banner.style.cssText = 'background:var(--gold); color:var(--dark, #000); text-align:center; padding:12px; font-weight:bold; position:sticky; top:0; z-index:2000; box-shadow:0 4px 15px rgba(0,0,0,0.5); font-size:1.05rem;';
-                    // Insert before header
-                    const hdr = document.getElementById('hdr');
-                    if(hdr) hdr.parentNode.insertBefore(banner, hdr);
-                }
-                banner.textContent = d.bannerText;
-                banner.style.display = 'block';
-            } else if (banner) {
-                banner.style.display = 'none';
-            }
-
-            // Header Visuals
-            const hdr = document.getElementById('hdr');
-            const logo = document.querySelector('.logo-wrap img');
-            const searchRow = document.getElementById('searchRow');
-
-            if (hdr) {
-                const bgImg = d.headerBg ? `url('${d.headerBg}')` : "url('images/sadu-pattern.jpg')";
-                const op = d.headerOpacity || '0.3';
-                hdr.style.background = `linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,${op})), ${bgImg} center / 120px repeat`;
-            }
-            if (logo && d.logoHeight) {
-                logo.style.height = d.logoHeight + 'px';
-            }
-            if (searchRow) {
-                searchRow.style.display = (d.showSearch === false) ? 'none' : 'block';
-            }
-
-            // Main Menu Labels
-            if (d.labelArabic) {
-                const p = document.getElementById('pill-arabic');
-                if(p) p.textContent = d.labelArabic;
-            }
-            if (d.labelIntl) {
-                const p = document.getElementById('pill-intl');
-                if(p) p.textContent = d.labelIntl;
-            }
-            if (d.labelDrinks) {
-                const p = document.getElementById('pill-drinks');
-                if(p) p.textContent = d.labelDrinks;
-            }
-            if (d.labelArgileh) {
-                const p = document.getElementById('pill-argileh');
-                if(p) p.textContent = d.labelArgileh;
-            }
-        });
+    <script src="js/design-sync.js"></script>
+    <script>
+        // ── Real-Time Menu Listener ───────────────────────────────
 
         // ── Dynamic Sub-Navigation & Category Titles ──────────────────
         db.ref('categories_meta').on('value', (snapshot) => {

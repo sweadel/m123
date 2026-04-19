@@ -125,7 +125,7 @@
 
  .logo-wrap img {
  /* لتكبير أو تصغير الشعار: غيّر الرقم 220px بالأسفل */
-height: 300px;
+ height: 300px;
   width: auto;
   filter: drop-shadow(0 4px 30px rgba(0, 0, 0, .9));
  }
@@ -363,7 +363,7 @@ height: 300px;
 			appId: "1:1025966646494:web:f89373fad63d988f298e4f",
 			databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
 		};
-		firebase.initializeApp(firebaseConfig);
+		if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 		const db = firebase.database();
 		const settingsRef = db.ref('settings/home');
 
@@ -371,19 +371,19 @@ height: 300px;
 			const data = snapshot.val();
 			if(data) {
 				// Hide/Show Buttons
-				document.getElementById('btn_arabic').style.display = data.showBtnAr === false ? 'none' : 'flex';
-				document.getElementById('btn_english').style.display = data.showBtnEn === false ? 'none' : 'flex';
-				document.getElementById('btn_feedback_ar').style.display = data.showBtnFeed === false ? 'none' : 'flex';
-				document.getElementById('btn_feedback_en').style.display = data.showBtnFeed === false ? 'none' : 'flex';
+				if(document.getElementById('btn_arabic')) document.getElementById('btn_arabic').style.display = data.showBtnAr === false ? 'none' : 'flex';
+				if(document.getElementById('btn_english')) document.getElementById('btn_english').style.display = data.showBtnEn === false ? 'none' : 'flex';
+				if(document.getElementById('btn_feedback_ar')) document.getElementById('btn_feedback_ar').style.display = data.showBtnFeed === false ? 'none' : 'flex';
+				if(document.getElementById('btn_feedback_en')) document.getElementById('btn_feedback_en').style.display = data.showBtnFeed === false ? 'none' : 'flex';
 				
 				// Update Links
-				if(data.whatsapp) document.getElementById('link_whatsapp').href = `https://wa.me/${data.whatsapp}`;
+				if(data.whatsapp) document.getElementById('link_whatsapp').href = `https://wa.me/${data.whatsapp.replace(/\D/g,'')}`;
 				if(data.instagram) document.getElementById('link_instagram').href = data.instagram;
 				if(data.maps) document.getElementById('link_maps').href = data.maps;
 			}
 		});
 	</script>
- 
+	<script src="js/design-sync.js"></script>
 	<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>
 
