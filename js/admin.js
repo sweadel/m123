@@ -69,16 +69,23 @@ menuRef.on('value', (snapshot) => {
 });
 
 // ── 6. Render Table ───────────────────────────────────────────────
-function renderTable(filterText = '') {
+function renderTable() {
     const tbody = document.getElementById('menu-table-body');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const q = filterText.toLowerCase();
-    const filtered = menuItems.filter(item =>
-        (item.name   && item.name.toLowerCase().includes(q)) ||
-        (item.nameEn && item.nameEn.toLowerCase().includes(q))
-    );
+    const filterSearchEl = document.getElementById('filterSearch');
+    const filterCategoryEl = document.getElementById('filterCategory');
+
+    const q = filterSearchEl ? filterSearchEl.value.toLowerCase() : '';
+    const cat = filterCategoryEl ? filterCategoryEl.value : 'all';
+
+    const filtered = menuItems.filter(item => {
+        const matchesText = (item.name && item.name.toLowerCase().includes(q)) || 
+                            (item.nameEn && item.nameEn.toLowerCase().includes(q));
+        const matchesCat = (cat === 'all') || (item.category === cat);
+        return matchesText && matchesCat;
+    });
 
     if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-secondary);">لا يوجد أصناف حالياً</td></tr>`;
@@ -116,8 +123,8 @@ function renderTable(filterText = '') {
 }
 
 // ── 7. Filter ─────────────────────────────────────────────────────
-function filterTable(val) {
-    renderTable(val);
+function filterTable() {
+    renderTable();
 }
 
 // ── 8. Stats Update ───────────────────────────────────────────────
