@@ -325,8 +325,7 @@ function syncData() {
 }
 
 // ── 17. Design & Appearance Settings ──────────────────────────────
-const designRef = db.ref('settings/design');
-const catNamesRef = db.ref('settings/categories');
+// designRef and catNamesRef are already defined at the top
 
 // Listen for Design Settings
 designRef.on('value', (snapshot) => {
