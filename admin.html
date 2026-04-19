@@ -191,136 +191,144 @@
                 </div>
             </div>
 
-            <!-- ── 4. Design & Settings ── -->
+            <!-- ── 4. Design & Appearance ── -->
             <div id="design-settings" class="view-section">
                 <div class="page-header">
                     <div>
                         <h1 class="page-title">إعدادات التصميم والظهور</h1>
-                        <p class="page-subtitle">تغيير الألوان، الخطوط، الإعلانات، وأسماء الأقسام ديناميكياً</p>
+                        <p class="page-subtitle">تحكم كامل في مظهر المنيو، الألوان، الخطوط، والرسائل الإعلانية</p>
                     </div>
                     <button class="primary-btn" onclick="saveDesignSettings()">
-                        <i class="fa-solid fa-floppy-disk"></i> حفظ التغييرات
+                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق التصميم
                     </button>
                 </div>
 
-                <div class="settings-grid">
-                    <!-- Header Visuals -->
-                    <div class="panel-card">
-                        <h3 class="panel-title">تصميم الهيدر (رأس الصفحة)</h3>
-                        <div class="form-group" style="margin-bottom:15px;">
-                            <label>رابط خلفية الهيدر (نمط السدو)</label>
-                            <input type="text" id="set_header_bg" class="form-control" placeholder="images/sadu-pattern.jpg">
-                            <p class="text-muted" style="margin-top:5px;">يمكنك وضع رابط صورة أو مسار صورة النسيج.</p>
+                <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+                    
+                    <!-- 1. Brand Identity -->
+                    <div class="panel-card" style="border-top: 4px solid var(--gold);">
+                        <h3 class="panel-title"><i class="fa-solid fa-fingerprint"></i> الهوية والألوان الأساسية</h3>
+                        <p class="text-muted" style="margin-bottom:20px;">حدد الألوان الرئيسية التي تعبر عن علامتك التجارية.</p>
+                        
+                        <div class="form-group">
+                            <label>رابط اللوجو (URL)</label>
+                            <input type="text" id="set_logo_url" class="form-control" placeholder="https://...">
                         </div>
-                        <div class="form-row" style="display:flex; gap:15px; margin-bottom:15px;">
+
+                        <div class="form-row" style="display:flex; gap:15px;">
+                            <div class="form-group flex-1">
+                                <label>اللون الأساسي (Primary)</label>
+                                <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                                    <input type="color" id="set_primary_color" value="#c3922e" style="width:40px; height:40px; border:none; background:none; cursor:pointer;">
+                                    <span style="font-size:0.8rem; opacity:0.7;">لون الأزرار واللمسات الذهبية</span>
+                                </div>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>لون النص الثانوي</label>
+                                <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                                    <input type="color" id="set_secondary_text" value="#888888" style="width:40px; height:40px; border:none; background:none; cursor:pointer;">
+                                    <span style="font-size:0.8rem; opacity:0.7;">لون الوصف والأسعار</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Visual Styles -->
+                    <div class="panel-card" style="border-top: 4px solid #4a90e2;">
+                        <h3 class="panel-title"><i class="fa-solid fa-wand-magic-sparkles"></i> أنماط العرض والخطوط</h3>
+                        
+                        <div class="form-group">
+                            <label>نوع الخط المستخدم (Google Fonts)</label>
+                            <select id="set_font_family" class="form-control">
+                                <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic (فخم وعصري)</option>
+                                <option value="Cairo">Cairo (كلاسيكي ورسمي)</option>
+                                <option value="Tajawal">Tajawal (ناعم وبسيط)</option>
+                                <option value="Almarai">Almarai (واضح للمجلات)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row" style="display:flex; gap:15px;">
+                             <div class="form-group flex-1">
+                                <label>نمط البطاقات</label>
+                                <select id="set_card_style" class="form-control">
+                                    <option value="modern">Modern ✨</option>
+                                    <option value="classic">Classic 🏛️</option>
+                                    <option value="glass">Glass 💎</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>تغليظ الخط (Bold)</label>
+                                <div class="row-align" style="height:45px;">
+                                    <label class="switch"><input type="checkbox" id="set_font_bold" checked><span class="slider"></span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="display:flex; gap:15px;">
+                            <div class="form-group flex-1">
+                                <label>خلفية الصفحة</label>
+                                <input type="color" id="set_page_bg" value="#0a0a0a" class="form-control" style="height:45px; cursor:pointer;">
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>خلفية بطاقة الطبق</label>
+                                <input type="color" id="set_card_bg" value="#121212" class="form-control" style="height:45px; cursor:pointer;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Header & Navigation -->
+                    <div class="panel-card" style="border-top: 4px solid #2ecc71;">
+                        <h3 class="panel-title"><i class="fa-solid fa-Compass"></i> الهيدر وقوائم التصفح</h3>
+                        
+                        <div class="form-group">
+                            <label>رابط صورة خلفية الهيدر</label>
+                            <input type="text" id="set_header_bg" class="form-control" placeholder="images/sadu-pattern.jpg">
+                        </div>
+
+                        <div class="form-row" style="display:flex; gap:15px;">
                             <div class="form-group flex-1">
                                 <label>ارتفاع اللوجو (px)</label>
                                 <input type="number" id="set_logo_height" class="form-control" placeholder="62">
                             </div>
                             <div class="form-group flex-1">
-                                <label>درجة التعتيم (0.1 - 0.9)</label>
-                                <input type="number" id="set_header_opacity" class="form-control" step="0.1" min="0" max="1">
+                                <label>تعتيم الخلفية (0-1)</label>
+                                <input type="number" id="set_header_opacity" class="form-control" step="0.1" min="0" max="1" placeholder="0.3">
                             </div>
                         </div>
-                        <div class="form-group row-align">
-                            <label>إظهار مربع البحث</label>
-                            <label class="switch">
-                                <input type="checkbox" id="set_show_search" checked>
-                                <span class="slider"></span>
-                            </label>
+
+                        <div class="form-group row-align" style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px;">
+                            <label><i class="fa-solid fa-magnifying-glass"></i> تفعيل مربع البحث في الأعلى</label>
+                            <label class="switch"><input type="checkbox" id="set_show_search" checked><span class="slider"></span></label>
                         </div>
-                        <hr style="border:0; border-top:1px dashed rgba(255,255,255,0.1); margin:15px 0;">
-                        <h4 style="margin-bottom:10px; font-size:0.9rem; color:var(--text-secondary);">تخصيص أسماء القوائم الرئيسية:</h4>
-                        <div class="form-group">
-                            <label>اسم قائمة "المنيو العربي"</label>
-                            <input type="text" id="set_label_arabic" class="form-control" placeholder="المنيو العربي">
-                        </div>
-                        <div class="form-group">
-                            <label>اسم قائمة "انترناشونل"</label>
-                            <input type="text" id="set_label_intl" class="form-control" placeholder="انترناشونل">
-                        </div>
-                        <div class="form-group">
-                            <label>اسم قائمة "المشروبات"</label>
-                            <input type="text" id="set_label_drinks" class="form-control" placeholder="المشروبات">
-                        </div>
-                        <div class="form-group">
-                            <label>اسم قائمة "أراجيل"</label>
-                            <input type="text" id="set_label_argileh" class="form-control" placeholder="أراجيل">
+
+                        <div style="margin-top:20px;">
+                            <h4 style="font-size:0.85rem; color:var(--gold); margin-bottom:10px; border-right:2px solid var(--gold); padding-right:8px;">تغيير مسميات التبويبات الرئيسية:</h4>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                <input type="text" id="set_label_arabic" class="form-control" placeholder="المنيو العربي" style="font-size:0.8rem;">
+                                <input type="text" id="set_label_intl" class="form-control" placeholder="انترناشونل" style="font-size:0.8rem;">
+                                <input type="text" id="set_label_drinks" class="form-control" placeholder="المشروبات" style="font-size:0.8rem;">
+                                <input type="text" id="set_label_argileh" class="form-control" placeholder="أراجيل" style="font-size:0.8rem;">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Typography & Backgrounds -->
-                    <div class="panel-card">
-                        <h3 class="panel-title">الخطوط وألوان الخلفية</h3>
+                    <!-- 4. Marketing Banners -->
+                    <div class="panel-card" style="border-top: 4px solid #e74c3c;">
+                        <h3 class="panel-title"><i class="fa-solid fa-bullhorn"></i> الرسائل الترويجية (Banner)</h3>
+                        <p class="text-muted" style="margin-bottom:15px;">اجذب انتباه الزبائن بعرض أو إعلان في أعلى الصفحة.</p>
                         
-                        <div class="form-group row-align">
-                            <label>نوع الخط (Font Family)</label>
-                            <select id="set_font_family" class="form-control" style="width: auto;">
-                                <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic (افتراضي وفخم)</option>
-                                <option value="Cairo">Cairo (كلاسيكي ورسمي)</option>
-                                <option value="Tajawal">Tajawal (عصري وناعم)</option>
-                                <option value="Almarai">Almarai (واضح ومميز)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group row-align">
-                            <label>عرض الخط (Bold)</label>
-                            <label class="switch"><input type="checkbox" id="set_font_bold" checked><span class="slider"></span></label>
-                        </div>
-
-                        <div class="form-group row-align">
-                            <label>لون خلفية الموقع (وراء البطاقات)</label>
-                            <input type="color" id="set_page_bg" value="#0a0a0a" style="border: none; width: 40px; height: 40px; background: none; cursor: pointer;">
-                        </div>
-
-                        <div class="form-group row-align">
-                            <label>لون خلفية البطاقات (شرائح الأطباق)</label>
-                            <input type="color" id="set_card_bg" value="#121212" style="border: none; width: 40px; height: 40px; background: none; cursor: pointer;">
-                        </div>
-
-                        <div class="form-group">
-                            <label>رابط اللوجو العلوي (URL)</label>
-                            <input type="text" id="set_logo_url" class="form-control" placeholder="https://...">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group flex-1">
-                                <label>اللون الأساسي (Primary/Gold)</label>
-                                <input type="color" id="set_primary_color" value="#c3922e" class="form-control" style="height:45px;">
-                            </div>
-                            <div class="form-group flex-1">
-                                <label>لون النص الثانوي</label>
-                                <input type="color" id="set_secondary_text" value="#888888" class="form-control" style="height:45px;">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>نمط عرض البطاقات</label>
-                            <select id="set_card_style" class="form-control">
-                                <option value="modern">عصري (زوايا مستديرة + ظل)</option>
-                                <option value="classic">كلاسيكي (خلفية سادة)</option>
-                                <option value="glass">زجاجي (Glassmorphism)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Announcement Banner -->
-                    <div class="panel-card">
-                        <h3 class="panel-title">شريط الإعلانات العلوي (Banner)</h3>
-                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px;">يظهر هذا الشريط أعلى المنيو لإعلان عروض أو رسائل للزبائن.</p>
-                        
-                        <div class="form-group row-align">
-                            <label>تفعيل شريط الإعلانات</label>
+                        <div class="form-group row-align" style="margin-bottom:20px;">
+                            <label>تفعيل شريط الإعلانات العائم</label>
                             <label class="switch"><input type="checkbox" id="set_banner_active"><span class="slider"></span></label>
                         </div>
 
                         <div class="form-group">
                             <label>نص الإعلان</label>
-                            <input type="text" id="set_banner_text" class="form-control" placeholder="مثال: خصم 20% اليوم على قسم الإفطار!">
+                            <textarea id="set_banner_text" class="form-control" rows="2" placeholder="مثال: استمتع بخصم 15% على جميع وجبات الغداء طوال أيام الأسبوع!"></textarea>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
 
             <!-- ── 5. Category Management ── -->
