@@ -1,0 +1,26 @@
+{
+  "name": "طلوا حبابنا",
+  "short_name": "طلوا حبابنا",
+  "description": "قائمة طعام مطعم طلوا حبابنا — مشروبات، منيو عربي، منيو عالمي",
+  "start_url": "/menu.html",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#C5A022",
+  "lang": "ar",
+  "dir": "rtl",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/tallo-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/tallo-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

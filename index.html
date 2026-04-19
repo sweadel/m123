@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<!--
+ 
+  index.html  الصفحة الرئيسية لموقع طلوا حبابنا 
+  Tallo Ahbabna  Landing Page 
+  
+  المحتوى: 
+   فيديو خلفية يشتغل تلقائياً صامت (tallo-video.mp4) 
+   شعار المطعم في المنتصف 
+   4 أزرار مكدسة فوق بعض (عمود واحد) 
+   شريط سوشيال + موقع + واتساب + إنستغرام + فيسبوك 
+ 
+-->
+<html lang="ar" dir="rtl">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="theme-color" content="#C5A022">
+ <meta name="description" content="مطعم طلوا حبابنا  مادبا، الأردن. اكتشف قائمة طعامنا الكاملة">
+
+ <!--  Open Graph: يحسّن مظهر الرابط عند مشاركته على واتساب وغيره  -->
+ <meta property="og:type" content="website">
+ <meta property="og:title" content="طلوا حبابنا | مادبا">
+ <meta property="og:description" content="تفضل وشوف قائمتنا الكاملة ">
+ <meta property="og:image" content="images/tallo-logo.png">
+ <meta property="og:locale" content="ar_SA">
+
+ <!--  PWA: يتيح إضافة الموقع لشاشة الهاتف كتطبيق  -->
+ <link rel="manifest" href="manifest.json">
+ <link rel="apple-touch-icon" href="images/tallo-logo.png">
+
+ <title>طلوا حبابنا | مادبا</title>
+
+ <!--  Google Font: IBM Plex Sans Arabic  خط عربي فخم  -->
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
+
+ <style>
+ /* 
+ متغيرات التصميم  Design Tokens
+  */
+ :root {
+ --gold: #C5A022;
+ /* الذهبي الأساسي */
+ --gold-dark: #9a7010;
+ /* ذهبي داكن للـ hover */
+ --dark: #080808;
+ /* خلفية سوداء */
+ --glass: rgba(8, 8, 8, .75);
+ /* شفافية داكنة */
+ }
+
+ *,
+ *::before,
+ *::after, input, button {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+ font-family: 'IBM Plex Sans Arabic', sans-serif !important;
+ font-weight: 600;
+
+ }
+
+ html,
+ body {
+ height: 100%;
+ overflow: hidden;
+ }
+
+ body {
+ font-family: 'IBM Plex Sans Arabic', sans-serif;
+
+ background: var(--dark);
+ direction: rtl;
+ position: relative;
+ }
+
+ /* 
+ الفيديو كخلفية كاملة
+ - object-fit:cover يملأ الشاشة بدون تشويه
+ - autoplay + muted + loop مطلوبة للمتصفحات
+  */
+ .vid-bg {
+ position: fixed;
+ inset: 0;
+ /* يساوي top:0 right:0 bottom:0 left:0 */
+ z-index: 0;
+ overflow: hidden;
+ }
+
+ .vid-bg video {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ /* يملأ بالكامل دون تشويه */
+ object-position: center;
+ }
+
+ /*  طبقة قتامة فوق الفيديو لإظهار النصوص  */
+ .vid-bg::after {
+ content: '';
+ position: absolute;
+ inset: 0;
+ background: rgba(0, 0, 0, .52);
+ /* تعتيم 52% */
+ }
+
+ /* 
+ شعار المطعم  Logo
+  */
+ .logo-wrap {
+ position: fixed;
+ top: 0;
+ left: 50%;
+ transform: translateX(-50%);
+ z-index: 10;
+ display: flex;
+ justify-content: center;
+ padding-top: 7vh;
+ pointer-events: none;
+ /* لا يستجيب للنقر */
+ }
+
+ .logo-wrap img {
+ /* لتكبير أو تصغير الشعار: غيّر الرقم 220px بالأسفل */
+height: 220px;
+ width: auto;
+ filter: drop-shadow(0 4px 24px rgba(0, 0, 0, .8));
+ }
+
+ /* 
+ اللوحة السفلية  Bottom Panel
+ تحتوي الأزرار وشريط السوشيال
+  */
+ .panel {
+ position: fixed;
+ bottom: 0;
+ left: 0;
+ width: 100%;
+ z-index: 10;
+ background: linear-gradient(transparent, var(--glass) 18%, rgba(6, 6, 6, .75));
+ padding: 14px 20px 0;
+ border-radius: 24px 24px 0 0;
+ backdrop-filter: blur(10px);
+ -webkit-backdrop-filter: blur(10px);
+ }
+
+ /* 
+ الأزرار  مكدسة عمودياً (flex-direction:column)
+  */
+ .btn-col {
+ display: flex;
+ flex-direction: column;
+ /* فوق بعض */
+ gap: 10px;
+ margin-bottom: 10px;
+ }
+
+ .main-btn {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ padding: 15px 20px;
+ border-radius: 14px;
+ font-family: 'IBM Plex Sans Arabic', sans-serif;
+ font-weight: 700;
+ font-size: 1.1rem;
+ text-decoration: none;
+ transition: all .22s;
+ border: none;
+ cursor: pointer;
+ gap: 10px;
+ letter-spacing: .02em;
+ }
+
+ /* زر ذهبي  للمنيو العربي والإنجليزي */
+ .main-btn.gold {
+ background: linear-gradient(135deg, #C5A022, #a8841c);
+ color: #000;
+ box-shadow: 0 4px 18px rgba(197, 160, 34, .45);
+ }
+
+ .main-btn.gold:hover,
+ .main-btn.gold:active {
+ background: var(--gold-dark);
+ transform: translateY(-1px);
+ }
+
+ /* زر شفاف  للتقييم */
+ .main-btn.ghost {
+ background: rgba(255, 255, 255, .1);
+ color: #fff;
+ border: 1px solid rgba(255, 255, 255, .18);
+ }
+
+ .main-btn.ghost:hover,
+ .main-btn.ghost:active {
+ background: rgba(255, 255, 255, .18);
+ }
+
+ /* تسمية صغيرة تحت الأزرار */
+ .tagline {
+ text-align: center;
+ color: rgba(255, 255, 255, .4);
+ font-size: .78rem;
+ padding: 6px 0 0;
+ letter-spacing: .4px;
+ }
+
+ /* 
+ شريط السوشيال  Social Bar
+  */
+ .social-bar {
+ display: flex;
+ justify-content: space-around;
+ align-items: center;
+ padding: 12px 0 14px;
+ border-top: 1px solid rgba(255, 255, 255, .07);
+ margin-top: 8px;
+ }
+
+ .s-link {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ text-decoration: none;
+ color: rgba(255, 255, 255, .65);
+ font-size: .65rem;
+ font-weight: 700;
+ gap: 3px;
+ transition: color .2s;
+ }
+
+ .s-link:hover,
+ .s-link:active {
+ color: var(--gold);
+ }
+
+ .s-link svg {
+ width: 22px;
+ height: 22px;
+ }
+
+ /* 
+ موبايل صغير  تعديلات بسيطة
+  */
+ @media (max-width: 380px) {
+ .logo-wrap img {
+ height: 160px;
+ }
+
+ .main-btn {
+ font-size: .92rem;
+ padding: 13px 16px;
+ }
+ }
+ </style>
+</head>
+
+<body>
+
+ <!--  فيديو الخلفية 
+ autoplay: يشتغل تلقائياً
+ muted: صامت (شرط للـ autoplay في المتصفحات)
+ loop: يعيد الفيديو تلقائياً
+ playsinline: مهم للـ iPhone
+ poster: صورة تظهر قبل تحميل الفيديو
+-->
+ <div class="vid-bg">
+ <video autoplay muted loop playsinline preload="auto" poster="images/drinks-bg.png">
+ <source src="images/tallo-video.mp4" type="video/mp4">
+ <!-- إذا الفيديو مش مدعوم تظهر الصورة من الـ poster -->
+ </video>
+ </div>
+
+ <!--  شعار المطعم  -->
+ <div class="logo-wrap">
+ <img src="images/tallo-logo.png" alt="طلوا حبابنا  مادبا" loading="eager">
+ </div>
+
+ <!--  اللوحة السفلية  -->
+ <div class="panel">
+
+ <!-- 4 أزرار مكدسة فوق بعض -->
+ <div class="btn-col">
+
+ <!-- أزرار المنيو الرئيسية: لتغيير الرابط عدل href ولتغيير الاسم عدل النص بين العلامات -->
+ <!-- زر 1: قائمة الطعام بالعربي -->
+ <a href="menu.html#arabic" id="btn_arabic" class="main-btn gold">
+ قائمة الطعام  عربي
+  </a>
+
+ <!-- زر 2: قائمة الطعام بالإنجليزي -->
+ <a href="menu-en.html" id="btn_english" class="main-btn gold">
+ Tallo Menu  English
+  </a>
+
+ <!-- زر 3: تقييم التجربة بالعربي -->
+ <a href="feedback.html" id="btn_feedback_ar" class="main-btn ghost">
+ 
+ شاركنا تجربتك
+ </a>
+
+ <!-- زر 4: تقييم التجربة بالإنجليزي -->
+ <a href="feedback-en.html" id="btn_feedback_en" class="main-btn ghost">
+ 
+ Share Your Experience
+ </a>
+
+ </div><!-- /btn-col -->
+
+ <!-- نص صغير تعريفي -->
+ <p class="tagline">طلوا حبابنا  مادبا، الأردن</p>
+
+ <!--  شريط السوشيال 
+ يحتوي روابط: الموقع على الخريطة، واتساب، إنستغرام، فيسبوك
+ -->
+ <div class="social-bar">
+
+ <!-- Google Maps  موقع المطعم -->
+ <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link">
+ 
+ <span>الموقع</span>
+ </a>
+
+ <!-- WhatsApp  تواصل مباشر -->
+ <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link">
+ 
+ <span>واتساب</span>
+ </a>
+
+ <!-- Instagram -->
+ <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link">
+ 
+ <span>إنستغرام</span>
+ </a>
+
+ <!-- Facebook -->
+ <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" target="_blank" rel="noopener"
+ class="s-link">
+ 
+ <span>فيسبوك</span>
+ </a>
+
+ </div><!-- /social-bar -->
+
+ </div><!-- /panel -->
+
+	<!-- Firebase SDKs -->
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+	<script>
+		// Initialize Firebase
+		const firebaseConfig = {
+			apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+			authDomain: "tallow-ahbabna.firebaseapp.com",
+			projectId: "tallow-ahbabna",
+			storageBucket: "tallow-ahbabna.firebasestorage.app",
+			messagingSenderId: "1025966646494",
+			appId: "1:1025966646494:web:f89373fad63d988f298e4f",
+			databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+		};
+		firebase.initializeApp(firebaseConfig);
+		const db = firebase.database();
+		const settingsRef = db.ref('settings/home');
+
+		settingsRef.on('value', (snapshot) => {
+			const data = snapshot.val();
+			if(data) {
+				// Hide/Show Buttons
+				document.getElementById('btn_arabic').style.display = data.showBtnAr === false ? 'none' : 'flex';
+				document.getElementById('btn_english').style.display = data.showBtnEn === false ? 'none' : 'flex';
+				document.getElementById('btn_feedback_ar').style.display = data.showBtnFeed === false ? 'none' : 'flex';
+				document.getElementById('btn_feedback_en').style.display = data.showBtnFeed === false ? 'none' : 'flex';
+				
+				// Update Links
+				if(data.whatsapp) document.getElementById('link_whatsapp').href = `https://wa.me/${data.whatsapp}`;
+				if(data.instagram) document.getElementById('link_instagram').href = data.instagram;
+				if(data.maps) document.getElementById('link_maps').href = data.maps;
+			}
+		});
+	</script>
+ 
+	<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
+</body>
+
+</html>

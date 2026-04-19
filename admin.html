@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلوا حبابنا | لوحة الإدارة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <script>
+        // Force cleanup of old service worker cache
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                for(let reg of regs) { reg.unregister(); }
+            });
+        }
+    </script>
+
+<div id="adminApp" class="admin-layout">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/tallo-logo.png" alt="Tallo Ahbabna" class="admin-logo">
+            <h2>نظام إدارة المطعم</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-target="dashboard"><i class="fa-solid fa-chart-pie"></i> نظرة عامة</a>
+            <a href="#" class="nav-item" data-target="arabic-menu"><i class="fa-solid fa-utensils"></i> إدارة المنيو</a>
+            <a href="#" class="nav-item" data-target="home-settings"><i class="fa-solid fa-house-chimney"></i> الصفحة الرئيسية</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html" class="nav-item" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> عرض الموقع</a>
+        </div>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <main class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="icon-btn mobile-menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="بحث سريع في اللوحة...">
+            </div>
+            <div class="topbar-actions">
+                <button class="icon-btn" title="مزامنة" onclick="location.reload()"><i class="fa-solid fa-rotate"></i></button>
+                <button class="icon-btn" title="تسجيل الخروج" onclick="logout()" style="color: #ff4d4d;"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <div class="user-profile">
+                    <img src="images/tallo-logo.png" alt="Admin">
+                    <span>المدير العام</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Views -->
+        <div class="views-container">
+
+            <!-- ── 1. Dashboard ── -->
+            <div id="dashboard" class="view-section active">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">مرحباً بك في لوحة التحكم</h1>
+                        <p class="page-subtitle">نظرة عامة على المنيو وإحصائيات فورية من قاعدة البيانات</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-utensils"></i></div>
+                        <div class="stat-info">
+                            <h3>إجمالي الأصناف</h3>
+                            <p class="stat-num" id="stat-total">—</p>
+                            <span class="stat-trend neutral">من قاعدة البيانات</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-eye"></i></div>
+                        <div class="stat-info">
+                            <h3>الأصناف النشطة</h3>
+                            <p class="stat-num" id="stat-active">—</p>
+                            <span class="stat-trend positive">تظهر للزبائن</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-eye-slash"></i></div>
+                        <div class="stat-info">
+                            <h3>الأصناف المخفية</h3>
+                            <p class="stat-num" id="stat-hidden">—</p>
+                            <span class="stat-trend neutral">مخفية عن الزبائن</span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <!-- ── 2. Menu Manager ── -->
+            <div id="arabic-menu" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">إدارة المنيو الكامل</h1>
+                        <p class="page-subtitle">إضافة، تعديل، إخفاء، وحذف الأصناف — التغييرات فورية</p>
+                    </div>
+                    <button class="primary-btn" onclick="openItemModal()">
+                        <i class="fa-solid fa-plus"></i> صنف جديد
+                    </button>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="filter-input" placeholder="ابحث باسم الصنف (عربي أو إنجليزي)..." onkeyup="filterTable(this.value)" style="width:100%; max-width:420px;">
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>الصورة</th>
+                                <th>اسم الصنف</th>
+                                <th>القسم</th>
+                                <th>السعر</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menu-table-body">
+                            <tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-secondary);">جاري التحميل من Firebase...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── 3. Home Settings ── -->
+            <div id="home-settings" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">إعدادات الصفحة الرئيسية</h1>
+                        <p class="page-subtitle">التحكم بالأزرار والروابط</p>
+                    </div>
+                    <button class="primary-btn" onclick="saveSettings()">
+                        <i class="fa-solid fa-floppy-disk"></i> حفظ التغييرات
+                    </button>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="panel-card">
+                        <h3 class="panel-title">أزرار الصفحة الرئيسية</h3>
+                        <div class="form-group row-align">
+                            <label>زر المنيو العربي</label>
+                            <label class="switch"><input type="checkbox" id="set_btn_ar" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="form-group row-align">
+                            <label>زر المنيو الإنجليزي</label>
+                            <label class="switch"><input type="checkbox" id="set_btn_en" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="form-group row-align">
+                            <label>زر التقييم</label>
+                            <label class="switch"><input type="checkbox" id="set_btn_feed" checked><span class="slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <h3 class="panel-title">روابط التواصل الاجتماعي</h3>
+                        <div class="form-group">
+                            <label>رقم الواتساب</label>
+                            <input type="text" id="set_whatsapp" class="form-control" placeholder="962779688633">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط إنستغرام</label>
+                            <input type="text" id="set_instagram" class="form-control" placeholder="https://www.instagram.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط خرائط جوجل</label>
+                            <input type="text" id="set_maps" class="form-control" placeholder="https://maps.app.goo.gl/...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /views-container -->
+    </main>
+</div><!-- /adminApp -->
+
+<!-- ═══ MODAL: Add / Edit Item ═══ -->
+<div class="modal-overlay" id="itemModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">إضافة صنف جديد</h2>
+            <button class="close-btn" onclick="closeItemModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="itemForm" onsubmit="event.preventDefault(); saveItem();">
+
+                <!-- Row 1: Names -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>الاسم (عربي) <span class="required">*</span></label>
+                        <input type="text" id="itemName" class="form-control" placeholder="مثال: منسف بلدي" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Name (English)</label>
+                        <input type="text" id="itemNameEn" class="form-control" placeholder="e.g. Mansaf">
+                    </div>
+                </div>
+
+                <!-- Row 2: Category -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>القسم <span class="required">*</span></label>
+                        <select id="itemCategory" class="form-control" required>
+                            <optgroup label="المشروبات (Drinks)">
+                                <option value="s-specialty">قهوة مختصة</option>
+                                <option value="s-ice">مشروبات مثلجة</option>
+                                <option value="s-hot">مشروبات ساخنة</option>
+                                <option value="s-smoothie">سموذي</option>
+                                <option value="s-cold">عصائر وباردة</option>
+                                <option value="s-other">مياه وغازيات</option>
+                            </optgroup>
+                            <optgroup label="المنيو العربي (Arabic)">
+                                <option value="ar-break">الإفطار والمناقيش</option>
+                                <option value="ar-salads">سلطات ومقبلات باردة</option>
+                                <option value="ar-salads-hot">مقبلات ساخنة</option>
+                                <option value="ar-lunch">أطباق الغداء</option>
+                                <option value="ar-main">الأطباق الرئيسية</option>
+                                <option value="ar-grill">من الفخار والفرن</option>
+                                <option value="ar-grill-char">مشاوي على الجمر</option>
+                                <option value="ar-soups">شوربات يومية</option>
+                                <option value="ar-sweets">الحلويات</option>
+                            </optgroup>
+                            <optgroup label="الإنترناشونال (International)">
+                                <option value="in-salads">سلطات عالمية</option>
+                                <option value="in-app">أبيتيزر ومقبلات</option>
+                                <option value="in-lunch">أطباق الغداء (إنترناشونال)</option>
+                                <option value="in-main">الأطباق الرئيسية</option>
+                                <option value="in-pasta">الباستا</option>
+                                <option value="in-sand">السندويشات</option>
+                                <option value="in-pizza">بيتزا يدوية الصنع</option>
+                            </optgroup>
+                            <optgroup label="الأراجيل (Argileh)">
+                                <option value="arg-all">الأراجيل</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>حالة الصنف</label>
+                        <select id="itemStatus" class="form-control">
+                            <option value="active">نشط (يظهر للزبائن)</option>
+                            <option value="inactive">مخفي (لا يظهر)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Price -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>السعر <span class="text-muted">(اختياري)</span></label>
+                        <div class="input-with-icon">
+                            <input type="text" id="itemPrice" class="form-control" placeholder="0.00">
+                            <span class="input-icon">د.أ</span>
+                        </div>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>رابط صورة الصنف <span class="text-muted">(اختياري)</span></label>
+                        <input type="url" id="itemImg" class="form-control" placeholder="https://...">
+                    </div>
+                </div>
+
+                <!-- Row 4: Descriptions -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>الوصف / المكونات (عربي)</label>
+                        <textarea id="itemDesc" class="form-control" rows="2" placeholder="أدخل المكونات أو الوصف..."></textarea>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Description (English)</label>
+                        <textarea id="itemDescEn" class="form-control" rows="2" placeholder="Enter description..."></textarea>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closeItemModal()">إلغاء</button>
+            <button class="primary-btn" onclick="saveItem()"><i class="fa-solid fa-check"></i> حفظ الصنف</button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDKs (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="js/admin.js?v=1.2"></script>
+
+</body>
+</html>

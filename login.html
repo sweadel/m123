@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلوا حبابنا | تسجيل الدخول</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #c3922e;
+            --bg: #0a0a0a;
+            --card-bg: #151515;
+            --text: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .login-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(195, 146, 46, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .logo { width: 80px; margin-bottom: 20px; }
+        h1 { font-size: 1.5rem; margin-bottom: 30px; color: var(--gold); }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #888; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); }
+        input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(195, 146, 46, 0.1); }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .login-btn:hover { background: #d4a345; transform: translateY(-2px); }
+        .error-msg { color: #ff4d4d; font-size: 0.85rem; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <img src="images/tallo-logo.png" alt="Logo" class="logo">
+    <h1>تسجيل دخول الإدارة</h1>
+    
+    <div class="form-group">
+        <label>اسم المستخدم</label>
+        <div class="input-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="username" placeholder="مثلاً: 123456" autocomplete="username">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>كلمة المرور</label>
+        <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" placeholder="••••••" autocomplete="current-password">
+        </div>
+    </div>
+
+    <button class="login-btn" onclick="handleLogin()">دخول النظام</button>
+    <p class="error-msg" id="error">خطأ في اسم المستخدم أو كلمة المرور!</p>
+</div>
+
+<script>
+    function handleLogin() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        const err = document.getElementById('error');
+
+        // البيانات المطلوبة: 123456
+        if(u === '123456' && p === '123456') {
+            localStorage.setItem('admin_auth', 'true');
+            localStorage.setItem('auth_time', Date.now());
+            window.location.href = 'admin.html';
+        } else {
+            err.style.display = 'block';
+            setTimeout(() => { err.style.display = 'none'; }, 3000);
+        }
+    }
+
+    // إذا كان مسجل دخول أصلاً
+    if(localStorage.getItem('admin_auth') === 'true') {
+        window.location.href = 'admin.html';
+    }
+</script>
+
+</body>
+</html>
