@@ -204,6 +204,51 @@
                 </div>
 
                 <div class="settings-grid">
+                    <!-- Header Visuals -->
+                    <div class="panel-card">
+                        <h3 class="panel-title">تصميم الهيدر (رأس الصفحة)</h3>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>رابط خلفية الهيدر (نمط السدو)</label>
+                            <input type="text" id="set_header_bg" class="form-control" placeholder="images/sadu-pattern.jpg">
+                            <p class="text-muted" style="margin-top:5px;">يمكنك وضع رابط صورة أو مسار صورة النسيج.</p>
+                        </div>
+                        <div class="form-row" style="display:flex; gap:15px; margin-bottom:15px;">
+                            <div class="form-group flex-1">
+                                <label>ارتفاع اللوجو (px)</label>
+                                <input type="number" id="set_logo_height" class="form-control" placeholder="62">
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>درجة التعتيم (0.1 - 0.9)</label>
+                                <input type="number" id="set_header_opacity" class="form-control" step="0.1" min="0" max="1">
+                            </div>
+                        </div>
+                        <div class="form-group row-align">
+                            <label>إظهار مربع البحث</label>
+                            <label class="switch">
+                                <input type="checkbox" id="set_show_search" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <hr style="border:0; border-top:1px dashed rgba(255,255,255,0.1); margin:15px 0;">
+                        <h4 style="margin-bottom:10px; font-size:0.9rem; color:var(--text-secondary);">تخصيص أسماء القوائم الرئيسية:</h4>
+                        <div class="form-group">
+                            <label>اسم قائمة "المنيو العربي"</label>
+                            <input type="text" id="set_label_arabic" class="form-control" placeholder="المنيو العربي">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم قائمة "انترناشونل"</label>
+                            <input type="text" id="set_label_intl" class="form-control" placeholder="انترناشونل">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم قائمة "المشروبات"</label>
+                            <input type="text" id="set_label_drinks" class="form-control" placeholder="المشروبات">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم قائمة "أراجيل"</label>
+                            <input type="text" id="set_label_argileh" class="form-control" placeholder="أراجيل">
+                        </div>
+                    </div>
+
                     <!-- Typography & Backgrounds -->
                     <div class="panel-card">
                         <h3 class="panel-title">الخطوط وألوان الخلفية</h3>

@@ -348,6 +348,17 @@ designRef.on('value', (snapshot) => {
     if(document.getElementById('set_primary_color')) document.getElementById('set_primary_color').value = data.primaryColor || '#c3922e';
     if(document.getElementById('set_secondary_text')) document.getElementById('set_secondary_text').value = data.secondaryText || '#888888';
     if(document.getElementById('set_card_style')) document.getElementById('set_card_style').value = data.cardStyle || 'modern';
+
+    // Header & Labels
+    if(document.getElementById('set_header_bg')) document.getElementById('set_header_bg').value = data.headerBg || '';
+    if(document.getElementById('set_logo_height')) document.getElementById('set_logo_height').value = data.logoHeight || '';
+    if(document.getElementById('set_header_opacity')) document.getElementById('set_header_opacity').value = data.headerOpacity || '';
+    if(document.getElementById('set_show_search')) document.getElementById('set_show_search').checked = data.showSearch !== false;
+
+    if(document.getElementById('set_label_arabic')) document.getElementById('set_label_arabic').value = data.labelArabic || '';
+    if(document.getElementById('set_label_intl')) document.getElementById('set_label_intl').value = data.labelIntl || '';
+    if(document.getElementById('set_label_drinks')) document.getElementById('set_label_drinks').value = data.labelDrinks || '';
+    if(document.getElementById('set_label_argileh')) document.getElementById('set_label_argileh').value = data.labelArgileh || '';
 });
 
 // Listen for custom category names
@@ -371,7 +382,17 @@ function saveDesignSettings() {
         logoUrl: document.getElementById('set_logo_url')?.value || '',
         primaryColor: document.getElementById('set_primary_color')?.value || '#c3922e',
         secondaryText: document.getElementById('set_secondary_text')?.value || '#888888',
-        cardStyle: document.getElementById('set_card_style')?.value || 'modern'
+        cardStyle: document.getElementById('set_card_style')?.value || 'modern',
+        
+        // Header & Labels
+        headerBg: document.getElementById('set_header_bg')?.value || '',
+        logoHeight: document.getElementById('set_logo_height')?.value || '',
+        headerOpacity: document.getElementById('set_header_opacity')?.value || '',
+        showSearch: document.getElementById('set_show_search')?.checked ?? true,
+        labelArabic: document.getElementById('set_label_arabic')?.value || '',
+        labelIntl: document.getElementById('set_label_intl')?.value || '',
+        labelDrinks: document.getElementById('set_label_drinks')?.value || '',
+        labelArgileh: document.getElementById('set_label_argileh')?.value || ''
     };
     
     // 2. Save Categories

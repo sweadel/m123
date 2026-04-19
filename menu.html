@@ -31,10 +31,10 @@
 
         <!-- الأزرار الرئيسية في الأعلى (التبويبات) -->
         <div class="nav-row" id="mainTabRow">
-            <a class="pill active" onclick="setTab('arabic',this)">المنيو العربي</a>
-            <a class="pill" onclick="setTab('intl',this)">انترناشونل</a>
-            <a class="pill" onclick="setTab('drinks',this)">المشروبات</a>
-            <a class="pill" onclick="setTab('argileh',this)">أراجيل</a>
+            <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">المنيو العربي</a>
+            <a id="pill-intl" class="pill" onclick="setTab('intl',this)">انترناشونل</a>
+            <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">المشروبات</a>
+            <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">أراجيل</a>
         </div>
 
         <div class="search-row" id="searchRow">
@@ -1549,6 +1549,41 @@
                 banner.style.display = 'block';
             } else if (banner) {
                 banner.style.display = 'none';
+            }
+
+            // Header Visuals
+            const hdr = document.getElementById('hdr');
+            const logo = document.querySelector('.logo-wrap img');
+            const searchRow = document.getElementById('searchRow');
+
+            if (hdr) {
+                const bgImg = d.headerBg ? `url('${d.headerBg}')` : "url('images/sadu-pattern.jpg')";
+                const op = d.headerOpacity || '0.3';
+                hdr.style.background = `linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,${op})), ${bgImg} center / 120px repeat`;
+            }
+            if (logo && d.logoHeight) {
+                logo.style.height = d.logoHeight + 'px';
+            }
+            if (searchRow) {
+                searchRow.style.display = (d.showSearch === false) ? 'none' : 'block';
+            }
+
+            // Main Menu Labels
+            if (d.labelArabic) {
+                const p = document.getElementById('pill-arabic');
+                if(p) p.textContent = d.labelArabic;
+            }
+            if (d.labelIntl) {
+                const p = document.getElementById('pill-intl');
+                if(p) p.textContent = d.labelIntl;
+            }
+            if (d.labelDrinks) {
+                const p = document.getElementById('pill-drinks');
+                if(p) p.textContent = d.labelDrinks;
+            }
+            if (d.labelArgileh) {
+                const p = document.getElementById('pill-argileh');
+                if(p) p.textContent = d.labelArgileh;
             }
         });
 

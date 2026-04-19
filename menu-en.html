@@ -23,10 +23,10 @@ body { direction: ltr; font-weight: 700; }
  <div class="logo-wrap"><img src="images/tallo-logo.png" alt="Tallo Ahbabna"></div>
 
  <div class="nav-row" id="mainTabRow">
-  <a class="pill active" onclick="setTab('arabic',this)">Arabic Menu</a>
-  <a class="pill" onclick="setTab('intl',this)">International</a>
-  <a class="pill" onclick="setTab('drinks',this)">Beverages</a>
-  <a class="pill" onclick="setTab('argileh',this)">Argileh</a>
+  <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">Arabic Menu</a>
+  <a id="pill-intl" class="pill" onclick="setTab('intl',this)">International</a>
+  <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">Beverages</a>
+  <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">Argileh</a>
  </div>
 
  <div class="search-row" id="searchRow">
@@ -657,6 +657,31 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
             } else if (banner) {
                 banner.style.display = 'none';
             }
+
+            // Header Visuals
+            const hdr = document.getElementById('hdr');
+            const logo = document.querySelector('.logo-wrap img');
+            const searchRow = document.getElementById('searchRow');
+
+            if (hdr) {
+                const bgImg = d.headerBg ? `url('${d.headerBg}')` : "url('images/sadu-pattern.jpg')";
+                const op = d.headerOpacity || '0.3';
+                hdr.style.background = `linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,${op})), ${bgImg} center / 120px repeat`;
+            }
+            if (logo && d.logoHeight) {
+                logo.style.height = d.logoHeight + 'px';
+            }
+            if (searchRow) {
+                searchRow.style.display = (d.showSearch === false) ? 'none' : 'block';
+            }
+
+            // Main Menu Labels (English labels would ideally have their own fields, but for now we follow the user's lead on total control)
+            // If the user provided English versions for these in the same object, we could use them.
+            // Since we put 'labelArabic' etc. in admin, we use them.
+            if (d.labelArabic) document.getElementById('pill-arabic').textContent = d.labelArabic;
+            if (d.labelIntl) document.getElementById('pill-intl').textContent = d.labelIntl;
+            if (d.labelDrinks) document.getElementById('pill-drinks').textContent = d.labelDrinks;
+            if (d.labelArgileh) document.getElementById('pill-argileh').textContent = d.labelArgileh;
         });
     </script>
     <a id="link-whatsapp" class="floating-wa" href="https://wa.me/962779688633" target="_blank" title="Contact us via WhatsApp">
