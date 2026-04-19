@@ -1494,25 +1494,11 @@
             });
         });
 
-        // ── Settings Listener (show/hide buttons, social links) ───
-        db.ref('settings/home').on('value', (snap) => {
-            const cfg = snap.val();
-            if (!cfg) return;
-            const arBtn   = document.getElementById('btn-menu-ar');
-            const enBtn   = document.getElementById('btn-menu-en');
-            const feedBtn = document.getElementById('btn-feedback');
-            const waLink  = document.getElementById('link-whatsapp');
-            const igLink  = document.getElementById('link-instagram');
-            const mapLink = document.getElementById('link-maps');
-            if (arBtn)   arBtn.style.display   = cfg.showBtnAr   !== false ? '' : 'none';
-            if (enBtn)   enBtn.style.display   = cfg.showBtnEn   !== false ? '' : 'none';
-            if (feedBtn) feedBtn.style.display = cfg.showBtnFeed !== false ? '' : 'none';
-            if (waLink  && cfg.whatsapp)   waLink.href  = 'https://wa.me/' + cfg.whatsapp.replace(/\D/g,'');
-            if (igLink  && cfg.instagram)  igLink.href  = cfg.instagram;
-            if (mapLink && cfg.maps)       mapLink.href = cfg.maps;
-        });
+        // ── Settings Listener REMOVED (Handled by design-sync.js) ───
+    </script>
 
     <script src="js/design-sync.js"></script>
+
     <script>
         // ── Real-Time Menu Listener ───────────────────────────────
 

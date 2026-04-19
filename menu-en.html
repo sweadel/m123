@@ -618,27 +618,102 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
             });
         });
 
-        // ── Settings Listener (show/hide buttons, social links) ───
-        db.ref('settings/home').on('value', (snap) => {
-            const cfg = snap.val();
-            if (!cfg) return;
-            // ── Dynamic Sub-Navigation & Category Titles ──────────────────
+    </script>
+
+    <script src="js/design-sync.js"></script>
+
+    <script>
+        // ... (remaining listeners)
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        const _fbCfg = {
+            apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+            authDomain: "tallow-ahbabna.firebaseapp.com",
+            projectId: "tallow-ahbabna",
+            storageBucket: "tallow-ahbabna.firebasestorage.app",
+            messagingSenderId: "1025966646494",
+            appId: "1:1025966646494:web:f89373fad63d988f298e4f",
+            databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(_fbCfg);
+        const db = firebase.database();
+
+        function prepareGridsForSection(sectionId) {
+            const heading = document.getElementById(sectionId);
+            if (!heading) return [];
+            const grids = [];
+            let sibling = heading.nextElementSibling;
+            while (sibling) {
+                if (sibling.tagName === 'H2') break;
+                if (sibling && sibling.classList && sibling.classList.contains('menu-grid')) {
+                    grids.push(sibling);
+                    sibling.innerHTML = ""; 
+                }
+                sibling = sibling.nextElementSibling;
+            }
+            return grids;
+        }
+
+        function buildCard(item) {
+            const card = document.createElement('a');
+            card.className = 'menu-card';
+            card.setAttribute('data-t', item.nameEn || item.name || '');
+            card.setAttribute('data-desc', item.descEn || item.desc || '');
+            if (item.image) card.setAttribute('data-img', item.image);
+            const imgStyle = item.image
+                ? `background-image:url('${item.image}');background-size:cover;background-position:center;`
+                : '';
+            card.innerHTML = `
+                <div class="card-img" style="${imgStyle}"></div>
+                <div class="card-body">
+                    <h3 class="card-name">${item.nameEn || item.name || ''}</h3>
+                    <span class="card-price">${item.price ? item.price + ' JD' : ''}</span>
+                </div>
+            `;
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof openDishModal === 'function') openDishModal(this);
+            });
+            return card;
+        }
+
+        db.ref('menu_items').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+            const grouped = {};
+            Object.values(data).forEach(item => {
+                if (item.status === 'inactive') return;
+                if (!item.category) return;
+                if (!grouped[item.category]) grouped[item.category] = [];
+                grouped[item.category].push(item);
+            });
+            Object.entries(grouped).forEach(([catId, items]) => {
+                const grids = prepareGridsForSection(catId);
+                if (grids.length === 0) return;
+                items.forEach(item => grids[0].appendChild(buildCard(item)));
+            });
+        });
+    </script>
+
+    <script src="js/design-sync.js"></script>
+
+    <script>
         db.ref('categories_meta').on('value', (snapshot) => {
             const data = snapshot.val();
             if (!data) return;
-
             const sections = { arabic: [], intl: [], drinks: [], argileh: [] };
             Object.keys(data).forEach(id => {
                 const cat = { id, ...data[id] };
                 if (sections[cat.section]) sections[cat.section].push(cat);
             });
-
             Object.keys(sections).forEach(secId => {
                 const nav = document.getElementById(secId + 'Nav');
                 if (!nav) return;
                 nav.innerHTML = '';
                 sections[secId].sort((a, b) => (a.order || 0) - (b.order || 0));
-
                 sections[secId].forEach(cat => {
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
@@ -656,7 +731,6 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
                     if (titleEl) titleEl.textContent = cat.nameEn || cat.nameAr;
                 });
             });
-
             document.querySelectorAll('.sub-nav .cat-btn').forEach(function(btn){
                 btn.addEventListener('click', function(){
                     var pn = this.closest('.sub-nav');
@@ -665,17 +739,11 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
                 });
             });
         });
-
-        const waLink  = document.getElementById('link-whatsapp');
-            if (waLink  && cfg.whatsapp)   waLink.href  = 'https://wa.me/' + cfg.whatsapp.replace(/\D/g,'');
-        });
-    <script src="js/design-sync.js"></script>
-    <script>
-        // ... (remaining listeners)
     </script>
+
     <a id="link-whatsapp" class="floating-wa" href="https://wa.me/962779688633" target="_blank" title="Contact us via WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}</script>
+    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>
 </html>

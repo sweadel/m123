@@ -195,43 +195,46 @@
             if (!h) return;
 
             // Buttons visibility
-            const btnAr   = document.getElementById('btn-ar-menu')   || document.querySelector('[data-home-btn="ar"]');
-            const btnEn   = document.getElementById('btn-en-menu')   || document.querySelector('[data-home-btn="en"]');
-            const btnFeed = document.getElementById('btn-feedback')  || document.querySelector('[data-home-btn="feed"]');
-            if (btnAr)   btnAr.style.display   = h.showBtnAr   === false ? 'none' : '';
-            if (btnEn)   btnEn.style.display   = h.showBtnEn   === false ? 'none' : '';
-            if (btnFeed) btnFeed.style.display  = h.showBtnFeed === false ? 'none' : '';
+            const btnAr   = document.getElementById('btn-ar-menu')   || document.getElementById('btn_arabic') || document.querySelector('[data-home-btn="ar"]');
+            const btnEn   = document.getElementById('btn-en-menu')   || document.getElementById('btn_english') || document.querySelector('[data-home-btn="en"]');
+            const btnFeed = document.getElementById('btn-feedback')  || document.getElementById('btn_feedback_ar') || document.getElementById('btn_feedback_en') || document.querySelector('[data-home-btn="feed"]');
+            if (btnAr)   btnAr.style.display   = h.showBtnAr   === false ? 'none' : 'flex';
+            if (btnEn)   btnEn.style.display   = h.showBtnEn   === false ? 'none' : 'flex';
+            if (btnFeed) btnFeed.style.display  = h.showBtnFeed === false ? 'none' : 'flex';
 
             // Social links
-            const wa  = document.querySelector('[data-social="whatsapp"]');
-            const ig  = document.querySelector('[data-social="instagram"]');
-            const fb  = document.querySelector('[data-social="facebook"]');
-            const gm  = document.querySelector('[data-social="maps"]');
-            if (wa && h.whatsapp)   wa.href = `https://wa.me/${h.whatsapp}`;
+            const wa  = document.getElementById('link_whatsapp') || document.getElementById('link-whatsapp') || document.querySelector('[data-social="whatsapp"]');
+            const ig  = document.getElementById('link_instagram') || document.getElementById('link-instagram') || document.querySelector('[data-social="instagram"]');
+            const fb  = document.querySelector('.s-link[href*="facebook"]') || document.querySelector('[data-social="facebook"]');
+            const gm  = document.getElementById('link_maps') || document.getElementById('link-maps') || document.querySelector('[data-social="maps"]');
+            if (wa && h.whatsapp)   wa.href = `https://wa.me/${h.whatsapp.toString().replace(/\D/g,'')}`;
             if (ig && h.instagram)  ig.href = h.instagram;
             if (fb && h.facebook)   fb.href = h.facebook;
             if (gm && h.maps)       gm.href = h.maps;
 
-            // Video background
-            const vid = document.querySelector('video.bg-video') || document.querySelector('.hero-video video');
+            // Video background & Overlay
+            const vid = document.querySelector('video.bg-video') || document.querySelector('.hero-video video') || document.querySelector('.vid-bg video');
             if (vid && h.homeVideo) {
                 const src = vid.querySelector('source') || document.createElement('source');
-                src.src = h.homeVideo; src.type = 'video/mp4';
-                if (!src.parentNode) vid.appendChild(src);
-                vid.load();
+                if (src.src !== h.homeVideo) {
+                    src.src = h.homeVideo; src.type = 'video/mp4';
+                    if (!src.parentNode) vid.appendChild(src);
+                    vid.load();
+                }
+            }
+            const overlay = document.querySelector('.video-overlay, .hero-overlay, .vid-bg, [data-overlay]');
+            if (overlay && h.homeOverlay !== undefined) {
+                overlay.style.setProperty('--overlay-op', h.homeOverlay);
+                overlay.style.opacity = h.homeOverlay;
             }
 
             // Tagline
             const tagline = document.querySelector('.hero-tagline, .tagline, [data-tagline]');
             if (tagline && h.homeTagline) tagline.textContent = h.homeTagline;
 
-            // Overlay opacity
-            const overlay = document.querySelector('.video-overlay, .hero-overlay, [data-overlay]');
-            if (overlay && h.homeOverlay !== undefined) overlay.style.opacity = h.homeOverlay;
-
             // Logo size
-            const homeLogo = document.querySelector('.home-logo img, .hero-logo img');
-            if (homeLogo && h.homeLogoSize) homeLogo.style.width = h.homeLogoSize + 'px';
+            const homeLogo = document.querySelector('.home-logo img, .hero-logo img, .logo-wrap img');
+            if (homeLogo && h.homeLogoSize) homeLogo.style.height = h.homeLogoSize + 'px';
         });
     };
 
