@@ -1,3 +1,4 @@
+console.log("Admin System Version: 2.0 - Loaded");
 // ── 0. Security Check ─────────────────────────────────────────────
 if (localStorage.getItem('admin_auth') !== 'true') {
     window.location.href = 'login.html';
