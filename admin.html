@@ -2107,6 +2107,16 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <input type="text" id="catIcon" class="f-ctrl" placeholder="fa-utensils">
                         <p class="f-hint">مثال: fa-mug-hot أو fa-pizza-slice — ابحث على fontawesome.com</p>
                     </div>
+
+                    <!-- ── ITEMS IN CATEGORY ── -->
+                    <div id="catItemsSection" style="margin-top:20px; border-top:1px dashed var(--border); padding-top:16px; display:none;">
+                        <div class="form-section-label" style="font-size:0.75rem; margin-bottom:10px;">
+                            <i class="fa-solid fa-list-check"></i> الأصناف التابعة لهذا القسم
+                        </div>
+                        <div id="catItemsList" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; padding-left:8px;">
+                            <!-- Items will be injected here -->
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

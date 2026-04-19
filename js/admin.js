@@ -878,6 +878,11 @@ function openCatModal() {
     editingCatKey = null;
     document.getElementById('catForm')?.reset();
     document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
+    
+    // Hide items section when adding new cat
+    const itemsSection = document.getElementById('catItemsSection');
+    if (itemsSection) itemsSection.style.display = 'none';
+
     document.getElementById('catModal')?.classList.add('open');
 }
 
@@ -896,7 +901,65 @@ function editCategory(key) {
     document.getElementById('catSection').value = cat.section || 'arabic';
     document.getElementById('catIcon').value    = cat.icon   || '';
     document.getElementById('catOrder').value   = cat.order  || 0;
+    
+    // Show items list
+    document.getElementById('catItemsSection').style.display = 'block';
+    renderItemsInCategory(key);
+
     document.getElementById('catModal')?.classList.add('open');
+}
+
+function renderItemsInCategory(catId) {
+    const container = document.getElementById('catItemsList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const items = menuItems.filter(i => i.category === catId);
+    if (items.length === 0) {
+        container.innerHTML = '<div style="font-size:0.75rem; color:var(--text-3); text-align:center; padding:10px;">لا توجد أصناف في هذا القسم حالياً</div>';
+        return;
+    }
+
+    items.forEach(item => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:8px; background:var(--bg-2); border-radius:8px; border:1px solid var(--border);';
+        
+        row.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:30px; height:30px; background-image:url(\'${item.image || 'images/tallo-logo.png'}\'); background-size:cover; border-radius:4px;"></div>
+                <div style="font-size:0.8rem; font-weight:600;">${item.name}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <select onchange="moveItemToCategory(\'${item.firebaseKey}\', this.value, \'${catId}\')" style="font-size:0.7rem; padding:4px; border-radius:4px; background:var(--bg-3); color:var(--text); border:1px solid var(--border); outline:none; max-width:120px;">
+                    <option value="" disabled selected>نقل إلى قسم آخر...</option>
+                    ${categoryItems.filter(c => c.id !== catId).map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('')}
+                </select>
+                <i class="fa-solid fa-up-down-left-right" title="نقل" style="font-size:0.7rem; color:var(--text-3);"></i>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+}
+
+function moveItemToCategory(itemKey, newCatId, oldCatId) {
+    const item = menuItems.find(i => i.firebaseKey === itemKey);
+    const newCat = categoryItems.find(c => c.id === newCatId);
+    const oldCat = categoryItems.find(c => c.id === oldCatId);
+
+    if (!item || !newCat) return;
+
+    if (!confirm(`هل أنت متأكد من نقل "${item.name}" من قسم "${oldCat?.nameAr}" إلى قسم "${newCat.nameAr}"؟`)) {
+        renderItemsInCategory(oldCatId); // Reset UI
+        return;
+    }
+
+    REFS.menu.child(itemKey).update({ category: newCatId })
+        .then(() => {
+            showToast(`✓ تم نقل "${item.name}" إلى ${newCat.nameAr}`);
+            log('نقل صنف', `نقل "${item.name}" من ${oldCat?.nameAr || 'قسم'} إلى ${newCat.nameAr}`);
+            renderItemsInCategory(oldCatId); // Refresh list
+        })
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
 function saveCategory() {
