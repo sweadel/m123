@@ -330,9 +330,14 @@
                         <h1 class="page-title">إدارة الأقسام (القوائم)</h1>
                         <p class="page-subtitle">إضافة أقسام جديدة، تغيير مسمياتها، أو ترتيبها</p>
                     </div>
-                    <button class="primary-btn" onclick="openCatModal()">
-                        <i class="fa-solid fa-folder-plus"></i> قسم جديد
-                    </button>
+                    <div style="display:flex; gap:10px;">
+                        <button class="secondary-btn" onclick="restoreDefaultCategories()" title="استعادة الأقسام الأساسية">
+                            <i class="fa-solid fa-rotate-left"></i> الأقسام الافتراضية
+                         </button>
+                        <button class="primary-btn" onclick="openCatModal()">
+                            <i class="fa-solid fa-folder-plus"></i> قسم جديد
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-grid" id="categories-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
@@ -519,6 +524,19 @@
                 <div class="form-group">
                     <label>اسم المستخدم <span class="required">*</span></label>
                     <input type="text" id="userName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>يتبع للقائمة الرئيسية (Section)</label>
+                    <select id="catSection" class="form-control">
+                        <option value="arabic">المنيو العربي (Arabic Menu)</option>
+                        <option value="intl">انترناشونل (International)</option>
+                        <option value="drinks">المشروبات (Beverages)</option>
+                        <option value="argileh">أراجيل (Argileh)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>أيقونة القسم (FontAwesome Class)</label>
+                    <input type="text" id="catIcon" class="form-control" placeholder="fa-solid fa-utensils">
                 </div>
                 <div class="form-group">
                     <label>كلمة المرور <span class="required">*</span></label>

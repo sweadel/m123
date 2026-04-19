@@ -622,7 +622,51 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
         db.ref('settings/home').on('value', (snap) => {
             const cfg = snap.val();
             if (!cfg) return;
-            const waLink  = document.getElementById('link-whatsapp');
+            // ── Dynamic Sub-Navigation & Category Titles ──────────────────
+        db.ref('categories_meta').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            const sections = { arabic: [], intl: [], drinks: [], argileh: [] };
+            Object.keys(data).forEach(id => {
+                const cat = { id, ...data[id] };
+                if (sections[cat.section]) sections[cat.section].push(cat);
+            });
+
+            Object.keys(sections).forEach(secId => {
+                const nav = document.getElementById(secId + 'Nav');
+                if (!nav) return;
+                nav.innerHTML = '';
+                sections[secId].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+                sections[secId].forEach(cat => {
+                    const btn = document.createElement('a');
+                    btn.href = '#' + cat.id;
+                    btn.className = 'cat-btn';
+                    btn.textContent = cat.nameEn || cat.nameAr;
+                    if(cat.icon) {
+                        const icon = document.createElement('i');
+                        icon.className = `fa-solid ${cat.icon}`;
+                        icon.style.fontSize = '0.9em';
+                        btn.prepend(icon);
+                        btn.style.gap = '6px';
+                    }
+                    nav.appendChild(btn);
+                    const titleEl = document.getElementById(cat.id);
+                    if (titleEl) titleEl.textContent = cat.nameEn || cat.nameAr;
+                });
+            });
+
+            document.querySelectorAll('.sub-nav .cat-btn').forEach(function(btn){
+                btn.addEventListener('click', function(){
+                    var pn = this.closest('.sub-nav');
+                    if(pn) pn.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active')});
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        const waLink  = document.getElementById('link-whatsapp');
             if (waLink  && cfg.whatsapp)   waLink.href  = 'https://wa.me/' + cfg.whatsapp.replace(/\D/g,'');
         });
         // ── Design & Appearance Listener ──────────────────────────

@@ -623,6 +623,13 @@ function renderCategoryGrid() {
         return;
     }
 
+    const sectionNames = {
+        'arabic': 'المنيو العربي',
+        'intl': 'انترناشونل',
+        'drinks': 'المشروبات',
+        'argileh': 'أراجيل'
+    };
+
     categoryItems.forEach(cat => {
         const card = document.createElement('div');
         card.className = 'stat-card';
@@ -630,6 +637,9 @@ function renderCategoryGrid() {
         card.style.alignItems = 'flex-start';
         card.style.gap = '15px';
         card.style.padding = '20px';
+        
+        const parentSec = sectionNames[cat.section] || 'غير محدد';
+
         card.innerHTML = `
             <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
                 <div class="stat-icon" style="width:50px; height:50px; font-size:1.2rem;">
@@ -641,12 +651,13 @@ function renderCategoryGrid() {
                 </div>
             </div>
             <div style="width:100%;">
-                <h3 style="color:var(--gold); font-size:1.1rem; margin-bottom:4px;">${cat.nameAr}</h3>
+                <div style="font-size:0.7rem; color:var(--gold); text-transform:uppercase; margin-bottom:5px;">قائمة: ${parentSec}</div>
+                <h3 style="color:var(--text); font-size:1.1rem; margin-bottom:4px;">${cat.nameAr}</h3>
                 <p style="color:var(--text-secondary); font-size:0.85rem;">${cat.nameEn || '-'}</p>
             </div>
             <div style="display:flex; width:100%; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
                 <span style="font-size:0.8rem; color:var(--text-secondary);">الترتيب: ${cat.order || 0}</span>
-                <span class="status-badge status-active" style="font-size:0.75rem; background:rgba(229,196,103,0.1); color:var(--gold); border-radius:4px;">
+                <span class="status-badge" style="font-size:0.75rem; background:rgba(229,196,103,0.1); color:var(--gold); border-radius:4px; border:none;">
                     ${menuItems.filter(i => i.category === cat.id).length} صنف
                 </span>
             </div>
@@ -695,17 +706,18 @@ function closeCatModal() {
 }
 
 function saveCategory() {
-    const nameAr = document.getElementById('catNameAr').value.trim();
-    const nameEn = document.getElementById('catNameEn').value.trim();
-    const icon   = document.getElementById('catIcon').value.trim();
-    const order  = parseInt(document.getElementById('catOrder').value) || 0;
+    const nameAr  = document.getElementById('catNameAr').value.trim();
+    const nameEn  = document.getElementById('catNameEn').value.trim();
+    const section = document.getElementById('catSection').value;
+    const icon    = document.getElementById('catIcon').value.trim();
+    const order   = parseInt(document.getElementById('catOrder').value) || 0;
 
     if (!nameAr) {
         showToast('يرجى إدخال اسم القسم بالعربي', 'error');
         return;
     }
 
-    const catData = { nameAr, nameEn, icon, order };
+    const catData = { nameAr, nameEn, section, icon, order };
 
     if (editingCatKey) {
         categoriesRef.child(editingCatKey).update(catData).then(() => {
@@ -729,6 +741,7 @@ function editCategory(key) {
     document.getElementById('catModalTitle').textContent = 'تعديل قسم: ' + cat.nameAr;
     document.getElementById('catNameAr').value = cat.nameAr;
     document.getElementById('catNameEn').value = cat.nameEn || '';
+    document.getElementById('catSection').value = cat.section || 'arabic';
     document.getElementById('catIcon').value = cat.icon || '';
     document.getElementById('catOrder').value = cat.order || 0;
     document.getElementById('catModal').classList.add('open');
@@ -744,5 +757,45 @@ function deleteCategory(key) {
     categoriesRef.child(key).remove().then(() => {
         showToast('تم حذف القسم');
         logAction('حذف قسم', 'قام بحذف أحد أقسام المنيو');
+    });
+}
+
+function restoreDefaultCategories() {
+    if (!confirm('سيتم إضافة الأقسام الأساسية للمنيو (إفطار، غداء، مشروبات...). هل تريد المتابعة؟')) return;
+
+    const defaults = [
+        // Arabic Menu
+        { id: 'ar-break', nameAr: 'الإفطار والمناقيش', nameEn: 'Breakfast', section: 'arabic', order: 1, icon: 'fa-bread-slice' },
+        { id: 'ar-cold',  nameAr: 'مقبلات باردة وسلطات', nameEn: 'Cold Appetizers', section: 'arabic', order: 2, icon: 'fa-leaf' },
+        { id: 'ar-lunch',  nameAr: 'أطباق الغداء', nameEn: 'Lunch Dishes', section: 'arabic', order: 3, icon: 'fa-utensils' },
+        { id: 'ar-grill',  nameAr: 'مشاوي على الجمر', nameEn: 'Charcoal Grills', section: 'arabic', order: 4, icon: 'fa-fire' },
+        { id: 'ar-sweets', nameAr: 'الحلويات', nameEn: 'Desserts', section: 'arabic', order: 5, icon: 'fa-ice-cream' },
+        
+        // Intl Menu
+        { id: 'in-app',    nameAr: 'مقبلات عالمية', nameEn: 'International Starters', section: 'intl', order: 10, icon: 'fa-cheese' },
+        { id: 'in-main',   nameAr: 'أطباق عالمية', nameEn: 'Main Course', section: 'intl', order: 11, icon: 'fa-plate-wheat' },
+        { id: 'in-pizza',  nameAr: 'بيتزا إيطالية', nameEn: 'Italian Pizza', section: 'intl', order: 12, icon: 'fa-pizza-slice' },
+
+        // Drinks
+        { id: 's-hot',      nameAr: 'مشروبات ساخنة', nameEn: 'Hot Drinks', section: 'drinks', order: 20, icon: 'fa-mug-hot' },
+        { id: 's-ice',      nameAr: 'مشروبات مثلجة', nameEn: 'Iced Coffee', section: 'drinks', order: 21, icon: 'fa-glass-water' },
+        { id: 's-smoothie', nameAr: 'سموذي وميلك شيك', nameEn: 'Smoothies', section: 'drinks', order: 22, icon: 'fa-blender' },
+        { id: 's-other',    nameAr: 'مياه وغازيات', nameEn: 'Soft Drinks', section: 'drinks', order: 23, icon: 'fa-bottle-water' },
+
+        // Argileh
+        { id: 'arg-all',    nameAr: 'أراجيل منوعة', nameEn: 'Argileh Selection', section: 'argileh', order: 30, icon: 'fa-smoking' }
+    ];
+
+    let count = 0;
+    defaults.forEach(cat => {
+        const { id, ...data } = cat;
+        // Use set with ID to ensure we don't duplicate if they run it thrice
+        categoriesRef.child(id).set(data).then(() => {
+            count++;
+            if(count === defaults.length) {
+                showToast('تمت استعادة الأقسام الأساسية بنجاح');
+                logAction('استعادة الأقسام', 'قام باستيراد الأقسام الافتراضية للنظام');
+            }
+        });
     });
 }

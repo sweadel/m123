@@ -1587,15 +1587,59 @@
             }
         });
 
-        // ── Custom Categories Renaming Listener ───────────────────
-        db.ref('settings/categories').on('value', (snapshot) => {
+        // ── Dynamic Sub-Navigation & Category Titles ──────────────────
+        db.ref('categories_meta').on('value', (snapshot) => {
             const data = snapshot.val();
             if (!data) return;
-            Object.keys(data).forEach(catId => {
-                const headEl = document.getElementById(catId);
-                if (headEl && data[catId]) {
-                    headEl.textContent = data[catId];
-                }
+
+            // 1. Group categories by section
+            const sections = { arabic: [], intl: [], drinks: [], argileh: [] };
+            Object.keys(data).forEach(id => {
+                const cat = { id, ...data[id] };
+                if (sections[cat.section]) sections[cat.section].push(cat);
+            });
+
+            // 2. Render sub-nav buttons for each section
+            Object.keys(sections).forEach(secId => {
+                const nav = document.getElementById(secId + 'Nav');
+                if (!nav) return;
+                nav.innerHTML = '';
+                
+                // Sort by order
+                sections[secId].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+                sections[secId].forEach(cat => {
+                    const btn = document.createElement('a');
+                    btn.href = '#' + cat.id;
+                    btn.className = 'cat-btn';
+                    btn.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
+                    
+                    // Add icon if exists
+                    if(cat.icon) {
+                        const icon = document.createElement('i');
+                        icon.className = `fa-solid ${cat.icon}`;
+                        icon.style.fontSize = '0.9em';
+                        btn.prepend(icon);
+                        btn.style.gap = '6px';
+                    }
+                    
+                    nav.appendChild(btn);
+
+                    // 3. Update the H2 title in the menu if it exists
+                    const titleEl = document.getElementById(cat.id);
+                    if (titleEl) {
+                        titleEl.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
+                    }
+                });
+            });
+
+            // Re-apply click listeners to new buttons
+            document.querySelectorAll('.sub-nav .cat-btn').forEach(function(btn){
+                btn.addEventListener('click', function(){
+                    var pn = this.closest('.sub-nav');
+                    if(pn) pn.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active')});
+                    this.classList.add('active');
+                });
             });
         });
 
