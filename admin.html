@@ -31,6 +31,7 @@
         <nav class="sidebar-nav">
             <a href="#" class="nav-item active" data-target="dashboard"><i class="fa-solid fa-chart-pie"></i> نظرة عامة</a>
             <a href="#" class="nav-item" data-target="arabic-menu"><i class="fa-solid fa-utensils"></i> إدارة المنيو</a>
+            <a href="#" class="nav-item" data-target="categories-mgmt"><i class="fa-solid fa-list-ul"></i> إدارة الأقسام</a>
             <a href="#" class="nav-item" data-target="home-settings"><i class="fa-solid fa-house-chimney"></i> الصفحة الرئيسية</a>
             <a href="#" class="nav-item" data-target="design-settings"><i class="fa-solid fa-paint-roller"></i> التصميم والظهور</a>
             <a href="#" class="nav-item" data-target="audit-logs"><i class="fa-solid fa-clock-rotate-left"></i> سجل العمليات</a>
@@ -119,44 +120,7 @@
                 <div class="filters-bar" style="display:flex; gap:15px; margin-bottom: 20px;">
                     <select class="filter-input" id="filterCategory" onchange="filterTable()" style="flex: 1; max-width:250px;">
                         <option value="all" style="font-weight: bold; color: var(--gold);">جميع الأقسام (الكل)</option>
-                        
-                        <optgroup label="المشروبات (Drinks)">
-                            <option value="section_drinks">-- كل المشروبات --</option>
-                            <option value="s-specialty">قهوة مختصة</option>
-                            <option value="s-ice">مشروبات مثلجة</option>
-                            <option value="s-hot">مشروبات ساخنة</option>
-                            <option value="s-smoothie">سموذي</option>
-                            <option value="s-cold">عصائر وباردة</option>
-                            <option value="s-other">مياه وغازيات</option>
-                        </optgroup>
-                        
-                        <optgroup label="المنيو العربي (Arabic)">
-                            <option value="section_arabic">-- كل المنيو العربي --</option>
-                            <option value="ar-break">الإفطار والمناقيش</option>
-                            <option value="ar-salads">سلطات ومقبلات باردة</option>
-                            <option value="ar-salads-hot">مقبلات ساخنة</option>
-                            <option value="ar-lunch">أطباق الغداء</option>
-                            <option value="ar-main">الأطباق الرئيسية</option>
-                            <option value="ar-grill">من الفخار والفرن</option>
-                            <option value="ar-grill-char">مشاوي على الجمر</option>
-                            <option value="ar-soups">شوربات يومية</option>
-                            <option value="ar-sweets">الحلويات</option>
-                        </optgroup>
-                        
-                        <optgroup label="الإنترناشونال (International)">
-                            <option value="section_intl">-- كل الإنترناشونال --</option>
-                            <option value="in-salads">سلطات عالمية</option>
-                            <option value="in-app">أبيتيزر ومقبلات</option>
-                            <option value="in-lunch">أطباق الغداء (إنترناشونال)</option>
-                            <option value="in-main">الأطباق الرئيسية</option>
-                            <option value="in-pasta">الباستا</option>
-                            <option value="in-sand">السندويشات</option>
-                            <option value="in-pizza">بيتزا يدوية الصنع</option>
-                        </optgroup>
-                        
-                        <optgroup label="الأراجيل (Argileh)">
-                            <option value="arg-all">الأراجيل</option>
-                        </optgroup>
+                        <!-- Dynamic Categories will load here -->
                     </select>
                     <input type="text" id="filterSearch" class="filter-input" placeholder="ابحث باسم الصنف (عربي أو إنجليزي)..." onkeyup="filterTable()" style="flex: 2; max-width:420px;">
                 </div>
@@ -312,28 +276,25 @@
                     </div>
                 </div>
 
-                <!-- Custom Categories renaming -->
-                <div class="panel-card" style="margin-top: 30px;">
-                    <h3 class="panel-title">تخصيص أسماء الأقسام</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px;">يمكنك تغيير الأسماء الافتراضية للأقسام كما تظهر للزبائن في قائمة المنيو (اترك الخانة فارغة إذا كنت ترغب في الاسم الافتراضي الأصلي).</p>
-                    
-                    <div class="settings-grid" id="catNamesGrid" style="gap: 15px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
-                        <div class="form-group"><label>الإفطار والمناقيش</label><input type="text" class="form-control cat-rename" data-cat="ar-break" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>سلطات ومقبلات باردة</label><input type="text" class="form-control cat-rename" data-cat="ar-salads" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>مقبلات ساخنة</label><input type="text" class="form-control cat-rename" data-cat="ar-salads-hot" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>أطباق الغداء</label><input type="text" class="form-control cat-rename" data-cat="ar-lunch" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>الأطباق الرئيسية</label><input type="text" class="form-control cat-rename" data-cat="ar-main" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>من الفخار والفرن</label><input type="text" class="form-control cat-rename" data-cat="ar-grill" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>مشاوي على الجمر</label><input type="text" class="form-control cat-rename" data-cat="ar-grill-char" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>شوربات يومية</label><input type="text" class="form-control cat-rename" data-cat="ar-soups" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>الحلويات</label><input type="text" class="form-control cat-rename" data-cat="ar-sweets" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>قهوة مختصة</label><input type="text" class="form-control cat-rename" data-cat="s-specialty" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>مشروبات مثلجة</label><input type="text" class="form-control cat-rename" data-cat="s-ice" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>مشروبات ساخنة</label><input type="text" class="form-control cat-rename" data-cat="s-hot" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>عصائر وباردة</label><input type="text" class="form-control cat-rename" data-cat="s-cold" placeholder="تغيير الاسم..."></div>
-                        <div class="form-group"><label>الأراجيل</label><input type="text" class="form-control cat-rename" data-cat="arg-all" placeholder="تغيير الاسم..."></div>
+            </div>
+
+            <!-- ── 5. Category Management ── -->
+            <div id="categories-mgmt" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">إدارة الأقسام (القوائم)</h1>
+                        <p class="page-subtitle">إضافة أقسام جديدة، تغيير مسمياتها، أو ترتيبها</p>
                     </div>
+                    <button class="primary-btn" onclick="openCatModal()">
+                        <i class="fa-solid fa-folder-plus"></i> قسم جديد
+                    </button>
                 </div>
+
+                <div class="stats-grid" id="categories-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                    <!-- Dynamic Category Cards will load here -->
+                    <div style="color:var(--text-secondary); text-align:center; padding:40px; grid-column: 1/-1;">جاري تحميل الأقسام...</div>
+                </div>
+            </div>
 
             </div>
 
@@ -453,37 +414,7 @@
                     <div class="form-group flex-1">
                         <label>القسم <span class="required">*</span></label>
                         <select id="itemCategory" class="form-control" required>
-                            <optgroup label="المشروبات (Drinks)">
-                                <option value="s-specialty">قهوة مختصة</option>
-                                <option value="s-ice">مشروبات مثلجة</option>
-                                <option value="s-hot">مشروبات ساخنة</option>
-                                <option value="s-smoothie">سموذي</option>
-                                <option value="s-cold">عصائر وباردة</option>
-                                <option value="s-other">مياه وغازيات</option>
-                            </optgroup>
-                            <optgroup label="المنيو العربي (Arabic)">
-                                <option value="ar-break">الإفطار والمناقيش</option>
-                                <option value="ar-salads">سلطات ومقبلات باردة</option>
-                                <option value="ar-salads-hot">مقبلات ساخنة</option>
-                                <option value="ar-lunch">أطباق الغداء</option>
-                                <option value="ar-main">الأطباق الرئيسية</option>
-                                <option value="ar-grill">من الفخار والفرن</option>
-                                <option value="ar-grill-char">مشاوي على الجمر</option>
-                                <option value="ar-soups">شوربات يومية</option>
-                                <option value="ar-sweets">الحلويات</option>
-                            </optgroup>
-                            <optgroup label="الإنترناشونال (International)">
-                                <option value="in-salads">سلطات عالمية</option>
-                                <option value="in-app">أبيتيزر ومقبلات</option>
-                                <option value="in-lunch">أطباق الغداء (إنترناشونال)</option>
-                                <option value="in-main">الأطباق الرئيسية</option>
-                                <option value="in-pasta">الباستا</option>
-                                <option value="in-sand">السندويشات</option>
-                                <option value="in-pizza">بيتزا يدوية الصنع</option>
-                            </optgroup>
-                            <optgroup label="الأراجيل (Argileh)">
-                                <option value="arg-all">الأراجيل</option>
-                            </optgroup>
+                            <!-- Dynamic Categories will load here -->
                         </select>
                     </div>
                     <div class="form-group flex-1">

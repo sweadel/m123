@@ -39,7 +39,8 @@ const logsRef    = db.ref('audit_logs');
 const deletedRef = db.ref('deleted_items');
 const usersRef   = db.ref('users');
 const designRef  = db.ref('settings/design');
-const catNamesRef = db.ref('settings/categories');
+const catNamesRef = db.ref('settings/categories'); 
+const categoriesRef = db.ref('categories_meta'); // New unified categories collection
 
 // ── 2. Mobile Sidebar ─────────────────────────────────────────────
 function toggleSidebar() {
@@ -64,7 +65,9 @@ document.querySelectorAll('.sidebar-nav .nav-item[data-target]').forEach(item =>
 
 // ── 4. State ──────────────────────────────────────────────────────
 let menuItems  = [];
+let categoryItems = [];
 let editingKey = null;
+let editingCatKey = null;
 
 // ── 5. Real-Time Listener ─────────────────────────────────────────
 menuRef.on('value', (snapshot) => {
@@ -119,6 +122,8 @@ function renderTable() {
         const statusCls = isActive ? 'status-active' : 'status-inactive';
         const statusTxt = isActive ? 'نشط' : 'مخفي';
         const imgSrc    = item.image ? item.image : 'images/tallo-logo.png';
+        const catObj    = categoryItems.find(c => c.id === item.category);
+        const catName   = catObj ? catObj.nameAr : (item.category || '-');
 
         tr.innerHTML = `
             <td><div class="item-img-mini" style="background-image:url('${imgSrc}');background-size:cover;background-position:center;width:44px;height:44px;border-radius:8px;"></div></td>
@@ -127,7 +132,7 @@ function renderTable() {
                 ${item.nameEn ? `<span style="color:var(--text-secondary);font-size:.85rem;"> / ${item.nameEn}</span>` : ''}
                 ${item.desc   ? `<br><span style="color:var(--text-secondary);font-size:.8rem;">${item.desc}</span>` : ''}
             </td>
-            <td><span style="font-size:.85rem;">${item.category || '-'}</span></td>
+            <td><span style="font-size:.85rem;">${catName}</span></td>
             <td style="font-weight:600;color:var(--gold);">${item.price ? item.price + ' د.أ' : '-'}</td>
             <td><span class="status-badge ${statusCls}">${statusTxt}</span></td>
             <td>
@@ -568,5 +573,155 @@ function deleteUser(key) {
     usersRef.child(key).remove().then(() => {
         showToast('تم حذف الحساب');
         logAction('حذف حساب', `حذف مستخدم بصلاحية معينة`);
+    });
+}
+
+// ── 22. Category Management Logic ─────────────────────────────────
+categoriesRef.on('value', snapshot => {
+    const data = snapshot.val();
+    categoryItems = [];
+    if (data) {
+        Object.keys(data).forEach(key => {
+            categoryItems.push({ id: key, ...data[key] });
+        });
+        // Sort by priority/order
+        categoryItems.sort((a, b) => (a.order || 0) - (b.order || 0));
+    }
+    renderCategoryGrid();
+    updateMenuSelects();
+    renderTable(); // Refresh table to show correct cat names
+});
+
+function renderCategoryGrid() {
+    const grid = document.getElementById('categories-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    
+    if (categoryItems.length === 0) {
+        grid.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:40px; grid-column: 1/-1;">لا يوجد أقسام حالياً. ابدأ بإضافة قسم جديد!</div>';
+        return;
+    }
+
+    categoryItems.forEach(cat => {
+        const card = document.createElement('div');
+        card.className = 'stat-card';
+        card.style.flexDirection = 'column';
+        card.style.alignItems = 'flex-start';
+        card.style.gap = '15px';
+        card.style.padding = '20px';
+        card.innerHTML = `
+            <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
+                <div class="stat-icon" style="width:50px; height:50px; font-size:1.2rem;">
+                    <i class="fa-solid ${cat.icon || 'fa-folder'}"></i>
+                </div>
+                <div style="display:flex; gap:8px;">
+                     <button class="action-btn edit" onclick="editCategory('${cat.id}')"><i class="fa-solid fa-pen"></i></button>
+                     <button class="action-btn delete" onclick="deleteCategory('${cat.id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            <div style="width:100%;">
+                <h3 style="color:var(--gold); font-size:1.1rem; margin-bottom:4px;">${cat.nameAr}</h3>
+                <p style="color:var(--text-secondary); font-size:0.85rem;">${cat.nameEn || '-'}</p>
+            </div>
+            <div style="display:flex; width:100%; justify-content:space-between; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
+                <span style="font-size:0.8rem; color:var(--text-secondary);">الترتيب: ${cat.order || 0}</span>
+                <span class="status-badge status-active" style="font-size:0.75rem; background:rgba(229,196,103,0.1); color:var(--gold); border-radius:4px;">
+                    ${menuItems.filter(i => i.category === cat.id).length} صنف
+                </span>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function updateMenuSelects() {
+    const itemCatSelect = document.getElementById('itemCategory');
+    const filterCatSelect = document.getElementById('filterCategory');
+    if (!itemCatSelect || !filterCatSelect) return;
+
+    // Item Modal Select
+    const currentItemVal = itemCatSelect.value;
+    itemCatSelect.innerHTML = '<option value="" disabled selected>اختر القسم...</option>';
+    categoryItems.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = `${cat.nameAr} (${cat.nameEn || '-'})`;
+        itemCatSelect.appendChild(opt);
+    });
+    if(currentItemVal) itemCatSelect.value = currentItemVal;
+
+    // Filter Select
+    const currentFilterVal = filterCatSelect.value;
+    filterCatSelect.innerHTML = '<option value="all" style="font-weight:bold; color:var(--gold);">جميع الأقسام (الكل)</option>';
+    categoryItems.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.nameAr;
+        filterCatSelect.appendChild(opt);
+    });
+    filterCatSelect.value = currentFilterVal;
+}
+
+function openCatModal() {
+    editingCatKey = null;
+    document.getElementById('catForm').reset();
+    document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
+    document.getElementById('catModal').classList.add('open');
+}
+
+function closeCatModal() {
+    document.getElementById('catModal').classList.remove('open');
+}
+
+function saveCategory() {
+    const nameAr = document.getElementById('catNameAr').value.trim();
+    const nameEn = document.getElementById('catNameEn').value.trim();
+    const icon   = document.getElementById('catIcon').value.trim();
+    const order  = parseInt(document.getElementById('catOrder').value) || 0;
+
+    if (!nameAr) {
+        showToast('يرجى إدخال اسم القسم بالعربي', 'error');
+        return;
+    }
+
+    const catData = { nameAr, nameEn, icon, order };
+
+    if (editingCatKey) {
+        categoriesRef.child(editingCatKey).update(catData).then(() => {
+            logAction('تعديل قسم', `تعديل مسمى القسم: ${nameAr}`);
+            closeCatModal();
+            showToast('تم تحديث القسم');
+        });
+    } else {
+        categoriesRef.push(catData).then(() => {
+            logAction('إنشاء قسم', `إضافة قسم جديد للمنيو: ${nameAr}`);
+            closeCatModal();
+            showToast('تم إضافة القسم بنجاح');
+        });
+    }
+}
+
+function editCategory(key) {
+    const cat = categoryItems.find(c => c.id === key);
+    if (!cat) return;
+    editingCatKey = key;
+    document.getElementById('catModalTitle').textContent = 'تعديل قسم: ' + cat.nameAr;
+    document.getElementById('catNameAr').value = cat.nameAr;
+    document.getElementById('catNameEn').value = cat.nameEn || '';
+    document.getElementById('catIcon').value = cat.icon || '';
+    document.getElementById('catOrder').value = cat.order || 0;
+    document.getElementById('catModal').classList.add('open');
+}
+
+function deleteCategory(key) {
+    const count = menuItems.filter(i => i.category === key).length;
+    if (count > 0) {
+        showToast(`لا يمكن حذف القسم! يحتوي على ${count} أصناف حالياً.`, 'error');
+        return;
+    }
+    if (!confirm('هل تريد حذف هذا القسم نهائياً؟')) return;
+    categoriesRef.child(key).remove().then(() => {
+        showToast('تم حذف القسم');
+        logAction('حذف قسم', 'قام بحذف أحد أقسام المنيو');
     });
 }
