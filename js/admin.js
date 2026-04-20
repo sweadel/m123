@@ -54,6 +54,11 @@ let catFilter     = 'all';
 let isSavingDesign = false;
 let isSavingHome   = false;
 
+const FONTS = [
+    'Zain', 'Tajawal', 'Cairo', 'Almarai', 'IBM Plex Sans Arabic', 
+    'Roboto', 'Inter', 'Outfit', 'Montserrat'
+];
+
 // ══════════════ 3. NAVIGATION ══════════════
 document.querySelectorAll('[data-view]').forEach(btn => {
     btn.addEventListener('click', function(e) {
