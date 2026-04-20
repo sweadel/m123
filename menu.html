@@ -1115,32 +1115,31 @@
         function openDishModal(card) {
             var name = card.querySelector('.card-name') ? card.querySelector('.card-name').textContent : (card.dataset.t || '');
             var price = card.querySelector('.card-price') ? card.querySelector('.card-price').textContent : '';
-            var ingredients = card.dataset.ingredients || '';
             var desc = card.dataset.desc || '';
-            var img = card.querySelector('.card-img img');
+            var cardImgDiv = card.querySelector('.card-img');
+            var bgUrl = cardImgDiv ? cardImgDiv.style.backgroundImage.slice(4, -1).replace(/"/g, "") : "";
 
             document.getElementById('modalTitle').textContent = name;
             document.getElementById('modalPrice').textContent = price;
             document.getElementById('modalDesc').textContent = desc;
 
-            // Ingredients
-            var ingRow = document.getElementById('modalIngredients');
-            ingRow.innerHTML = '';
-            if (ingredients.trim()) {
-                ingredients.split(',').forEach(function (ing) {
-                    var pill = document.createElement('span');
-                    pill.className = 'ing-pill';
-                    pill.textContent = ing.trim();
-                    ingRow.appendChild(pill);
-                });
-            }
-
-            // Image
+            // Handle Modal Image Display
             var modalImg = document.getElementById('modalImg');
             modalImg.innerHTML = '';
-            if (img) {
-                var clone = img.cloneNode();
-                modalImg.appendChild(clone);
+            
+            if (bgUrl) {
+                var imgEl = document.createElement('img');
+                imgEl.src = bgUrl;
+                imgEl.style.width = '100%';
+                imgEl.style.height = '100%';
+                imgEl.style.objectFit = 'cover';
+                modalImg.appendChild(imgEl);
+            } else {
+                // Default fallback if no image
+                var logo = document.createElement('img');
+                logo.src = 'images/tallo-logo.png';
+                logo.style.width = '160px';
+                modalImg.appendChild(logo);
             }
 
             document.getElementById('dishModal').classList.add('open');
