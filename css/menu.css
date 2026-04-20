@@ -162,26 +162,31 @@ header.compressed {
 .back-btn {
  position: absolute;
  right: 15px;
- top: 14px;
+ top: 12px;
  color: var(--gold);
  text-decoration: none;
- font-size: 1.3rem;
- width: 38px;
- height: 38px;
+ font-size: 1.4rem;
+ width: 44px;
+ height: 44px;
  display: flex;
  align-items: center;
  justify-content: center;
- background: rgba(0, 0, 0, 0.55);
+ background: rgba(20, 20, 20, 0.6);
+ backdrop-filter: blur(10px);
+ -webkit-backdrop-filter: blur(10px);
  border-radius: 50%;
- border: 1px solid rgba(197, 160, 34, 0.35);
+ border: 1px solid rgba(197, 160, 34, 0.4);
+ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
  z-index: 10;
- transition: all 0.2s;
+ transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.back-btn:hover {
- background: rgba(229, 196, 103, 0.15);
+.back-btn:hover, .back-btn:active {
+ background: rgba(197, 160, 34, 0.2);
  border-color: var(--gold);
+ transform: scale(1.08);
 }
+
 
 .back-btn-en {
  right: auto;
@@ -828,37 +833,7 @@ section.active {
  transform: translateY(-3px);
 }
 
-/* ════════════════════════════════════════════════════════════════════
- 11. الزر العائم للواتس اب — Floating WhatsApp Button
- ════════════════════════════════════════════════════════════════════ */
-  .floating-wa {
-     position: fixed;
-     bottom: 25px;
-     right: 25px; 
-     background: #25d366;
-     color: white;
-     width: 55px;
-     height: 55px;
-     border-radius: 50%;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     font-size: 30px;
-     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-     z-index: 1000;
-     transition: transform 0.3s ease, background 0.3s;
-     text-decoration: none;
-  }
 
- .floating-wa:hover {
-    background: #128c7e;
-    transform: scale(1.1);
- }
-
- html[dir="ltr"] .floating-wa {
-    right: auto;
-    left: 25px;
- }
 
 /* ════════════════════════════════════════════════════════════════════
  12. استجابة الموبايل — Responsive Mobile
