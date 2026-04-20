@@ -117,10 +117,17 @@ header {
 /* ── الجزء العلوي: يتقلص ويختفي عند الـ scroll ── */
 .hdr-top {
  overflow: hidden;
- max-height: 180px;
+ max-height: 220px; /* زيادة الارتفاع ليتناسب مع الصورة الجديدة */
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
  opacity: 1;
  transform: translateY(0);
+ background-image: url('../images/mosaic-header.png'); /* الصورة الجديدة */
+ background-size: cover;
+ background-position: center;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ padding-bottom: 10px;
 }
 
 /* الحالة المضغوطة: تصغير اللوجو وإخفاء العناصر الإضافية */
@@ -140,13 +147,14 @@ header.compressed {
  display: flex;
  justify-content: center;
  align-items: center;
- padding: 8px 0 2px;
+ padding: 25px 0 10px; /* زيادة الـ padding لتوسيط اللوجو داخل المربع الأبيض */
+ width: 100%;
 }
 
 .logo-wrap img {
- height: 48px; /* تصغير اللوجو الافتراضي */
- opacity: .93;
- filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .6));
+ height: 75px; /* تكبير بسيط ليملأ المربع الأبيض بشكل متناسق */
+ opacity: 1;
+ filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .3));
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
