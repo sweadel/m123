@@ -1368,15 +1368,32 @@
         }
 
         // ── Firebase Listeners ────────────────────────────────────
-        db.ref('menu_items').on('value', (snapshot) => {
-            _menuItems = snapshot.val() || {};
-            renderFullMenu();
-        });
+        function initListeners() {
+            if (typeof db === 'undefined') {
+                setTimeout(initListeners, 500);
+                return;
+            }
+            
+            // Listen for Items
+            db.ref('menu_items').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    _menuItems = data;
+                    console.log("Items updated from Firebase:", Object.keys(_menuItems).length);
+                    renderFullMenu();
+                }
+            });
 
-        db.ref('categories_meta').on('value', (snapshot) => {
-            _categoriesMeta = snapshot.val() || {};
-            renderFullMenu();
-        });
+            // Listen for Categories
+            db.ref('categories_meta').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    _categoriesMeta = data;
+                    renderFullMenu();
+                }
+            });
+        }
+        initListeners();
 
     </script>
     <script src="js/design-sync.js"></script>
