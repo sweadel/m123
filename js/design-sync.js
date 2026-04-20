@@ -113,12 +113,12 @@
             if (!h) return;
 
             // Background sync for header-top and section heroes
-            const bgSize = h.bgSize || 80;
+            const bgSize = parseInt(h.bgSize) || 80;
             let bgStyle;
-            if (h.bgImage) {
+            if (h.bgImage && h.bgImage.trim()) {
                 const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;
                 const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.3;
-                bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage}') center/${bgSize}px repeat`;
+                bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage.trim()}') center/${bgSize}px repeat`;
             } else {
                 bgStyle = h.solidColor || '#111111';
             }
