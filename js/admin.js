@@ -800,23 +800,26 @@ function previewImage(url) {
     const ph  = document.getElementById('img-placeholder');
     if (!img) return;
     
-    if (url && (url.startsWith('http') || url.startsWith('images/') || url.includes('.'))) {
-        img.src = url;
-        img.classList.add('visible');
-        if (ph) ph.style.display = 'none';
-        img.onerror = () => { 
-            // If it fails, try adding the project root if it's a relative path
-            if (!url.startsWith('http') && !url.startsWith('/')) {
-                img.src = url; 
-            }
-            img.classList.remove('visible'); 
-            if(ph) ph.style.display = 'flex'; 
-        };
-    } else {
+    if (!url) {
         img.classList.remove('visible');
         img.src = '';
         if (ph) ph.style.display = 'flex';
+        return;
     }
+
+    // Try to load the image
+    img.src = url;
+    img.onload = () => {
+        img.classList.add('visible');
+        if (ph) ph.style.display = 'none';
+    };
+    
+    img.onerror = () => {
+        // If it's a relative path starting with images/ and fails, it might need to climb up one level or be absolute
+        console.warn("Retrying image load for:", url);
+        img.classList.remove('visible');
+        if (ph) ph.style.display = 'flex';
+    };
 }
 
 // ══════════════ 17. ITEM MODAL ══════════════
