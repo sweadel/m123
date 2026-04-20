@@ -799,11 +799,19 @@ function previewImage(url) {
     const img = document.getElementById('img-preview-el');
     const ph  = document.getElementById('img-placeholder');
     if (!img) return;
-    if (url && (url.startsWith('http') || url.startsWith('images/'))) {
+    
+    if (url && (url.startsWith('http') || url.startsWith('images/') || url.includes('.'))) {
         img.src = url;
         img.classList.add('visible');
         if (ph) ph.style.display = 'none';
-        img.onerror = () => { img.classList.remove('visible'); if(ph) ph.style.display = 'flex'; };
+        img.onerror = () => { 
+            // If it fails, try adding the project root if it's a relative path
+            if (!url.startsWith('http') && !url.startsWith('/')) {
+                img.src = url; 
+            }
+            img.classList.remove('visible'); 
+            if(ph) ph.style.display = 'flex'; 
+        };
     } else {
         img.classList.remove('visible');
         img.src = '';
