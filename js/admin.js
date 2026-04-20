@@ -248,6 +248,67 @@ REFS.design.on('value', snapshot => {
     sv('catbtn_colorTxt',    cb.color       || '');
     sv('catbtn_activeColor', cb.activeColor || '#E5C467');
     sv('catbtn_activeColorTxt', cb.activeColor || '');
+
+    // Reset preview on load
+    setTimeout(previewDesign, 100);
+});
+
+// ── Live Preview Engine ──
+function previewDesign() {
+    const d = {
+        primaryColor: document.getElementById('d_primaryColor')?.value,
+        fontFamily:   document.getElementById('d_fontFamily')?.value,
+        fontBold:     document.getElementById('d_fontBold')?.checked,
+        pageBg:       document.getElementById('d_pageBg')?.value,
+        pageBgImage:  document.getElementById('d_pageBgImage')?.value,
+        pageBgSize:   document.getElementById('d_pageBgSize')?.value,
+        logoUrl:      document.getElementById('d_logoUrl')?.value || document.getElementById('hdr_logoUrl')?.value
+    };
+
+    const box = document.getElementById('design-preview-box');
+    const logoImg = document.getElementById('preview-logo');
+    const pills = [document.getElementById('preview-pill-active'), document.getElementById('preview-pill-dim')];
+
+    if (!box) return;
+
+    // Apply font
+    if (d.fontFamily) {
+        let link = document.getElementById('ds-preview-font');
+        if (!link) {
+            link = document.createElement('link'); link.id = 'ds-preview-font'; link.rel = 'stylesheet';
+            document.head.appendChild(link);
+        }
+        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(d.fontFamily)}:wght@400;700;800&display=swap`;
+        box.style.fontFamily = `'${d.fontFamily}', sans-serif`;
+    }
+    box.style.fontWeight = d.fontBold ? '800' : '600';
+
+    // Apply colors
+    if (d.primaryColor) {
+        document.documentElement.style.setProperty('--gold', d.primaryColor);
+        if (pills[0]) pills[0].style.background = d.primaryColor;
+    }
+
+    // Apply background
+    if (d.pageBgImage) {
+        box.style.backgroundImage = `url('${d.pageBgImage}')`;
+        box.style.backgroundSize = d.pageBgSize || 'cover';
+    } else {
+        box.style.backgroundImage = 'none';
+        box.style.background = d.pageBg || 'var(--bg-1)';
+    }
+
+    // Apply logo
+    if (logoImg && d.logoUrl) logoImg.src = d.logoUrl;
+}
+
+// Add live listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const ids = ['d_primaryColor', 'd_fontFamily', 'd_fontBold', 'd_pageBg', 'd_pageBgImage', 'd_pageBgSize', 'd_logoUrl', 'hdr_logoUrl'];
+    ids.forEach(id => {
+        document.getElementById(id)?.addEventListener('input', previewDesign);
+        document.getElementById(id)?.addEventListener('change', previewDesign);
+    });
 });
 
 function saveDesign() {
