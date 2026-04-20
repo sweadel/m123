@@ -1687,9 +1687,20 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <div>
                             <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-image"></i> الخلفية والتعتيم</div>
                             <div class="form-group" style="margin-bottom:10px;">
-                                <label class="form-label">صورة خلفية الهيدر (pattern)</label>
-                                <input type="text" id="hdr_bgImage" class="f-ctrl" placeholder="images/sadu-pattern.jpg">
-                                <p style="font-size:0.68rem;color:var(--text-3);margin-top:3px;">اتركه فارغاً لإزالة الصورة</p>
+                                <label class="form-label">📸 صورة خلفية الهيدر والأقسام</label>
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <input type="text" id="hdr_bgImage" class="f-ctrl" placeholder="images/sadu-pattern.jpg"
+                                        oninput="updateBgPreview(this.value)" style="flex:1;">
+                                    <button class="icon-btn danger" title="حذف الصورة"
+                                        onclick="document.getElementById('hdr_bgImage').value=''; updateBgPreview('')">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                                <!-- معاينة الخلفية -->
+                                <div id="bg-preview-box" style="margin-top:8px; height:60px; border-radius:8px; border:1px dashed var(--border); background:#111; transition:all 0.3s; display:flex; align-items:center; justify-content:center;">
+                                    <span style="font-size:0.7rem; color:var(--text-3);">معاينة — أدخل رابط صورة أعلاه</span>
+                                </div>
+                                <p style="font-size:0.68rem;color:var(--text-3);margin-top:3px;">💡 اتركه فارغاً لعرض لون سادة فقط</p>
                             </div>
                             <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
                                 <div class="form-group">

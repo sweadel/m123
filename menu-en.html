@@ -19,48 +19,56 @@ body { direction: ltr; font-weight: 700; }
 <body>
 
 <header id="hdr">
- <a href="index.html" class="back-btn back-btn-en">&#8592;</a> <!-- Left arrow -->
- <div class="logo-wrap"><img src="images/tallo-logo.png" alt="Tallo Ahbabna"></div>
+    <!-- Top section: collapses on scroll -->
+    <div class="hdr-top">
+        <a href="index.html" class="back-btn back-btn-en">&#8592;</a>
+        <div class="logo-wrap"><img src="images/tallo-logo.png" alt="Tallo Ahbabna"></div>
 
- <div class="nav-row" id="mainTabRow">
-  <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">Arabic Menu</a>
-  <a id="pill-intl" class="pill" onclick="setTab('intl',this)">International</a>
-  <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">Beverages</a>
-  <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">Argileh</a>
- </div>
+        <div class="nav-row" id="mainTabRow">
+            <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">Arabic Menu</a>
+            <a id="pill-intl" class="pill" onclick="setTab('intl',this)">International</a>
+            <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">Beverages</a>
+            <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">Argileh</a>
+        </div>
 
- <div class="search-row" id="searchRow">
- <div class="search-box">
- <svg width="15" height="15" fill="var(--gold)" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
- <input type="text" id="srch" placeholder="Search the menu..." onkeyup="filterMenu()">
- </div>
- </div>
+        <div class="search-row" id="searchRow">
+            <div class="search-box">
+                <svg width="15" height="15" fill="var(--gold)" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+                <input type="text" id="srch" placeholder="Search the menu..." onkeyup="filterMenu()">
+            </div>
+        </div>
+    </div>
 
- 
- <div class="sub-nav" id="drinksNav">
- <a href="#s-hot" class="cat-btn"> Hot</a>
- <a href="#s-ice" class="cat-btn"> Iced</a>
- <a href="#s-smoothie" class="cat-btn"> Smoothies</a>
- <a href="#s-mojito" class="cat-btn"> Mojito</a>
- <a href="#s-cold" class="cat-btn"> Cold Drinks</a>
- </div>
+    <!-- Bottom section: always pinned -->
+    <div class="hdr-bottom">
+        <div class="sub-nav" id="drinksNav">
+            <a href="#s-hot" class="cat-btn"> Hot</a>
+            <a href="#s-ice" class="cat-btn"> Iced</a>
+            <a href="#s-smoothie" class="cat-btn"> Smoothies</a>
+            <a href="#s-mojito" class="cat-btn"> Mojito</a>
+            <a href="#s-cold" class="cat-btn"> Cold Drinks</a>
+        </div>
 
- <div class="sub-nav" id="arabicNav" style="display:none;">
- <a href="#ar-break" class="cat-btn"> Breakfast</a>
- <a href="#ar-cold" class="cat-btn"> Appetizers</a>
- <a href="#ar-lunch" class="cat-btn"> Lunch</a>
- <a href="#ar-grill" class="cat-btn"> Grills</a>
- <a href="#ar-sweets" class="cat-btn"> Desserts</a>
- </div>
+        <div class="sub-nav" id="arabicNav" style="display:none;">
+            <a href="#ar-break" class="cat-btn"> Breakfast</a>
+            <a href="#ar-cold" class="cat-btn"> Appetizers</a>
+            <a href="#ar-lunch" class="cat-btn"> Lunch</a>
+            <a href="#ar-grill" class="cat-btn"> Grills</a>
+            <a href="#ar-sweets" class="cat-btn"> Desserts</a>
+        </div>
 
- <div class="sub-nav" id="intlNav" style="display:none;">
- <a href="#in-salads" class="cat-btn"> Salads</a>
- <a href="#in-hot" class="cat-btn"> Appetizers</a>
- <a href="#in-lunch" class="cat-btn"> Lunch</a>
- <a href="#in-main" class="cat-btn"> Mains</a>
- <a href="#in-pizza" class="cat-btn"> Pizza</a>
- </div>
+        <div class="sub-nav" id="intlNav" style="display:none;">
+            <a href="#in-salads" class="cat-btn"> Salads</a>
+            <a href="#in-hot" class="cat-btn"> Appetizers</a>
+            <a href="#in-lunch" class="cat-btn"> Lunch</a>
+            <a href="#in-main" class="cat-btn"> Mains</a>
+            <a href="#in-pizza" class="cat-btn"> Pizza</a>
+        </div>
 
+        <div class="sub-nav" id="argilehNav" style="display:none;">
+            <a href="#arg-all" class="cat-btn"> Argileh</a>
+        </div>
+    </div><!-- end hdr-bottom -->
 </header>
 
 <div class="container">

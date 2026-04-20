@@ -216,6 +216,9 @@ REFS.design.on('value', snapshot => {
     sv('hdr_backColor', h.backColor || '#E5C467');
     sv('hdr_backColorTxt', h.backColor || '');
 
+    // تحديث معاينة الخلفية بعد التحميل
+    setTimeout(() => updateBgPreview(h.bgImage || ''), 200);
+
     // Pills
     const p = h.pills || {};
     sv('pill_fontSize',    p.fontSize    || '');
@@ -310,6 +313,24 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(id)?.addEventListener('change', previewDesign);
     });
 });
+
+// ── Background Image Preview in Admin ──
+function updateBgPreview(url) {
+    const box = document.getElementById('bg-preview-box');
+    if (!box) return;
+    if (url && url.trim()) {
+        box.innerHTML = '';
+        box.style.backgroundImage = `url('${url.trim()}')`;
+        box.style.backgroundSize = '120px auto';
+        box.style.backgroundRepeat = 'repeat';
+        box.style.border = '1px solid var(--border-g)';
+    } else {
+        box.style.backgroundImage = 'none';
+        box.style.background = '#111';
+        box.style.border = '1px dashed var(--border)';
+        box.innerHTML = '<span style="font-size:0.7rem; color:var(--text-3);">معاينة — أدخل رابط صورة أعلاه</span>';
+    }
+}
 
 function saveDesign() {
     const gv  = id => document.getElementById(id)?.value || '';

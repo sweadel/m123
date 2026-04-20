@@ -95,6 +95,11 @@ body {
  • مربع البحث
  • التبويبات الفرعية (sub-nav)
  ════════════════════════════════════════════════════════════════════ */
+/* ══ HEADER - Smart Collapsing Header ══
+ الهيدر الذكي: يحتوي على قسمين:
+ - .hdr-top    : اللوجو + التبويبات الرئيسية + البحث (يختفي عند الـ scroll)
+ - .hdr-bottom : شريط الأقسام الفرعية (يبقى ثابتاً دائماً)
+*/
 header {
  position: fixed;
  top: 0;
@@ -103,96 +108,123 @@ header {
  z-index: 1000;
  background: #111111;
  border-bottom: 1px solid var(--border);
- box-shadow: 0 2px 24px rgba(0, 0, 0, 80);
- backdrop-filter: blur(12px);
- -webkit-backdrop-filter: blur(12px);
+ box-shadow: 0 2px 24px rgba(0, 0, 0, .8);
+ backdrop-filter: blur(16px);
+ -webkit-backdrop-filter: blur(16px);
+ transition: box-shadow 0.3s ease;
 }
 
-/* اللوجو داخل الهيدر */
+/* ── الجزء العلوي: يتقلص ويختفي عند الـ scroll ── */
+.hdr-top {
+ overflow: hidden;
+ max-height: 160px;
+ transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+             opacity 0.3s ease,
+             padding 0.3s ease;
+ opacity: 1;
+}
+
+/* ── الحالة المضغوطة (عند الـ scroll) ── */
+header.compressed .hdr-top {
+ max-height: 0;
+ opacity: 0;
+ pointer-events: none;
+}
+
+header.compressed {
+ box-shadow: 0 4px 20px rgba(0, 0, 0, .6);
+}
+
+/* ── اللوجو ── */
 .logo-wrap {
  display: flex;
  justify-content: center;
  align-items: center;
- padding: 7px 0 2px;
+ padding: 8px 0 2px;
 }
 
 .logo-wrap img {
  height: 62px;
  opacity: .93;
  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .6));
+ transition: height 0.3s ease;
 }
 
+/* ── زر الرجوع ── */
 .back-btn {
  position: absolute;
- right: 15px; /* right for RTL */
- top: 18px;
+ right: 15px;
+ top: 14px;
  color: var(--gold);
  text-decoration: none;
- font-size: 1.5rem;
- width: 40px;
- height: 40px;
+ font-size: 1.3rem;
+ width: 38px;
+ height: 38px;
  display: flex;
  align-items: center;
  justify-content: center;
- background: rgba(0,0,0,0.5);
+ background: rgba(0, 0, 0, 0.55);
  border-radius: 50%;
- border: 1px solid rgba(197, 160, 34, 0.3);
+ border: 1px solid rgba(197, 160, 34, 0.35);
  z-index: 10;
-}
-.back-btn-en {
- right: auto;
- left: 15px; /* left for LTR */
+ transition: all 0.2s;
 }
 
-/* ── التبويبات الرئيسية: مشروبات / عربي / عالمي ── */
+.back-btn:hover {
+ background: rgba(229, 196, 103, 0.15);
+ border-color: var(--gold);
+}
+
+.back-btn-en {
+ right: auto;
+ left: 15px;
+}
+
+/* ── التبويبات الرئيسية ── */
 .nav-row {
  display: flex;
  justify-content: center;
  gap: 6px;
- padding: 4px 12px;
+ padding: 4px 12px 5px;
  overflow-x: auto;
  scrollbar-width: none;
  -webkit-overflow-scrolling: touch;
 }
 
-.nav-row::-webkit-scrollbar {
- display: none;
-}
+.nav-row::-webkit-scrollbar { display: none; }
 
-/* زر التبويب الرئيسي */
 .pill {
  background: rgba(255, 255, 255, .06);
  color: var(--text-dim);
- padding: 9px 22px;
+ padding: 8px 20px;
  border-radius: 22px;
  text-decoration: none;
- font-size: .9rem;
+ font-size: .88rem;
  font-weight: 700;
  border: 1px solid rgba(255, 255, 255, .08);
  transition: all .2s;
  cursor: pointer;
  white-space: nowrap;
  flex-shrink: 0;
- letter-spacing: .01em;
 }
 
 .pill.active {
  background: var(--gold);
  color: #000;
  border-color: var(--gold);
- box-shadow: 0 0 20px var(--gold-glow);
+ box-shadow: 0 0 18px var(--gold-glow);
 }
 
-/* ── مربع البحث ── */
+/* ── شريط البحث ── */
 .search-row {
- padding: 4px 12px 3px;
+ padding: 3px 12px 4px;
 }
 
 .search-box {
  background: rgba(255, 255, 255, .05);
- border: 1px solid rgba(255, 255, 255, .08);
+ border: 1px solid rgba(255, 255, 255, .09);
  border-radius: 12px;
- padding: 9px 14px;
+ padding: 8px 14px;
  display: flex;
  align-items: center;
  gap: 9px;
@@ -206,26 +238,25 @@ header {
  outline: none;
  font-family: inherit;
  font-size: 16px;
- /* 16px يمنع iOS من التكبير التلقائي */
 }
 
-.search-box input::placeholder {
- color: var(--text-dim);
+.search-box input::placeholder { color: var(--text-dim); }
+
+/* ── شريط الأقسام الفرعية (يبقى ثابتاً دائماً) ── */
+.hdr-bottom {
+ border-top: 1px solid rgba(255, 255, 255, .05);
 }
 
-/* ── التبويبات الفرعية (لون أفتح) ── */
 .sub-nav {
  display: flex;
- gap: 6px;
- padding: 4px 12px 7px;
+ gap: 5px;
+ padding: 5px 12px 6px;
  overflow-x: auto;
  scrollbar-width: none;
  -webkit-overflow-scrolling: touch;
 }
 
-.sub-nav::-webkit-scrollbar {
- display: none;
-}
+.sub-nav::-webkit-scrollbar { display: none; }
 
 .cat-btn {
  background: transparent;

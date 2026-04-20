@@ -112,19 +112,23 @@
             const h = d.menuHeader;
             if (!h) return;
 
-            // Background sync for header and section heroes
-            const headerTargets = document.querySelectorAll('#hdr, header, .section-hero');
-            if (headerTargets.length > 0) {
-                const bgSize = h.bgSize || 120;
-                if (h.bgImage) {
-                    const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;
-                    const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.3;
-                    const bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage}') center/${bgSize}px repeat`;
-                    headerTargets.forEach(el => el.style.background = bgStyle);
-                } else {
-                    headerTargets.forEach(el => el.style.background = h.solidColor || '#111111');
-                }
+            // Background sync for header-top and section heroes
+            const bgSize = h.bgSize || 120;
+            let bgStyle;
+            if (h.bgImage) {
+                const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;
+                const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.3;
+                bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage}') center/${bgSize}px repeat`;
+            } else {
+                bgStyle = h.solidColor || '#111111';
             }
+
+            // Apply to header top section and section heroes
+            const hdrTop = document.querySelector('.hdr-top') || document.getElementById('hdr') || document.querySelector('header');
+            if (hdrTop) hdrTop.style.background = bgStyle;
+
+            // Also apply to section hero banners (same background as header)
+            document.querySelectorAll('.section-hero').forEach(el => el.style.background = bgStyle);
 
             // Logo in header
             const logoImg = document.querySelector('.logo-wrap img');

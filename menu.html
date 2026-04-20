@@ -26,52 +26,60 @@
 <body>
 
     <header id="hdr">
-        <a href="index.html" class="back-btn">&#8594;</a> <!-- Right arrow -->
-        <div class="logo-wrap"><img src="images/tallo-logo.png" alt="طلوا حبابنا"></div>
+        <!-- ── الجزء العلوي: يختفي عند التمرير ── -->
+        <div class="hdr-top">
+            <a href="index.html" class="back-btn">&#8594;</a>
+            <div class="logo-wrap"><img src="images/tallo-logo.png" alt="طلوا حبابنا"></div>
 
-        <!-- الأزرار الرئيسية في الأعلى (التبويبات) -->
-        <div class="nav-row" id="mainTabRow">
-            <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">المنيو العربي</a>
-            <a id="pill-intl" class="pill" onclick="setTab('intl',this)">انترناشونل</a>
-            <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">المشروبات</a>
-            <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">أراجيل</a>
-        </div>
+            <!-- التبويبات الرئيسية -->
+            <div class="nav-row" id="mainTabRow">
+                <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">المنيو العربي</a>
+                <a id="pill-intl" class="pill" onclick="setTab('intl',this)">انترناشونل</a>
+                <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">المشروبات</a>
+                <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">أراجيل</a>
+            </div>
 
-        <div class="search-row" id="searchRow">
-            <div class="search-box">
-                <svg width="15" height="15" fill="var(--gold)" viewBox="0 0 512 512">
-                    <path
-                        d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-                </svg>
-                <input type="text" id="srch" placeholder="ابحث في القائمة..." onkeyup="filterMenu()">
+            <!-- شريط البحث -->
+            <div class="search-row" id="searchRow">
+                <div class="search-box">
+                    <svg width="15" height="15" fill="var(--gold)" viewBox="0 0 512 512">
+                        <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                    </svg>
+                    <input type="text" id="srch" placeholder="ابحث في القائمة..." onkeyup="filterMenu()">
+                </div>
             </div>
         </div>
 
+        <!-- ── الجزء السفلي: يبقى دائماً ── -->
+        <div class="hdr-bottom">
+            <div class="sub-nav" id="drinksNav">
+                <a href="#s-hot" class="cat-btn"> ساخنة</a>
+                <a href="#s-ice" class="cat-btn"> مثلجة</a>
+                <a href="#s-smoothie" class="cat-btn"> سموذي</a>
+                <a href="#s-mojito" class="cat-btn"> موهيتو</a>
+                <a href="#s-cold" class="cat-btn"> عصائر وباردة</a>
+            </div>
 
-        <div class="sub-nav" id="drinksNav">
-            <a href="#s-hot" class="cat-btn"> ساخنة</a>
-            <a href="#s-ice" class="cat-btn"> مثلجة</a>
-            <a href="#s-smoothie" class="cat-btn"> سموذي</a>
-            <a href="#s-mojito" class="cat-btn"> موهيتو</a>
-            <a href="#s-cold" class="cat-btn"> عصائر وباردة</a>
+            <div class="sub-nav" id="arabicNav" style="display:none;">
+                <a href="#ar-break" class="cat-btn"> الإفطار</a>
+                <a href="#ar-cold" class="cat-btn"> مقبلات</a>
+                <a href="#ar-lunch" class="cat-btn"> الغداء</a>
+                <a href="#ar-grill" class="cat-btn"> المشاوي </a>
+                <a href="#ar-sweets" class="cat-btn"> حلويات</a>
+            </div>
+
+            <div class="sub-nav" id="intlNav" style="display:none;">
+                <a href="#in-salads" class="cat-btn"> سلطات</a>
+                <a href="#in-hot" class="cat-btn"> مقبلات</a>
+                <a href="#in-lunch" class="cat-btn"> الغداء</a>
+                <a href="#in-main" class="cat-btn"> أطباق رئيسية</a>
+                <a href="#in-pizza" class="cat-btn"> بيتزا</a>
+            </div>
+
+            <div class="sub-nav" id="argilehNav" style="display:none;">
+                <a href="#arg-all" class="cat-btn"> أراجيل منوعة</a>
+            </div>
         </div>
-
-        <div class="sub-nav" id="arabicNav" style="display:none;">
-            <a href="#ar-break" class="cat-btn"> الإفطار</a>
-            <a href="#ar-cold" class="cat-btn"> مقبلات</a>
-            <a href="#ar-lunch" class="cat-btn"> الغداء</a>
-            <a href="#ar-grill" class="cat-btn"> المشاوي </a>
-            <a href="#ar-sweets" class="cat-btn"> حلويات</a>
-        </div>
-
-        <div class="sub-nav" id="intlNav" style="display:none;">
-            <a href="#in-salads" class="cat-btn"> سلطات</a>
-            <a href="#in-hot" class="cat-btn"> مقبلات</a>
-            <a href="#in-lunch" class="cat-btn"> الغداء</a>
-            <a href="#in-main" class="cat-btn"> أطباق رئيسية</a>
-            <a href="#in-pizza" class="cat-btn"> بيتزا</a>
-        </div>
-
     </header>
 
     <div class="container">
@@ -1369,22 +1377,25 @@
             if (e.key === 'Escape') closeDishModal();
         });
 
-        /*  Header compress on scroll  */
-        var h = document.getElementById('hdr'), sb = document.getElementById('scrollTop');
-        var isComp = false, isSb = false, ticking = false;
+        /*  Header smart collapse on scroll  */
+        var hdrEl = document.getElementById('hdr');
+        var isComp = false, ticking = false;
+        var SCROLL_THRESHOLD = 60; // بعد 60px يبدأ التقلص
+
         window.addEventListener('scroll', function () {
             if (!ticking) {
                 window.requestAnimationFrame(function () {
                     var y = window.scrollY;
-                    var c = y > 80;
-                    if (c !== isComp) {
-                        if (c) h.classList.add('compressed');
-                        else h.classList.remove('compressed');
-                        isComp = c;
-                    }
-                    if (sb) {
-                        var s = y > 200;
-                        if (s !== isSb) { sb.style.display = s ? 'flex' : 'none'; isSb = s; }
+                    var shouldCompress = y > SCROLL_THRESHOLD;
+                    if (shouldCompress !== isComp) {
+                        if (shouldCompress) {
+                            hdrEl.classList.add('compressed');
+                        } else {
+                            hdrEl.classList.remove('compressed');
+                        }
+                        isComp = shouldCompress;
+                        // تحديث الـ body padding عند تغيير حجم الهيدر
+                        setTimeout(adjustBodyPadding, 350);
                     }
                     ticking = false;
                 });
@@ -1392,13 +1403,15 @@
             }
         }, { passive: true });
 
-        /* Auto body padding from real header height */
+        /* حساب padding الـ body من ارتفاع الهيدر الفعلي */
         function adjustBodyPadding() {
             var hdr = document.getElementById('hdr');
             if (!hdr) return;
             var h = hdr.offsetHeight;
             document.body.style.paddingTop = h + 'px';
-            document.querySelectorAll('.sec-title').forEach(function (el) { el.style.scrollMarginTop = '190px'; });
+            document.querySelectorAll('.sec-title').forEach(function (el) {
+                el.style.scrollMarginTop = (h + 10) + 'px';
+            });
         }
         adjustBodyPadding();
         window.addEventListener('resize', adjustBodyPadding, { passive: true });
