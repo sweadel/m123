@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&display=swap">
-<link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 /* English-specific overrides */
 body { direction: ltr; font-weight: 700; }
@@ -22,7 +23,7 @@ body { direction: ltr; font-weight: 700; }
     <!-- Top section: collapses on scroll -->
     <div class="hdr-top">
         <div class="logo-bg-layer"></div>
-        <a href="index.html" class="back-btn back-btn-en">&#8592;</a>
+        <a href="index.html" class="back-btn back-btn-en"><i class="fa-solid fa-arrow-left"></i></a>
         <div class="logo-wrap"><img src="images/tallo-logo.png" alt="Tallo Ahbabna"></div>
 
         <div class="nav-row" id="mainTabRow">
@@ -720,12 +721,14 @@ function closeDishModal() {
             const sectionKeys = ['arabic', 'intl', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
-                const secEl = document.getElementById(secKey + '_sec');
+                const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
-                // Clear previous content
+                // Clear previous content but PRESERVE the section-hero
                 navEl.innerHTML = '';
+                const hero = secEl.querySelector('.section-hero');
                 secEl.innerHTML = "";
+                if (hero) secEl.appendChild(hero);
 
                 // Get categories for this section
                 const cats = Object.entries(_categoriesMeta)
@@ -790,6 +793,7 @@ function closeDishModal() {
         });
     </script>
 
+    <script src="js/design-sync.js"></script>
     <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>
 </html>
