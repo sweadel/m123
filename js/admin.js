@@ -1136,18 +1136,32 @@ function deleteCategory(key) {
 function restoreDefaultCategories() {
     if (!confirm('سيتم إضافة الأقسام الأساسية. متابعة؟')) return;
     const defaults = [
-        { id: 'ar-break',   nameAr: 'الإفطار والمناقيش',   nameEn: 'Breakfast',             section: 'arabic',   order: 1,  icon: 'fa-bread-slice' },
-        { id: 'ar-cold',    nameAr: 'مقبلات وسلطات',       nameEn: 'Starters & Salads',      section: 'arabic',   order: 2,  icon: 'fa-leaf' },
-        { id: 'ar-lunch',   nameAr: 'أطباق الغداء',         nameEn: 'Main Dishes',            section: 'arabic',   order: 3,  icon: 'fa-utensils' },
-        { id: 'ar-grill',   nameAr: 'مشاوي على الجمر',      nameEn: 'Charcoal Grills',        section: 'arabic',   order: 4,  icon: 'fa-fire' },
-        { id: 'ar-sweets',  nameAr: 'الحلويات',             nameEn: 'Desserts',               section: 'arabic',   order: 5,  icon: 'fa-ice-cream' },
-        { id: 'in-app',     nameAr: 'مقبلات عالمية',        nameEn: 'International Starters', section: 'intl',     order: 10, icon: 'fa-cheese' },
-        { id: 'in-main',    nameAr: 'أطباق عالمية',         nameEn: 'Main Course',            section: 'intl',     order: 11, icon: 'fa-plate-wheat' },
-        { id: 'in-pizza',   nameAr: 'بيتزا',                nameEn: 'Pizza',                  section: 'intl',     order: 12, icon: 'fa-pizza-slice' },
-        { id: 's-hot',      nameAr: 'مشروبات ساخنة',        nameEn: 'Hot Drinks',             section: 'drinks',   order: 20, icon: 'fa-mug-hot' },
-        { id: 's-ice',      nameAr: 'مشروبات مثلجة',        nameEn: 'Cold Drinks',            section: 'drinks',   order: 21, icon: 'fa-glass-water' },
-        { id: 's-smoothie', nameAr: 'سموذي وميلك شيك',      nameEn: 'Smoothies',              section: 'drinks',   order: 22, icon: 'fa-blender' },
-        { id: 's-other',    nameAr: 'مياه وغازيات',         nameEn: 'Soft Drinks',            section: 'drinks',   order: 23, icon: 'fa-bottle-water' },
+        // ── المنيو العربي (arabic) ──
+        { id: 'ar-break',   nameAr: 'الإفطار والمناقيش',   nameEn: 'Breakfast & Manaqeesh',  section: 'arabic',   order: 1,  icon: 'fa-bread-slice' },
+        { id: 'ar-salads',  nameAr: 'مقبلات وسلطات',       nameEn: 'Starters & Salads',      section: 'arabic',   order: 2,  icon: 'fa-leaf' },
+        { id: 'ar-cold',    nameAr: 'مقبلات باردة',        nameEn: 'Cold Appetizers',        section: 'arabic',   order: 2,  icon: 'fa-bowl-rice' },
+        { id: 'ar-hot',     nameAr: 'مقبلات ساخنة',        nameEn: 'Hot Appetizers',         section: 'arabic',   order: 3,  icon: 'fa-fire-burner' },
+        { id: 'ar-lunch',   nameAr: 'أطباق الغداء',         nameEn: 'Main Lunch Dishes',      section: 'arabic',   order: 4,  icon: 'fa-utensils' },
+        { id: 'ar-grill',   nameAr: 'مشاوي على الجمر',      nameEn: 'Charcoal Grills',        section: 'arabic',   order: 5,  icon: 'fa-fire' },
+        { id: 'ar-sweets',  nameAr: 'الحلويات',             nameEn: 'Desserts',               section: 'arabic',   order: 6,  icon: 'fa-ice-cream' },
+
+        // ── انترناشونل (intl) ──
+        { id: 'in-salads',  nameAr: 'سلطات عالمية',         nameEn: 'International Salads',   section: 'intl',     order: 10, icon: 'fa-leaf' },
+        { id: 'in-app',     nameAr: 'مقبلات عالمية',        nameEn: 'International Starters', section: 'intl',     order: 11, icon: 'fa-cheese' },
+        { id: 'in-lunch',   nameAr: 'ساندويشات غداء',        nameEn: 'Lunch Sandwiches',       section: 'intl',     order: 12, icon: 'fa-hamburger' },
+        { id: 'in-main',    nameAr: 'أطباق عالمية',         nameEn: 'International Main',     section: 'intl',     order: 13, icon: 'fa-plate-wheat' },
+        { id: 'in-pizza',   nameAr: 'بيتزا',                nameEn: 'Pizza',                  section: 'intl',     order: 14, icon: 'fa-pizza-slice' },
+
+        // ── المشروبات (drinks) ──
+        { id: 's-specialty',nameAr: 'قهوة مختصة',           nameEn: 'Specialty Coffee',       section: 'drinks',   order: 20, icon: 'fa-coffee' },
+        { id: 's-hot',      nameAr: 'مشروبات ساخنة',        nameEn: 'Hot Drinks',             section: 'drinks',   order: 21, icon: 'fa-mug-hot' },
+        { id: 's-ice',      nameAr: 'مشروبات مثلجة',        nameEn: 'Iced Coffee',            section: 'drinks',   order: 22, icon: 'fa-glass-water' },
+        { id: 's-smoothie', nameAr: 'سموذي وميلك شيك',      nameEn: 'Smoothies & Shakes',     section: 'drinks',   order: 23, icon: 'fa-blender' },
+        { id: 's-mojito',   nameAr: 'موهيتو',               nameEn: 'Mojito Selection',       section: 'drinks',   order: 24, icon: 'fa-glass-citrus' },
+        { id: 's-cold',     nameAr: 'عصائر طازجة',          nameEn: 'Fresh Juices',           section: 'drinks',   order: 25, icon: 'fa-carrot' },
+        { id: 's-other',    nameAr: 'مواه وغازيات',         nameEn: 'Water & Soft Drinks',    section: 'drinks',   order: 26, icon: 'fa-bottle-water' },
+
+        // ── أراجيل (argileh) ──
         { id: 'arg-all',    nameAr: 'أراجيل منوعة',         nameEn: 'Argileh Selection',      section: 'argileh',  order: 30, icon: 'fa-smoking' },
     ];
     Promise.all(defaults.map(({ id, ...data }) => REFS.categories.child(id).set(data)))
