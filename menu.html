@@ -28,6 +28,7 @@
     <header id="hdr">
         <!-- ── الجزء العلوي: يختفي عند التمرير ── -->
         <div class="hdr-top">
+            <div class="logo-bg-layer"></div>
             <a href="index.html" class="back-btn">&#8594;</a>
             <div class="logo-wrap"><img src="images/tallo-logo.png" alt="طلوا حبابنا"></div>
 
@@ -1380,23 +1381,26 @@
         /*  Header smart collapse on scroll  */
         var hdrEl = document.getElementById('hdr');
         var isComp = false, ticking = false;
-        var SCROLL_THRESHOLD = 60; // بعد 60px يبدأ التقلص
+        var SCROLL_THRESHOLD = 40; 
+
+        function syncHeaderState() {
+            var y = window.scrollY;
+            var shouldCompress = y > SCROLL_THRESHOLD;
+            if (shouldCompress !== isComp) {
+                if (shouldCompress) {
+                    hdrEl.classList.add('compressed');
+                } else {
+                    hdrEl.classList.remove('compressed');
+                }
+                isComp = shouldCompress;
+            }
+            adjustBodyPadding();
+        }
 
         window.addEventListener('scroll', function () {
             if (!ticking) {
                 window.requestAnimationFrame(function () {
-                    var y = window.scrollY;
-                    var shouldCompress = y > SCROLL_THRESHOLD;
-                    if (shouldCompress !== isComp) {
-                        if (shouldCompress) {
-                            hdrEl.classList.add('compressed');
-                        } else {
-                            hdrEl.classList.remove('compressed');
-                        }
-                        isComp = shouldCompress;
-                        // تحديث الـ body padding عند تغيير حجم الهيدر
-                        setTimeout(adjustBodyPadding, 350);
-                    }
+                    syncHeaderState();
                     ticking = false;
                 });
                 ticking = true;
@@ -1413,7 +1417,8 @@
                 el.style.scrollMarginTop = (h + 10) + 'px';
             });
         }
-        adjustBodyPadding();
+        
+        window.addEventListener('load', syncHeaderState);
         window.addEventListener('resize', adjustBodyPadding, { passive: true });
 
         var initialTab = 'arabic';

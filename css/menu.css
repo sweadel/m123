@@ -117,7 +117,7 @@ header {
 /* ── الجزء العلوي: يتقلص ويختفي عند الـ scroll ── */
 .hdr-top {
  overflow: hidden;
- max-height: 130px; /* تقليص ضخم للموبايل لترك مساحة للمحتوى */
+ max-height: 200px; /* زيادة الطول للسماح بظهور جميع العناصر براحة */
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
  opacity: 1;
  transform: translateY(0);
@@ -125,7 +125,19 @@ header {
  display: flex;
  flex-direction: column;
  align-items: center;
- padding-bottom: 4px;
+ padding-bottom: 0;
+ position: relative;
+}
+
+/* طبقة الخلفية الخاصة باللوجو (التي بها مربع) */
+.logo-bg-layer {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 65px; /* ارتفاع منطقة المربع */
+ background: url('../images/square-bg.png') center/contain no-repeat;
+ z-index: 1;
 }
 
 /* الحالة المضغوطة: تصغير اللوجو وإخفاء العناصر الإضافية */
@@ -141,20 +153,23 @@ header.compressed {
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── اللوجو ── */
 .logo-wrap {
  display: flex;
  justify-content: center;
  align-items: center;
- padding: 10px 0 5px; /* تقليل الفراغات الزائدة */
+ padding: 8px 0 0;
  width: 100%;
+ height: 65px; /* نفس ارتفاع المربع */
+ position: relative;
+ z-index: 5;
 }
 
 .logo-wrap img {
- height: 44px; /* حجم موحد وراقي للتلفون */
- max-width: 130px;
+ height: 38px; /* حجم دقيق ليناسب المربع الأبيض في الصورة */
+ width: 38px;
  object-fit: contain;
  opacity: 1;
+ border-radius: 8px;
  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .4));
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -258,13 +273,25 @@ header.compressed {
 
 /* ── شريط الأقسام الفرعية (يبقى ثابتاً دائماً) ── */
 .hdr-bottom {
- border-top: 1px solid rgba(255, 255, 255, .05);
+ border-top: 1px solid rgba(255, 255, 255, .1);
+ background: url('../images/wide-bg.png') center/cover no-repeat;
+ position: relative;
+}
+
+.hdr-bottom::after {
+ content: '';
+ position: absolute;
+ inset: 0;
+ background: rgba(0,0,0,0.4); /* تعتيم خفيف لتوضيح الأزرار */
+ z-index: 1;
 }
 
 .sub-nav {
+ position: relative;
+ z-index: 2;
  display: flex;
  gap: 5px;
- padding: 5px 12px 6px;
+ padding: 8px 12px 10px;
  overflow-x: auto;
  scrollbar-width: none;
  -webkit-overflow-scrolling: touch;
