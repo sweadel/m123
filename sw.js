@@ -1,20 +1,12 @@
-/* ═══════════════════════════════════════════
-   sw.js — Tallo Ahbabna Service Worker
-   Caches all menu assets for offline use
-   ═══════════════════════════════════════════ */
-
-const CACHE = 'tallo-v4';
+const CACHE = 'tallo-v5'; // تحديث النسخة لمسح الكاش القديم
 
 const ASSETS = [
-  'menu.html',
-  'menu-en.html',
-  'css/menu.css',
+  'index.html',
   'images/tallo-logo.png',
-  'images/sadu-pattern.jpg',
   'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap'
 ];
 
-/* Install — cache everything */
+/* Install */
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
@@ -24,7 +16,7 @@ self.addEventListener('install', function(e) {
   self.skipWaiting();
 });
 
-/* Activate — clean old caches */
+/* Activate */
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -37,27 +29,28 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-/* Fetch — serve from cache, fall back to network */
+/* Fetch Strategy: Network First for HTML/JS */
 self.addEventListener('fetch', function(e) {
-  e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      return cached || fetch(e.request).then(function(response) {
-        /* Avoid caching Admin panel or JS folder to prevent stale versions */
-        const url = new URL(e.request.url);
-        if (e.request.method === 'GET' && 
-            response.status === 200 && 
-            !url.pathname.includes('admin.html') && 
-            !url.pathname.includes('js/admin.js')) {
-          var clone = response.clone();
-          caches.open(CACHE).then(function(c) { c.put(e.request, clone); });
-        }
-        return response;
-      });
-    }).catch(function() {
-      /* Offline fallback */
-      if (e.request.destination === 'document') {
-        return caches.match('/menu.html');
-      }
-    })
-  );
+  const url = new URL(e.request.url);
+  const isDynamic = url.pathname.endsWith('.html') || url.pathname.includes('js/');
+
+  if (isDynamic) {
+    // استراتيجية: الإنترنت أولاً للملفات البرمجية والصفحات
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    );
+  } else {
+    // استراتيجية: الكاش أولاً للصور والخطوط
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        return cached || fetch(e.request).then(res => {
+          if (res.status === 200) {
+            let clone = res.clone();
+            caches.open(CACHE).then(c => c.put(e.request, clone));
+          }
+          return res;
+        });
+      })
+    );
+  }
 });
