@@ -114,13 +114,14 @@
 
             // Background sync for header-top and section heroes
             let bgSize = parseInt(h.bgSize) || 80;
-            if (bgSize > 95) bgSize = 80; // حماية: منع التكبير التلقائي للزخرفة
+            if (bgSize > 95) bgSize = 80; 
 
             let bgStyle;
             if (h.bgImage && h.bgImage.trim()) {
-                const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;
-                const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.3;
-                bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage.trim()}') center/${bgSize}px repeat`;
+                const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.5; // تعتيم أقوى للخلفية
+                const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.7;
+                // تغيير Repeat إلى No-Repeat أو Cover لضمان عدم تكرار اللوجو في الخلفية
+                bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage.trim()}') center/cover no-repeat`;
             } else {
                 bgStyle = h.solidColor || '#111111';
             }
@@ -136,12 +137,12 @@
             const logoImg = document.querySelector('.logo-wrap img');
             if (logoImg) {
                 if (h.logoUrl) logoImg.src = h.logoUrl;
-                let lH = parseInt(h.logoHeight) || 48;
-                if (lH > 55) lH = 48; // حماية: منع اللوجو من تجاوز 55px 
+                let lH = parseInt(h.logoHeight) || 44; 
+                if (lH > 52) lH = 44; 
                 logoImg.style.height = lH + 'px';
                 logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 1;
-                const shadow = h.logoShadow !== undefined ? h.logoShadow : 8;
-                logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.3))`;
+                const shadow = h.logoShadow !== undefined ? h.logoShadow : 10;
+                logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.4))`;
             }
 
             // Back button

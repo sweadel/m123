@@ -117,15 +117,15 @@ header {
 /* ── الجزء العلوي: يتقلص ويختفي عند الـ scroll ── */
 .hdr-top {
  overflow: hidden;
- max-height: 150px; /* تقليص أكثر */
+ max-height: 130px; /* تقليص ضخم للموبايل لترك مساحة للمحتوى */
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
  opacity: 1;
  transform: translateY(0);
- background: #111 url('../images/mosaic-header.png') center/cover no-repeat; /* تأمين لون خلفية */
+ background: #080808; 
  display: flex;
  flex-direction: column;
  align-items: center;
- padding-bottom: 5px;
+ padding-bottom: 4px;
 }
 
 /* الحالة المضغوطة: تصغير اللوجو وإخفاء العناصر الإضافية */
@@ -138,6 +138,7 @@ header.compressed .hdr-top {
 
 header.compressed {
  box-shadow: 0 4px 20px rgba(0, 0, 0, .6);
+ transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── اللوجو ── */
@@ -150,11 +151,11 @@ header.compressed {
 }
 
 .logo-wrap img {
- height: 48px; /* فرض الحجم الصغير كقيمة أساسية */
- max-width: 140px;
+ height: 44px; /* حجم موحد وراقي للتلفون */
+ max-width: 130px;
  object-fit: contain;
  opacity: 1;
- filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .3));
+ filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .4));
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -526,6 +527,7 @@ section.active {
  aspect-ratio: 4 / 3;
  background:
  var(--surface) url('../images/tallo-logo.png') center / 44% no-repeat;
+
  overflow: hidden;
  position: relative;
  flex-shrink: 0;
