@@ -128,8 +128,9 @@
 
             // Apply to header top section and section heroes
             // Apply to header top section and section heroes
+            // Background sync logic refined: Only override if a NEW valid image is provided.
             const hdrTop = document.querySelector('.hdr-top');
-            if (hdrTop && h.bgImage && h.bgImage.trim() && !h.bgImage.includes('mosaic-header')) {
+            if (hdrTop && h.bgImage && h.bgImage.trim() && h.bgImage.includes('http')) {
                 hdrTop.style.backgroundImage = `url('${h.bgImage.trim()}')`;
                 hdrTop.style.backgroundSize = 'cover';
                 hdrTop.style.backgroundPosition = 'center';
@@ -139,8 +140,8 @@
             // Logo in header
             const logoImg = document.querySelector('.logo-wrap img');
             if (logoImg) {
-                if (h.logoUrl) logoImg.src = h.logoUrl;
-                // Removed JS height override to allow CSS control (Audit Fix)
+                if (h.logoUrl && h.logoUrl.trim().length > 5) logoImg.src = h.logoUrl;
+                // LOCKDOWN: Letting CSS control the logo size to prevent shrinking issues.
                 logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 1;
                 const shadow = h.logoShadow !== undefined ? h.logoShadow : 10;
                 logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.4))`;
