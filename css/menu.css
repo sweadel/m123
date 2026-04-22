@@ -115,14 +115,18 @@ header {
   position: relative;
   width: 100%;
   min-height: 240px;
-  background: url('../images/sadu-pattern.jpg') center/cover no-repeat;
+  background-color: #1a0a00; /* لون احتياطي أثناء تحميل الصورة */
+  background-image: url('../images/sadu-pattern.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding-top: 20px;
-  padding-bottom: 85px; /* مساحة للأزرار والبحث المطلقَي الموقع */
-  overflow: hidden;
+  padding-bottom: 85px;
+  overflow: visible; /* مهم: لا نخفي القوس */
 }
 
 /* تعتيم خفيف على خلفية السدو */
