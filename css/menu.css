@@ -114,19 +114,19 @@ header {
 .hdr-top {
   position: relative;
   width: 100%;
-  min-height: 440px; /* Taller to fit the large ornate logo/arch */
+  min-height: 480px; /* Taller to fit the large ornate logo/arch */
   background-color: #2d0a0a;
-  background-image: url('../images/sadu-pattern.jpg');
-  background-size: cover;
+  background-image: url('../images/sadu-pattern-v2.png');
+  background-size: 350px; /* Sadu pattern tile size */
   background-position: center top;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding-top: 25px;
   padding-bottom: 70px;
-  overflow: visible;
+  overflow: hidden; /* Prevent arch from spilling over if too large */
 }
 
 /* طبقة التعتيم الخفيف لإبراز ألوان السدو */
@@ -145,10 +145,24 @@ header {
 
 /* ══════════════════════════════════════════════
 /* ══════════════════════════════════════════════
-   القوس الإسلامي الذهبي الفخم (الآن مدمج في الصورة tallo-logo.png)
+   القوس الإسلامي الذهبي الفخم (الزخرفة الخلفية الجديدة)
    ══════════════════════════════════════════════ */
 .arch-overlay {
-  display: none; /* إخفاء القوس البرمجي لأن الصورة تحتوي عليه الآن */
+  display: block;
+  position: absolute;
+  bottom: -20px; /* Slightly lower to blend nicely */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 440px;
+  height: 440px;
+  background-image: url('../images/floral-arch-bg.png');
+  background-size: contain;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  z-index: 2;
+  filter: drop-shadow(0 0 35px rgba(0,0,0,0.85));
+  /* Rounded corners in case the image has sharp edges */
+  border-radius: 220px 220px 0 0;
 }
 
 /* اللوجو فوق القوس مباشرة */
@@ -156,7 +170,7 @@ header {
   position: relative;
   z-index: 5;
   margin-bottom: 20px;
-  margin-top: 0px;
+  margin-top: 30px; /* Push logo down to sit centrally inside the floral arch */
   width: 100%;
   display: flex;
   justify-content: center;
@@ -164,11 +178,11 @@ header {
 
 .logo-wrap img {
   height: auto;
-  max-height: 400px;
+  max-height: 220px; /* Reduced to fit nicely inside the background */
   width: auto;
-  max-width: 95%;
+  max-width: 80%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 25px rgba(0,0,0,0.85));
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.9));
 }
 
 /* أزرار الأقسام الرئيسية */
