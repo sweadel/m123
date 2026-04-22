@@ -22,13 +22,16 @@
             background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25));
         }
     </style>
+</head>
+
+<body>
     <header id="mainHeader">
         <!-- ─── HDR TOP: Arched Design ─── -->
         <div class="hdr-top">
-            <div class="arch-overlay">
-                <div class="logo-wrap">
-                    <img src="images/tallo-logo.png" alt="Tallo Ahbabna Logo">
-                </div>
+            <div class="arch-overlay"></div>
+            
+            <div class="logo-wrap">
+                <img src="images/tallo-logo.png" alt="Tallo Ahbabna Logo">
             </div>
 
             <!-- Main Category Pills (Arabic, Intl, etc) -->
@@ -42,40 +45,18 @@
             <!-- Search Row -->
             <div class="search-row">
                 <div class="search-box">
-                    <input type="text" id="srch" placeholder="ابحث في القائمة..." onkeyup="filterMenu()">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--gold); font-size: 1rem;"></i>
+                    <input type="text" id="menuSearch" placeholder="ابحث في القائمة..." oninput="handleSearch()">
                 </div>
             </div>
         </div>
 
-        <!-- ── الجزء السفلي: يبقى دائماً ── -->
+        <!-- ─── HDR BOTTOM: Categories Navigation ─── -->
         <div class="hdr-bottom">
-            <div class="sub-nav" id="drinksNav">
-                <a href="#s-hot" class="cat-btn"> ساخنة</a>
-                <a href="#s-ice" class="cat-btn"> مثلجة</a>
-                <a href="#s-smoothie" class="cat-btn"> سموذي</a>
-                <a href="#s-mojito" class="cat-btn"> موهيتو</a>
-                <a href="#s-cold" class="cat-btn"> عصائر وباردة</a>
-            </div>
-
-            <div class="sub-nav" id="arabicNav" style="display:none;">
-                <a href="#ar-break" class="cat-btn"> الإفطار</a>
-                <a href="#ar-cold" class="cat-btn"> مقبلات</a>
-                <a href="#ar-lunch" class="cat-btn"> الغداء</a>
-                <a href="#ar-grill" class="cat-btn"> المشاوي </a>
-                <a href="#ar-sweets" class="cat-btn"> حلويات</a>
-            </div>
-
-            <div class="sub-nav" id="intlNav" style="display:none;">
-                <a href="#in-salads" class="cat-btn"> سلطات</a>
-                <a href="#in-hot" class="cat-btn"> مقبلات</a>
-                <a href="#in-lunch" class="cat-btn"> الغداء</a>
-                <a href="#in-main" class="cat-btn"> أطباق رئيسية</a>
-                <a href="#in-pizza" class="cat-btn"> بيتزا</a>
-            </div>
-
-            <div class="sub-nav" id="argilehNav" style="display:none;">
-                <a href="#arg-all" class="cat-btn"> أراجيل منوعة</a>
-            </div>
+            <div class="sub-nav" id="arabicNav"></div>
+            <div class="sub-nav" style="display:none" id="intlNav"></div>
+            <div class="sub-nav" style="display:none" id="drinksNav"></div>
+            <div class="sub-nav" style="display:none" id="argilehNav"></div>
         </div>
     </header>
 
