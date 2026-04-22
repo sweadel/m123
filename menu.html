@@ -22,31 +22,26 @@
             background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25));
         }
     </style>
-</head>
-
-<body>
-
-    <header id="hdr">
-        <!-- ── الجزء العلوي: يختفي عند التمرير ── -->
+    <header id="mainHeader">
+        <!-- ─── HDR TOP: Arched Design ─── -->
         <div class="hdr-top">
-            <div class="logo-bg-layer"></div>
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
-            <div class="logo-wrap"><img src="images/tallo-logo.png" alt="طلوا حبابنا"></div>
-
-            <!-- التبويبات الرئيسية -->
-            <div class="nav-row" id="mainTabRow">
-                <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">المنيو العربي</a>
-                <a id="pill-intl" class="pill" onclick="setTab('intl',this)">انترناشونل</a>
-                <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">المشروبات</a>
-                <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">أراجيل</a>
+            <div class="arch-overlay">
+                <div class="logo-wrap">
+                    <img src="images/tallo-logo.png" alt="Tallo Ahbabna Logo">
+                </div>
             </div>
 
-            <!-- شريط البحث -->
-            <div class="search-row" id="searchRow">
+            <!-- Main Category Pills (Arabic, Intl, etc) -->
+            <div class="nav-row" id="mainTabRow">
+                <a href="javascript:void(0)" class="pill active" onclick="setTab('arabic', this)">المنيو العربي</a>
+                <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">الانترناشونال</a>
+                <a href="javascript:void(0)" class="pill" onclick="setTab('drinks', this)">المشروبات</a>
+                <a href="javascript:void(0)" class="pill" onclick="setTab('argileh', this)">الأراجيل</a>
+            </div>
+
+            <!-- Search Row -->
+            <div class="search-row">
                 <div class="search-box">
-                    <svg width="15" height="15" fill="var(--gold)" viewBox="0 0 512 512">
-                        <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-                    </svg>
                     <input type="text" id="srch" placeholder="ابحث في القائمة..." onkeyup="filterMenu()">
                 </div>
             </div>

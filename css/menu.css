@@ -106,247 +106,171 @@ header {
  left: 0;
  width: 100%;
  z-index: 1000;
- background: #111111;
- border-bottom: 1px solid var(--border);
- box-shadow: 0 2px 24px rgba(0, 0, 0, .8);
- backdrop-filter: blur(16px);
- -webkit-backdrop-filter: blur(16px);
- transition: box-shadow 0.3s ease;
-}
-
-/* ── الجزء العلوي: يتقلص ويختفي عند الـ scroll ── */
-.hdr-top {
+ background: #000;
+ box-shadow: 0 4px 30px rgba(0, 0, 0, .8);
+ transition: all 0.4s ease;
  overflow: hidden;
- max-height: 200px; /* زيادة الطول للسماح بظهور جميع العناصر براحة */
- transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
- opacity: 1;
- transform: translateY(0);
- background: #080808; 
- display: flex;
- flex-direction: column;
- align-items: center;
- padding-bottom: 0;
- position: relative;
 }
 
-/* طبقة الخلفية الخاصة باللوجو (الزخرفة الكاملة) */
-.logo-bg-layer {
+/* ── الجزء العلوي: القوس واللوجو وخلفية السدو ── */
+.hdr-top {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background: url('../images/sadu-pattern.jpg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.hdr-top::before {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 120px;
-    background: url('../img/sadu-pattern.png') center/cover repeat-x;
+    inset: 0;
+    background: rgba(0,0,0,0.2); /* تعتيم خفيف ليبرز القوس */
     z-index: 1;
+}
+
+/* تصميم القوس المميز */
+.arch-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 280px; /* عرض القوس كما في الصورة */
+    height: 100%;
+    background: #000;
+    border: 2px solid var(--gold);
+    border-bottom: none;
+    border-radius: 140px 140px 0 0;
+    z-index: 2;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-}
-
-/* الحالة المضغوطة: تصغير اللوجو وإخفاء العناصر الإضافية */
-header.compressed .hdr-top {
- max-height: 0;
- opacity: 0;
- transform: translateY(-20px);
- pointer-events: none;
-}
-
-header.compressed {
- box-shadow: 0 4px 20px rgba(0, 0, 0, .6);
- transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: 40px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
 }
 
 .logo-wrap {
- display: flex;
- justify-content: center;
- align-items: center;
- padding: 8px 0 0;
- width: 100%;
- height: 75px; 
- position: relative;
- z-index: 5;
+  position: relative;
+  z-index: 3;
+  margin-bottom: 5px;
 }
 
 .logo-wrap img {
- height: 50px; /* تكبير اللوجو ليكون واضحاً بناءً على طلبك */
- width: 50px;
- object-fit: contain;
- opacity: 1;
- border-radius: 50%; /* دائري ليكون متناسقاً */
- background: rgba(0,0,0,0.4); /* خلفية داكنة خفيفة ليبرز من الألوان */
- padding: 2px;
- filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
- transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 85px; 
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
 }
 
-/* ── زر الرجوع ── */
-.back-btn {
- position: absolute;
- right: 15px;
- top: 12px;
- color: var(--gold);
- text-decoration: none;
- font-size: 1.4rem;
- width: 44px;
- height: 44px;
- display: flex;
- align-items: center;
- justify-content: center;
- background: rgba(20, 20, 20, 0.6);
- backdrop-filter: blur(10px);
- -webkit-backdrop-filter: blur(10px);
- border-radius: 50%;
- border: 1px solid rgba(197, 160, 34, 0.4);
- box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
- z-index: 10;
- transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.back-btn:hover, .back-btn:active {
- background: rgba(197, 160, 34, 0.2);
- border-color: var(--gold);
- transform: scale(1.08);
-}
-
-
-.back-btn-en {
- right: auto;
- left: 15px;
-}
-
-/* ── التبويبات الرئيسية ── */
+/* ── الأقسام الرئيسية (دائرية كما في الصورة) ── */
 .nav-row {
- display: flex;
- justify-content: center;
- gap: 6px;
- padding: 4px 12px 5px;
- overflow-x: auto;
- scrollbar-width: none;
- -webkit-overflow-scrolling: touch;
+  position: absolute;
+  bottom: 85px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 10px;
+  z-index: 5;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-
-.nav-row::-webkit-scrollbar { display: none; }
 
 .pill {
-  background: rgba(255, 255, 255, .06);
-  color: var(--text-dim);
-  padding: 8px 12px; /* تقليل الـ padding العرضي لتوفير مساحة */
-  border-radius: 22px;
+  background: rgba(40, 40, 40, 0.7);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 30px;
   text-decoration: none;
-  font-size: .82rem; /* تصغير طفيف للخط */
+  font-size: 0.85rem;
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, .08);
-  transition: all .2s;
-  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s;
   white-space: nowrap;
   flex-shrink: 0;
-  text-align: center;
 }
 
 .pill.active {
   background: var(--gold);
-  color: #fff; /* تحويل لون النص من الأسود إلى الأبيض بناءً على الطلب */
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); /* إضافة ظل أسود واضح */
+  color: #000;
   border-color: var(--gold);
-  box-shadow: 0 0 18px var(--gold-glow);
+  box-shadow: 0 0 15px rgba(229, 196, 103, 0.5);
 }
 
-/* ── شريط البحث ── */
+/* ── شريط البحث المنحني ── */
 .search-row {
- padding: 0px 12px 6px;
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  padding: 0 40px;
+  z-index: 5;
 }
 
 .search-box {
- background: rgba(255, 255, 255, .05);
- border: 1px solid rgba(255, 255, 255, .09);
- border-radius: 12px;
- padding: 6px 12px; /* تصغير البحث */
- display: flex;
- align-items: center;
- gap: 9px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 40px; /* دائري بالكامل */
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .search-box input {
- background: transparent;
- border: none;
- color: var(--text);
- width: 100%;
- outline: none;
- font-family: inherit;
- font-size: 16px;
-}
-
-.search-box input::placeholder { color: var(--text-dim); }
-
-/* ── شريط الأقسام الفرعية (يبقى ثابتاً دائماً) ── */
-.hdr-bottom {
- border-top: 1px solid rgba(255,255,255,0.1); 
- background: url('../images/sadu-pattern.jpg') center/cover no-repeat;
- position: relative;
-}
-
-/* الخط الموزاييك الرفيع الفاصل */
-.hdr-bottom::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+  background: transparent;
+  border: none;
+  color: #fff;
   width: 100%;
-  height: 6px; /* خط رفيع فخم */
-  background: url('../images/wide-bg.png') center/100% 100% no-repeat; /* ليكون نفس اللي فوق بالضبط مضغوط */
-  z-index: 3;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.6);
+  outline: none;
+  font-size: 0.9rem;
+  text-align: right;
 }
 
-.hdr-bottom::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55); /* تعتيم لجعل الأزرار واضحة */
-  z-index: 1;
+/* ── شريط الأقسام الفرعية (الذهبي المطفي) ── */
+.hdr-bottom {
+  background: #000;
+  padding: 5px 0;
 }
 
 .sub-nav {
- position: relative;
- z-index: 2;
- display: flex;
- gap: 5px;
- padding: 8px 12px 10px;
- overflow-x: auto;
- scrollbar-width: none;
- -webkit-overflow-scrolling: touch;
+  display: flex;
+  gap: 15px;
+  padding: 10px 15px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
-
-.sub-nav::-webkit-scrollbar { display: none; }
 
 .cat-btn {
- background: transparent;
- color: var(--text-dim);
- padding: 5px 14px;
- border-radius: 50px;
- border: 1px solid rgba(255, 255, 255, .09);
- text-decoration: none;
- white-space: nowrap;
- font-size: .78rem;
- font-weight: 600;
- font-family: inherit;
- transition: all .2s;
- cursor: pointer;
- flex-shrink: 0;
- display: inline-flex;
- align-items: center;
- gap: 4px;
-}
-
-.cat-btn:hover {
- border-color: rgba(197, 160, 34, .5);
- color: var(--gold);
+  color: #aaa;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color 0.3s;
+  border: none;
+  background: none;
+  padding: 0;
 }
 
 .cat-btn.active {
- background: var(--gold-dim);
- color: var(--gold);
- border-color: rgba(197, 160, 34, .4);
+  color: var(--gold);
+}
+
+/* الحالة المضغوطة لتوفير المساحة عند السكرول */
+header.compressed .hdr-top {
+  height: 60px;
+}
+header.compressed .arch-overlay, 
+header.compressed .nav-row, 
+header.compressed .search-row {
+  display: none;
+}
+header.compressed .logo-wrap img {
+  height: 40px;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -471,10 +395,10 @@ section.active {
  3 أعمدة على الشاشات الكبيرة — 2 أعمدة على الموبايل
  ════════════════════════════════════════════════════════════════════ */
 .menu-grid {
- display: grid;
- grid-template-columns: repeat(3, 1fr);
- gap: 10px;
- margin-bottom: 6px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 عمود للموبايل ليكون مطابقاً للصورة */
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 /* ════════════════════════════════════════════════════════════════════
