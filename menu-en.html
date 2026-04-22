@@ -31,6 +31,7 @@ body { direction: ltr; font-weight: 700; }
         <div class="nav-row" id="mainTabRow">
             <a id="pill-arabic" class="pill active" onclick="setTab('arabic',this)">Arabic Menu</a>
             <a id="pill-intl" class="pill" onclick="setTab('intl',this)">International</a>
+            <a id="pill-desserts" class="pill" onclick="setTab('desserts',this)">Desserts</a>
             <a id="pill-drinks" class="pill" onclick="setTab('drinks',this)">Beverages</a>
             <a id="pill-argileh" class="pill" onclick="setTab('argileh',this)">Argileh</a>
         </div>
@@ -61,6 +62,8 @@ body { direction: ltr; font-weight: 700; }
             <a href="#ar-sweets" class="cat-btn"> Desserts</a>
         </div>
 
+        <div class="sub-nav" id="dessertsNav" style="display:none;"></div>
+
         <div class="sub-nav" id="intlNav" style="display:none;">
             <a href="#in-salads" class="cat-btn"> Salads</a>
             <a href="#in-hot" class="cat-btn"> Appetizers</a>
@@ -76,6 +79,18 @@ body { direction: ltr; font-weight: 700; }
 </header>
 
 <div class="container">
+
+<!--  DESSERTS  -->
+<section id="desserts" style="display:none;">
+    <div class="section-hero">
+        <div class="hero-icon"></div>
+        <div class="hero-text">
+            <div class="hero-title">Desserts</div>
+            <div class="hero-sub">Authentic Oriental & Western Sweets</div>
+        </div>
+    </div>
+    <div id="desserts_sec"></div>
+</section>
 
 <!--  DRINKS  -->
 <section id="drinks" class="active">

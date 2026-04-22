@@ -46,6 +46,7 @@
             <div class="nav-row" id="mainTabRow">
                 <a href="javascript:void(0)" class="pill active" onclick="setTab('arabic', this)">المنيو العربي</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">الانترناشونال</a>
+                <a href="javascript:void(0)" class="pill" onclick="setTab('desserts', this)">الحلويات</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('drinks', this)">المشروبات</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('argileh', this)">الأراجيل</a>
             </div>
@@ -63,12 +64,27 @@
         <div class="hdr-bottom">
             <div class="sub-nav" id="arabicNav"></div>
             <div class="sub-nav" style="display:none" id="intlNav"></div>
+            <div class="sub-nav" style="display:none" id="dessertsNav"></div>
             <div class="sub-nav" style="display:none" id="drinksNav"></div>
             <div class="sub-nav" style="display:none" id="argilehNav"></div>
         </div>
     </header>
 
     <div class="container">
+
+        <!--  =========================================  -->
+        <!--  قسم الحلويات (Desserts)  -->
+        <!--  =========================================  -->
+        <section id="desserts" style="display:none;">
+            <div class="section-hero">
+                <div class="hero-icon"></div>
+                <div class="hero-text">
+                    <div class="hero-title">الحلويات</div>
+                    <div class="hero-sub">حلويات شرقية وغربية طازجة</div>
+                </div>
+            </div>
+            <div id="desserts_sec"></div>
+        </section>
 
         <!--  =========================================  -->
         <!--  قسم المشروبات (Drinks)  -->
@@ -1255,7 +1271,7 @@
             });
 
             // 2. Clear and Render Sections & Sub-Navs
-            const sectionKeys = ['arabic', 'intl', 'drinks', 'argileh'];
+            const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
