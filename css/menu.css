@@ -110,82 +110,88 @@ header {
  transition: all 0.3s ease;
 }
 
-/* ── الجزء العلوي للهيدر: السدو والقوس ── */
+/* ── الجزء العلوي: صورة السدو الجميلة مع القوس ── */
 .hdr-top {
   position: relative;
   width: 100%;
-  height: 260px; /* طول ثابت للهيدر ليناسب التصميم */
+  min-height: 240px;
   background: url('../images/sadu-pattern.jpg') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  padding-top: 20px;
+  padding-bottom: 85px; /* مساحة للأزرار والبحث المطلقَي الموقع */
   overflow: hidden;
 }
 
+/* تعتيم خفيف على خلفية السدو */
 .hdr-top::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.2); /* تعتيم خفيف ليبرز جمال السدو */
-    z-index: 1;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
 }
 
-/* رسم القوس الذهبي المحيط باللوجو */
+/* القوس الذهبي الديكوري - خلف اللوجو فقط */
 .arch-overlay {
-    position: absolute;
-    bottom: 0;
-    width: 320px; 
-    height: 100%;
-    background: #000;
-    border: 3px solid var(--gold);
-    border-bottom: none;
-    border-radius: 160px 160px 0 0;
-    z-index: 2;
-    box-shadow: 0 -10px 50px rgba(0,0,0,1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 35px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 180px;
+  background: #000;
+  border: 3px solid var(--gold);
+  border-bottom: none;
+  border-radius: 150px 150px 0 0;
+  z-index: 2; /* خلف اللوجو وليس فوقه */
+  box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
 }
 
+/* اللوجو فوق القوس مباشرة */
 .logo-wrap {
   position: relative;
-  z-index: 5;
-  margin-bottom: 20px;
+  z-index: 5; /* فوق arch-overlay (z:2) وfore hdr-top::before (z:1) */
+  margin-bottom: 10px;
 }
 
 .logo-wrap img {
-  height: 90px; 
+  height: 110px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(0,0,0,0.6));
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.7));
 }
 
-/* ── الأقسام الرئيسية (زجاجية ودائرية) ── */
+/* أزرار الأقسام الرئيسية */
 .nav-row {
   position: absolute;
-  bottom: 90px;
-  width: 100%;
+  bottom: 50px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   gap: 8px;
-  padding: 0 10px;
+  padding: 0 12px;
   z-index: 10;
   overflow-x: auto;
   scrollbar-width: none;
 }
+.nav-row::-webkit-scrollbar { display: none; }
 
 .pill {
-  background: rgba(50, 50, 50, 0.7);
-  backdrop-filter: blur(10px);
+  background: rgba(30, 30, 30, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: #fff;
-  padding: 10px 18px;
-  border-radius: 40px;
+  padding: 9px 18px;
+  border-radius: 50px;
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 800;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.25s;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -194,26 +200,28 @@ header {
   background: var(--gold);
   color: #000;
   border-color: var(--gold);
-  box-shadow: 0 0 20px rgba(229, 196, 103, 0.5);
+  box-shadow: 0 0 18px rgba(229, 196, 103, 0.55);
 }
 
-/* ── شريط البحث المنحني ── */
+/* شريط البحث */
 .search-row {
   position: absolute;
-  bottom: 25px;
-  width: 100%;
-  padding: 0 45px;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
   z-index: 10;
 }
 
 .search-box {
-  background: rgba(10, 10, 10, 0.9);
+  background: rgba(10, 10, 10, 0.92);
   border: 1.5px solid rgba(255, 255, 255, 0.2);
   border-radius: 50px;
-  padding: 8px 20px;
+  padding: 8px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
 .search-box input {
@@ -223,50 +231,62 @@ header {
   width: 100%;
   outline: none;
   font-size: 0.92rem;
+  font-family: inherit;
   text-align: right;
 }
 
-/* ── شريط الأقسام الفرعية (الذهبي المطفي) ── */
+.search-box input::placeholder { color: rgba(255,255,255,0.5); }
+
+/* شريط الأقسام الفرعية */
 .hdr-bottom {
-  background: #000;
-  padding: 5px 0;
+  background: #0a0a0a;
+  border-top: 1px solid rgba(197, 160, 34, 0.2);
 }
 
 .sub-nav {
   display: flex;
-  gap: 15px;
-  padding: 10px 15px;
+  gap: 5px;
+  padding: 8px 15px;
   overflow-x: auto;
   scrollbar-width: none;
 }
+.sub-nav::-webkit-scrollbar { display: none; }
 
 .cat-btn {
-  color: #aaa;
+  color: rgba(255,255,255,0.55);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 700;
   white-space: nowrap;
-  transition: color 0.3s;
+  transition: color 0.25s;
   border: none;
   background: none;
+  padding: 4px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cat-btn.active,
+.cat-btn:hover {
+  color: var(--gold);
+  background: rgba(197, 160, 34, 0.12);
+}
+
+/* الهيدر عند الضغط للأسفل - يتصغر */
+header.compressed .hdr-top {
+  min-height: 0;
+  height: 50px;
   padding: 0;
 }
-
-.cat-btn.active {
-  color: var(--gold);
-}
-
-/* الحالة المضغوطة لتوفير المساحة عند السكرول */
-header.compressed .hdr-top {
-  height: 60px;
-}
-header.compressed .arch-overlay, 
-header.compressed .nav-row, 
-header.compressed .search-row {
+header.compressed .arch-overlay,
+header.compressed .nav-row,
+header.compressed .search-row,
+header.compressed .logo-wrap {
   display: none;
 }
-header.compressed .logo-wrap img {
-  height: 40px;
+header.compressed .hdr-bottom {
+  border-top: none;
 }
 
 /* ════════════════════════════════════════════════════════════════════

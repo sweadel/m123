@@ -92,6 +92,7 @@
                             <h3 class="card-name">أمريكانو</h3><span class="card-price"></span>
                         </div>
                     </a>
+                </div>
             <!-- مياه معدنية، مشروبات غازية، ريد بول -->
             <div class="menu-grid">
                 <a class="menu-card" data-t="مياه معدنية">
@@ -113,6 +114,7 @@
                     </div>
                 </a>
             </div>
+            </div> <!-- Close drinks_sec -->
         </section>
 
         <!--  =========================================  -->
@@ -593,7 +595,7 @@
                     </div>
                 </a>
             </div>
-
+            </div> <!-- Close arabic_sec -->
         </section>
 
 
@@ -984,6 +986,7 @@
                     </div>
                 </a>
             </div>
+            </div> <!-- Close argileh_sec -->
         </section>
 
 
@@ -1057,14 +1060,22 @@
             if (sn) sn.style.display = 'flex';
             document.querySelectorAll('.sec-title').forEach(function (st) { st.style.display = ''; });
             document.querySelectorAll('.menu-card').forEach(function (c) { c.style.display = 'flex'; });
-            var srch = document.getElementById('srch');
-            if (srch && btn) srch.value = '';
+            // Clear search on tab switch
+            var srch = document.getElementById('menuSearch');
+            if (srch) srch.value = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         /*  Search  */
+        function handleSearch() {
+            filterMenu();
+        }
+
         function filterMenu() {
-            var q = document.getElementById('srch').value.toLowerCase();
+            // Support both old (srch) and new (menuSearch) input ids
+            var srchEl = document.getElementById('menuSearch') || document.getElementById('srch');
+            if (!srchEl) return;
+            var q = srchEl.value.toLowerCase();
             if (q.length > 0) {
                 document.querySelectorAll('.sub-nav').forEach(function (sn) { sn.style.display = 'none' });
                 document.querySelectorAll('section').forEach(function (s) { s.style.display = 'block' });
@@ -1144,19 +1155,21 @@
             if (e.key === 'Escape') closeDishModal();
         });
 
-        /*  Header smart collapse on scroll  */
-        var hdrEl = document.getElementById('hdr');
+        /*  Header scroll behavior  */
+        var hdrEl = document.getElementById('mainHeader'); // Fixed: was 'hdr', now 'mainHeader'
         var isComp = false, ticking = false;
-        var SCROLL_THRESHOLD = 40; 
+        var SCROLL_THRESHOLD = 60;
 
         function syncHeaderState() {
             var y = window.scrollY;
             var shouldCompress = y > SCROLL_THRESHOLD;
             if (shouldCompress !== isComp) {
-                if (shouldCompress) {
-                    hdrEl.classList.add('compressed');
-                } else {
-                    hdrEl.classList.remove('compressed');
+                if (hdrEl) {
+                    if (shouldCompress) {
+                        hdrEl.classList.add('compressed');
+                    } else {
+                        hdrEl.classList.remove('compressed');
+                    }
                 }
                 isComp = shouldCompress;
             }
@@ -1173,9 +1186,8 @@
             }
         }, { passive: true });
 
-        /* حساب padding الـ body من ارتفاع الهيدر الفعلي */
         function adjustBodyPadding() {
-            var hdr = document.getElementById('hdr');
+            var hdr = document.getElementById('mainHeader'); // Fixed: was 'hdr'
             if (!hdr) return;
             var h = hdr.offsetHeight;
             document.body.style.paddingTop = h + 'px';
@@ -1183,8 +1195,11 @@
                 el.style.scrollMarginTop = (h + 10) + 'px';
             });
         }
-        
-        window.addEventListener('load', syncHeaderState);
+
+        window.addEventListener('load', function() {
+            syncHeaderState();
+            adjustBodyPadding();
+        });
         window.addEventListener('resize', adjustBodyPadding, { passive: true });
 
         var initialTab = 'arabic';
