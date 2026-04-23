@@ -199,22 +199,19 @@ header {
 
 .logo-wrap {
   position: absolute;
-  top: 15%; /* وضع اللوجو في الجزء العلوي من القوس */
+  top: 15%; 
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10; /* ضمان ظهور اللوجو فوق كل شيء */
+  z-index: 10;
   pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo-wrap img {
   height: 105px;
   width: auto;
   filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 10px rgba(229, 196, 103, 0.2));
-  transition: transform 0.3s ease;
-}
-
-.logo-wrap:hover img {
-  transform: scale(1.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* أزرار الأقسام الرئيسية */
@@ -226,11 +223,12 @@ header {
   display: flex;
   justify-content: flex-start; 
   gap: 10px;
-  padding: 0; /* Hug the edge as requested */
+  padding: 0; 
   z-index: 15;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .nav-row::-webkit-scrollbar { display: none; }
 
@@ -275,6 +273,7 @@ header {
   padding: 0 20px;
   z-index: 20;
   position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-box {
@@ -374,37 +373,37 @@ header {
   font-weight: 700;
 }
 
-/* الهيدر عند الضغط للأسفل - يتصغر */
-header.compressed {
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-}
-
+/* الهيدر المصغر - نسخة محسنة وأكثر نعومة */
 header.compressed .hdr-top {
   min-height: 0;
-  height: 60px; /* Small bar height */
+  height: 64px; /* ارتفاع أنيق للبار العلوي */
   padding: 0;
   background-image: none !important; 
-  background: #080808 !important; /* Solid background to prevent conflicts */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(197, 160, 34, 0.2);
-}
-
-header.compressed .arch-overlay,
-header.compressed .nav-row,
-header.compressed .search-row {
-  display: none;
+  background: #080808 !important; 
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(197, 160, 34, 0.3);
 }
 
 header.compressed .logo-wrap {
   top: 50%;
   left: 20px;
   transform: translateY(-50%);
-  margin: 0;
+  opacity: 1 !important; /* التأكد من بقاء اللوجو الصغير واضحاً */
 }
 
 header.compressed .logo-wrap img {
-  height: 38px;
+  height: 34px !important;
+  filter: none;
+}
+
+/* إخفاء تدريجي للعناصر */
+header.compressed .arch-overlay,
+header.compressed .nav-row,
+header.compressed .search-row {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
 }
 
 header.compressed .hdr-bottom {
