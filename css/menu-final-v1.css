@@ -245,17 +245,19 @@ header {
 /* أزرار الأقسام الرئيسية */
 .nav-row {
   position: absolute;
-  bottom: 110px;
-  /* تم رفعه للأعلى بشكل ملحوظ */
+  bottom: 105px;
+  /* تم تعديله لضمان عدم قص الأطراف */
   left: 0;
   right: 0;
   display: flex;
   justify-content: flex-start;
   gap: 10px;
-  padding: 0 10px;
-  /* مسافة بسيطة لعدم الالتصاق التام المزعج */
+  padding: 12px 10px;
+  /* إضافة padding علوي وسفلي لمنع قص الظلال والحدود */
   z-index: 15;
   overflow-x: auto;
+  overflow-y: visible;
+  /* السماح ببروز العناصر للأعلى */
   scrollbar-width: none;
   -ms-overflow-style: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -823,6 +825,8 @@ section.active {
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
+  padding-top: 15px;
+  /* مسافة علوية لمنع الحواف المستديرة من قص الصورة */
 }
 
 .modal-actual-img {
