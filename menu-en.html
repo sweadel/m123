@@ -254,7 +254,7 @@
             document.getElementById('modalDesc').textContent = desc;
 
             var modalImg = document.getElementById('modalImg');
-            modalImg.innerHTML = bgUrl ? `<img src="${bgUrl}" style="width:100%;height:100%;object-fit:cover;">` : `<img src="images/tallo-logo.png" style="width:180px;margin:auto;">`;
+            modalImg.innerHTML = bgUrl ? `<img src="${bgUrl}" class="modal-actual-img">` : `<img src="images/tallo-logo.png" style="width:180px;margin:auto;">`;
 
             document.getElementById('dishModal').classList.add('open');
             document.body.style.overflow = 'hidden';
