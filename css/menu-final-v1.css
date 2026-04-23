@@ -104,12 +104,10 @@ body {
  - .hdr-bottom : شريط الأقسام الفرعية (يبقى ثابتاً دائماً)
 */
 header {
-  position: sticky;
-  top: 0;
+  position: relative; /* إزالة الـ sticky للسماح له بالاختفاء طبيعياً */
   width: 100%;
   z-index: 1000;
   background: #000;
-  transition: all 0.3s ease;
 }
 
 /* ── الجزء العلوي: الهيدر الملكي الفخم ── */
@@ -313,16 +311,18 @@ header {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* شريط الأقسام الفرعية */
+/* ── الجزء السفلي: شريط الأقسام الفرعية ── */
 .hdr-bottom {
-  background: rgba(10, 10, 10, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(10, 10, 10, 0.95); /* خلفية داكنة جداً لدعم القراءة */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border-top: 1px solid rgba(197, 160, 34, 0.15);
   border-bottom: 1px solid rgba(197, 160, 34, 0.15);
+  
+  /* السر هنا: هذا الشريط فقط من سيثبت في الأعلى */
   position: sticky;
   top: 0;
-  z-index: 1001; /* يجب أن يكون أعلى من باقي العناصر في الصفحة */
+  z-index: 1001; /* يجب أن يكون أعلى من أي عنصر لضمان بقائه مرئياً */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
@@ -373,38 +373,7 @@ header {
   font-weight: 700;
 }
 
-/* الهيدر المصغر - يتم التحكم بارتفاعه عبر الجافاسكربت لنعومة فائقة */
-header.compressed .hdr-top {
-  background-image: none !important; 
-  background: #080808 !important; 
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-bottom: 1px solid rgba(197, 160, 34, 0.3);
-}
-
-header.compressed .logo-wrap {
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-  opacity: 1 !important; 
-}
-
-header.compressed .logo-wrap img {
-  height: 34px !important;
-  filter: none;
-}
-
-/* إخفاء تدريجي عبر الجافاسكربت، هنا فقط لضمان الإخفاء النهائي */
-header.compressed .arch-overlay,
-header.compressed .nav-row,
-header.compressed .search-row {
-  pointer-events: none;
-}
-
-header.compressed .hdr-bottom {
-  border-top: none;
-  background: rgba(10, 10, 10, 0.98);
-}
+/* تم إزالة الهيدر المصغر المعقد للحفاظ على نظافة التصميم */
 
 /* ════════════════════════════════════════════════════════════════════
  4. حاوية المحتوى — Content Container
