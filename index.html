@@ -196,14 +196,25 @@
             letter-spacing: .4px;
         }
 
-        /* Social Media Bar */
+        /* Social Media Bar (Floating Premium) */
         .social-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 400px;
+            background: rgba(15, 15, 15, 0.7);
+            padding: 12px 10px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 12px 0 14px;
-            border-top: 1px solid rgba(255, 255, 255, .07);
-            margin-top: 8px;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .s-link {
@@ -211,15 +222,23 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: rgba(255, 255, 255, .65);
+            color: rgba(255, 255, 255, 0.6);
             font-size: .65rem;
             font-weight: 700;
-            gap: 3px;
-            transition: color .2s;
+            gap: 4px;
+            transition: all .2s;
+            flex: 1;
+        }
+
+        .s-link i {
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-bottom: 2px;
         }
 
         .s-link:hover, .s-link:active {
-            color: var(--gold);
+            color: #fff;
+            transform: translateY(-2px);
         }
 
         /* Mobile Optimization */
@@ -270,18 +289,22 @@
         <!-- Social Bar Links -->
         <div class="social-bar">
             <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link">
+                <i class="fa-solid fa-location-dot"></i>
                 <span>الموقع</span>
             </a>
 
             <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link">
+                <i class="fa-brands fa-whatsapp"></i>
                 <span>واتساب</span>
             </a>
 
             <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link">
+                <i class="fa-brands fa-instagram"></i>
                 <span>إنستغرام</span>
             </a>
 
             <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" id="link_facebook" target="_blank" rel="noopener" class="s-link">
+                <i class="fa-brands fa-facebook-f"></i>
                 <span>فيسبوك</span>
             </a>
         </div>

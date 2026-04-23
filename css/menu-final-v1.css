@@ -239,32 +239,35 @@ header {
 
 .pill {
   flex: 0 0 auto;
-  padding: 12px 26px;
-  background: rgba(15, 15, 15, 0.7); 
-  color: #fff; /* High contrast white */
-  border-radius: 12px;
+  padding: 10px 24px;
+  background: rgba(20, 20, 20, 0.6); 
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 14px;
   text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 800; /* Extra bold for clarity */
+  font-size: 0.9rem;
+  font-weight: 700;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(197, 160, 34, 0.3); /* Subtle gold border */
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .pill:hover {
   background: rgba(197, 160, 34, 0.1);
-  border-color: var(--gold);
+  border-color: rgba(197, 160, 34, 0.4);
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .pill.active {
-  background: linear-gradient(135deg, var(--gold), #d4af37) !important;
+  background: linear-gradient(135deg, var(--gold), #b38d1d) !important;
   color: #000 !important;
-  box-shadow: 0 10px 30px rgba(229, 196, 103, 0.5);
+  box-shadow: 0 8px 25px rgba(197, 160, 34, 0.4);
   transform: translateY(-2px);
-  border-color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+  font-weight: 800;
 }
 
 /* شريط البحث */
@@ -421,46 +424,44 @@ section.active {
  خلفيته نسيج الساد مع تعتيم
  ════════════════════════════════════════════════════════════════════ */
 .section-hero {
- padding: 15px 20px; /* تقليص ضخم للمساحة */
- text-align: center;
- background-color: #111;
- background-size: cover;
- background-position: center;
- position: relative;
- margin-bottom: 10px;
- border-bottom: 2px solid var(--gold);
- min-height: 80px; /* تحديد حد أدنى صغير */
- display: flex;
- align-items: center;
- justify-content: center;
+  padding: 35px 20px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(20, 10, 5, 0.95) 0%, rgba(10, 5, 5, 0.8) 100%);
+  position: relative;
+  margin: 15px 0 25px;
+  border-radius: 20px;
+  border: 1px solid rgba(197, 160, 34, 0.15);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
-.hero-icon {
- font-size: 2.2rem;
- line-height: 1;
- flex-shrink: 0;
- z-index: 1;
-}
-
-.hero-text {
- z-index: 1;
+.section-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(197, 160, 34, 0.05) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .hero-title {
- font-size: 1.4rem;
- font-weight: 800;
- text-transform: uppercase;
- letter-spacing: 1px;
- margin-bottom: 2px;
- color: var(--gold);
- text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(197, 160, 34, 0.3);
 }
 
 .hero-sub {
- font-size: 0.75rem;
- opacity: .8;
- font-weight: 400;
- color: #fff;
+  font-size: 0.85rem;
+  opacity: .7;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.5px;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -469,32 +470,29 @@ section.active {
  تحتوي: أيقونة + نص + خط ذهبي يمتد للجانب
  ════════════════════════════════════════════════════════════════════ */
 .sec-title {
- display: flex;
- align-items: center;
- gap: 10px;
- margin: 22px 0 12px;
- color: var(--gold);
- font-size: 1.15rem;
- font-weight: 800;
- padding: 0 4px;
- /* scroll-margin-top: يتحدد ديناميكياً من adjustBodyPadding() في JS */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 40px 0 20px;
+  color: var(--gold);
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 0 4px;
+  text-shadow: 0 0 10px rgba(197, 160, 34, 0.2);
 }
 
 .sec-title .sec-icon {
- font-size: 1.1rem;
- flex-shrink: 0;
+  font-size: 1.4rem;
+  filter: drop-shadow(0 0 5px var(--gold));
 }
 
-.sec-title span:not(.sec-icon) {
- flex: 1;
-}
-
-/* خط يمتد بجانب العنوان — اتجاهه يتغير بين العربي والإنجليزي */
 .sec-title::after {
- content: '';
- height: 1px;
- flex: 1;
- /* قيمة الـ background تُحدَّد في كل ملف HTML على حدة */
+  content: '';
+  height: 2px;
+  flex: 1;
+  background: linear-gradient(to right, var(--gold), transparent);
+  opacity: 0.3;
+  border-radius: 2px;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -531,29 +529,30 @@ section.active {
  └─────────────────────────────────────────────────┘
  ════════════════════════════════════════════════════════════════════ */
 .menu-card {
- background: var(--card);
- border-radius: 16px;
- overflow: hidden;
- display: flex;
- flex-direction: column;
- text-decoration: none;
- color: inherit;
- border: 1px solid var(--border);
- cursor: pointer;
- position: relative;
- transform: translateZ(0);
- /* تفعيل GPU للتسارع */
- will-change: transform;
- /* يخبر المتصفح مسبقاً بالحركة */
- transition: border-color .2s, transform .15s, box-shadow .2s;
- -webkit-tap-highlight-color: transparent;
- /* يزيل التعليق الأزرق على iOS */
+  background: rgba(30, 26, 23, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid rgba(197, 160, 34, 0.15);
+  cursor: pointer;
+  position: relative;
+  transform: translateZ(0);
+  will-change: transform;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .menu-card:hover {
- border-color: rgba(197, 160, 34, .4);
- background: var(--card-hover);
- box-shadow: 0 4px 20px rgba(0, 0, 0, .4);
+  border-color: var(--gold);
+  background: rgba(197, 160, 34, 0.05);
+  box-shadow: 0 10px 30px rgba(197, 160, 34, 0.15);
+  transform: translateY(-5px);
 }
 
 .menu-card:active {
@@ -854,40 +853,53 @@ section.active {
  ثابت في أسفل الشاشة — يحتوي: الموقع، واتساب، إنستغرام، فيسبوك
  ════════════════════════════════════════════════════════════════════ */
 .social-bar {
- position: fixed;
- bottom: 0;
- left: 0;
- width: 100%;
- background: rgba(8, 8, 8, .97);
- padding: 10px 16px;
- display: flex;
- justify-content: space-around;
- align-items: center;
- z-index: 1000;
- border-top: 1px solid rgba(255, 255, 255, .05);
- backdrop-filter: blur(8px);
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 450px;
+  background: rgba(15, 15, 15, 0.85);
+  padding: 12px 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1500;
+  border: 1px solid rgba(197, 160, 34, 0.25);
+  border-radius: 20px;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(197, 160, 34, 0.05);
 }
 
 .s-link {
- display: flex;
- flex-direction: column;
- align-items: center;
- text-decoration: none;
- color: var(--text-dim);
- font-size: .63rem;
- font-weight: 700;
- gap: 3px;
- transition: color .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.68rem;
+  font-weight: 700;
+  gap: 5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1;
 }
 
-.s-link:hover,
-.s-link:active {
- color: var(--gold);
+.s-link i {
+  font-size: 1.25rem;
+  color: var(--gold);
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
 }
 
-.s-link svg {
- width: 21px;
- height: 21px;
+.s-link:hover {
+  color: #fff;
+}
+
+.s-link:hover i {
+  transform: translateY(-3px) scale(1.1);
+  color: #fff;
+  text-shadow: 0 0 10px var(--gold);
 }
 
 /* زر الرجوع للأعلى */
