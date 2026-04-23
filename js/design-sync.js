@@ -1,6 +1,7 @@
 /**
- * design-sync.js v2.0
+ * design-sync.js v3.0
  * Synchronizes the website design with Firebase settings in real-time.
+ * Optimized for Tallo Ahbabna's premium arched-header layout.
  */
 
 (function() {
@@ -9,7 +10,7 @@
     style.id = 'firebase-design-styles';
     document.head.appendChild(style);
 
-    // 2. Firebase Configuration (Same as admin)
+    // 2. Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
         authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -27,71 +28,55 @@
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const designRef = db.ref('settings/design');
-
-    // 3. Listen for changes - مؤقتاً تم إيقاف التزامن لمنع التخبيص والتعارض
-    designRef.on('value', snapshot => {
+    
+    // Listen for Design Settings
+    db.ref('settings/design').on('value', snapshot => {
         const d = snapshot.val();
         if (!d) return;
-
-        // applyDesign(d); // معطل مؤقتاً لحفظ التنسيق الأصلي للمنيو
+        applyDesign(d);
     });
 
     function applyDesign(d) {
-        // --- A. CSS Variables ---
+        // --- A. CSS Variables Injection ---
+        // Using variables allows us to update colors while keeping the premium structure intact
         let css = `
             :root {
-                --gold: ${d.primaryColor || '#E5C467'};
-                --bg: ${d.pageBg || '#14110e'};
-                --card: ${d.cardBg || '#26221f'};
+                --gold: ${d.primaryColor || '#C5A022'};
+                --gold-dark: ${d.primaryColor || '#a8841c'};
+                --bg: ${d.pageBg || '#0B0B0E'};
+                --card-bg: ${d.cardBg || 'rgba(255, 255, 255, 0.03)'};
                 --font-main: '${d.fontFamily || 'IBM Plex Sans Arabic'}', sans-serif;
             }
             body { 
                 background-color: var(--bg);
                 font-family: var(--font-main);
-                font-weight: ${d.fontBold ? '800' : '400'};
+                font-weight: ${d.fontBold ? '800' : '700'};
             }
-            /* تمت إزالة التعديلات الإجبارية (!important) للوجو والهيدر لمنع التعارض مع التصميم الأصلي */
-            .promo-banner {
-                background: var(--gold);
-                color: #000;
-            }
+            .sec-title { color: var(--gold); }
+            .pill.active { background: var(--gold); color: #000; }
+            .promo-banner { background: var(--gold); color: #000; }
         `;
         style.innerHTML = css;
 
-        // --- B. DOM Elements ---
+        // --- B. DOM Updates ---
         
-        // Logo
-        const logos = document.querySelectorAll('.logo-img, #main-logo');
-        logos.forEach(img => { if(d.logoUrl) img.src = d.logoUrl; });
+        // Logo Synchronization
+        const logos = document.querySelectorAll('#main-logo, .logo-wrap img');
+        logos.forEach(img => { 
+            if(d.logoUrl && !img.src.includes(d.logoUrl)) img.src = d.logoUrl; 
+        });
 
-        // Search Bar
-        const searchBar = document.querySelector('.search-container, #search-wrap');
-        if (searchBar) searchBar.style.display = d.showSearch ? 'flex' : 'none';
+        // Search Visibility
+        const searchBox = document.querySelector('.search-row');
+        if (searchBox) searchBox.style.display = d.showSearch === false ? 'none' : 'flex';
 
-        // Tab Labels (Main sections)
-        const updateText = (selector, text) => {
-            const el = document.querySelector(selector);
-            if (el && text) el.textContent = text;
-        };
-
-        // Determine if we are in Arabic or English based on html lang
-        const isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
-
-        if (isAr) {
-            updateText('[data-section="arabic"] span', d.labelArabic);
-            updateText('[data-section="intl"] span', d.labelIntl);
-            updateText('[data-section="desserts"] span', d.labelDesserts);
-            updateText('[data-section="drinks"] span', d.labelDrinks);
-            updateText('[data-section="argileh"] span', d.labelArgileh);
-        }
-
-        // Promotional Banner
+        // Promotional Banner Update
         const promo = document.getElementById('promo-banner');
         if (promo) {
             if (d.bannerActive && d.bannerText) {
                 promo.style.display = 'block';
-                promo.querySelector('.promo-text').textContent = d.bannerText;
+                const txtEl = promo.querySelector('.promo-text');
+                if(txtEl) txtEl.textContent = d.bannerText;
             } else {
                 promo.style.display = 'none';
             }

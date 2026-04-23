@@ -1,18 +1,35 @@
 <!DOCTYPE html>
+<!-- 
+  ==========================================================================
+  PROJECT: Tallo Ahbabna - Digital Menu
+  FILE: menu-en.html (English Version)
+  DESCRIPTION: The dynamic menu page (English). Renders items and categories
+               real-time from Firebase. Supports search and category filtering.
+  VERSION: 3.0 (Cleaned & Dynamic)
+  ==========================================================================
+-->
 <html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tallo Ahbabna | Digital Menu</title>
+    
+    <!-- Fonts: Premium English Selection -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap">
+    
+    <!-- Core CSS & Icons -->
     <link rel="stylesheet" href="css/menu-final-v1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        /* FORCE STYLE OVERRIDE - For consistent design */
+        /* 
+        --------------------------------------------------------------------------
+        DESIGN OVERRIDES
+        --------------------------------------------------------------------------
+        */
         .hdr-top {
             background-image: url('images/header-sadu-final.png') !important;
             background-color: #1a0505 !important;
@@ -26,15 +43,17 @@
             height: 105px !important;
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
         }
-        /* English-specific overrides */
         body { direction: ltr; font-weight: 700; }
         .sec-title::after { background: linear-gradient(to right, transparent, rgba(197, 160, 34, .25)); }
-        #scrollTop { left: auto; right: 18px; }
+        
+        /* Modal tweaks for LTR */
+        .modal-price-badge { margin-left: auto; margin-right: 0; }
+        .back-btn { right: auto; left: 18px; }
     </style>
 </head>
 
 <body>
-    <!-- Promo Banner -->
+    <!-- 1. Promo Banner -->
     <div id="promo-banner" class="promo-banner" style="display: none;">
         <div class="promo-content">
             <i class="fa-solid fa-bullhorn"></i>
@@ -42,21 +61,21 @@
         </div>
     </div>
 
+    <!-- 2. Sticky/Collapsing Header -->
     <header id="mainHeader">
-        <!-- ─── HDR TOP: Arched Design ─── -->
         <div class="hdr-top">
             <div class="arch-overlay"></div>
             
             <!-- Back Button -->
-            <a href="index.html" class="back-btn" title="Back to Home">
+            <a href="index.html" class="back-btn" title="Back">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
 
             <div class="logo-wrap">
-                <img src="images/tallo-logo.png" alt="Tallo Ahbabna Logo">
+                <img src="images/tallo-logo.png" alt="Logo">
             </div>
 
-            <!-- Main Category Pills (Arabic, Intl, etc) -->
+            <!-- Main Tab Pills -->
             <div class="nav-row" id="mainTabRow">
                 <a href="javascript:void(0)" class="pill active" onclick="setTab('arabic', this)">Arabic Menu</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">International</a>
@@ -65,7 +84,7 @@
                 <a href="javascript:void(0)" class="pill" onclick="setTab('argileh', this)">Argileh</a>
             </div>
 
-            <!-- Search Row -->
+            <!-- Global Search Box -->
             <div class="search-row">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass" style="color: var(--gold); font-size: 1rem;"></i>
@@ -74,7 +93,7 @@
             </div>
         </div>
 
-        <!-- ─── HDR BOTTOM: Categories Navigation ─── -->
+        <!-- HDR BOTTOM: Category Shortcuts -->
         <div class="hdr-bottom">
             <div class="sub-nav" id="arabicNav"></div>
             <div class="sub-nav" style="display:none" id="intlNav"></div>
@@ -84,87 +103,63 @@
         </div>
     </header>
 
+    <!-- 3. Dynamic Content Container -->
     <div class="container">
+        <section id="arabic" class="active">
+            <div class="section-hero">
+                <div class="hero-text">
+                    <div class="hero-title">Arabic Menu</div>
+                    <div class="hero-sub">Breakfast · Grills · Traditional · More</div>
+                </div>
+            </div>
+        </section>
 
-        <!--  =========================================  -->
-        <!--  Desserts Section  -->
-        <!--  =========================================  -->
+        <section id="intl" style="display:none;">
+            <div class="section-hero">
+                <div class="hero-text">
+                    <div class="hero-title">International</div>
+                    <div class="hero-sub">Appetizers · Pasta · Pizza · Sandwiches</div>
+                </div>
+            </div>
+        </section>
+
         <section id="desserts" style="display:none;">
             <div class="section-hero">
-                <div class="hero-icon"></div>
                 <div class="hero-text">
                     <div class="hero-title">Desserts</div>
                     <div class="hero-sub">Fresh Oriental & Western Sweets</div>
                 </div>
             </div>
-            <div id="desserts_sec"></div>
         </section>
 
-        <!--  =========================================  -->
-        <!--  Drinks Section  -->
-        <!--  =========================================  -->
-        <section id="drinks" class="active">
+        <section id="drinks" style="display:none;">
             <div class="section-hero">
-                <div class="hero-icon"></div>
                 <div class="hero-text">
                     <div class="hero-title">Beverages</div>
-                    <div class="hero-sub">Specialty Coffee, Cold Drinks, Fresh Juices</div>
+                    <div class="hero-sub">Specialty Coffee · Juices · Cold Drinks</div>
                 </div>
             </div>
-            <div id="drinks_sec"></div>
         </section>
 
-        <!--  =========================================  -->
-        <!--  Arabic Menu Section  -->
-        <!--  =========================================  -->
-        <section id="arabic" style="display:none;">
-            <div class="section-hero">
-                <div class="hero-icon"></div>
-                <div class="hero-text">
-                    <div class="hero-title">Arabic Menu</div>
-                    <div class="hero-sub">Breakfast, Grills, Main Courses</div>
-                </div>
-            </div>
-            <div id="arabic_sec"></div>
-        </section>
-
-        <!--  =========================================  -->
-        <!--  International Section  -->
-        <!--  =========================================  -->
-        <section id="intl" style="display:none;">
-            <div class="section-hero">
-                <div class="hero-icon"></div>
-                <div class="hero-text">
-                    <div class="hero-title">International Menu</div>
-                    <div class="hero-sub">Appetizers, Pasta, Pizza, Sandwiches</div>
-                </div>
-            </div>
-            <div id="intl_sec"></div>
-        </section>
-
-        <!--  =========================================  -->
-        <!--  Argileh Section  -->
-        <!--  =========================================  -->
         <section id="argileh" style="display:none;">
             <div class="section-hero">
-                <div class="hero-icon"></div>
                 <div class="hero-text">
                     <div class="hero-title">Argileh</div>
-                    <div class="hero-sub">Premium Flavors & Shisha Experience</div>
+                    <div class="hero-sub">Premium Flavors & Selected Shisha</div>
                 </div>
             </div>
-            <div id="argileh_sec"></div>
         </section>
+    </div>
 
-    </div><!-- container -->
+    <!-- 4. Quick Contact/Social Bar -->
+    <div class="social-bar">
+        <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" target="_blank" class="s-link">Location</a>
+        <a href="https://wa.me/962779688633" target="_blank" class="s-link">WhatsApp</a>
+        <a href="https://www.instagram.com/tallo.hbabna/" target="_blank" class="s-link">Instagram</a>
+        <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" target="_blank" class="s-link">Facebook</a>
+    </div>
 
-    <button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-        <i class="fa-solid fa-chevron-up"></i>
-    </button>
-
-    <!--  =========================================  -->
-    <!--  DISH DETAIL MODAL  -->
-    <!--  =========================================  -->
+    <!-- 5. Dish Detail Modal -->
     <div class="modal-overlay" id="dishModal" onclick="closeModal(event)">
         <div class="modal-sheet" role="dialog" aria-modal="true">
             <button class="modal-close" onclick="closeDishModal()" aria-label="Close">&times;</button>
@@ -175,170 +170,165 @@
                     <h2 class="modal-title" id="modalTitle"></h2>
                     <span class="modal-price-badge" id="modalPrice"></span>
                 </div>
-                <p class="modal-label">Ingredients</p>
-                <div class="ingredients-row" id="modalIngredients"></div>
                 <p class="modal-label">Details</p>
                 <p class="modal-desc" id="modalDesc"></p>
             </div>
         </div>
     </div>
 
-    <!-- Firebase & Core JS -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="js/firebase-config.js"></script>
+    <!-- 6. Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        let _menuItems = {};
-        let _categoriesMeta = {};
-        let currentMainTab = 'arabic';
-
-        // Removed complex scroll logic to restore clean native behavior
-
+        var currentTab = 'arabic';
 
         function setTab(tabId, btn) {
-            currentMainTab = tabId;
+            currentTab = tabId;
             document.querySelectorAll('#mainTabRow .pill').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
+            if (btn) btn.classList.add('active');
             
-            document.querySelectorAll('section').forEach(s => {
-                s.style.display = 'none';
-                s.classList.remove('active');
+            document.querySelectorAll('section').forEach(s => { 
+                s.style.display = 'none'; 
+                s.classList.remove('active'); 
             });
-            const targetSec = document.getElementById(tabId);
-            if(targetSec) {
-                targetSec.style.display = 'block';
-                targetSec.classList.add('active');
+            
+            var targetSec = document.getElementById(tabId);
+            if (targetSec) { 
+                targetSec.style.display = 'block'; 
+                targetSec.classList.add('active'); 
             }
-
+            
             document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
-            const sn = document.getElementById(tabId + 'Nav');
-            if(sn) sn.style.display = 'flex';
-
+            var sn = document.getElementById(tabId + 'Nav');
+            if (sn) sn.style.display = 'flex';
+            
+            document.querySelectorAll('.sec-title, .menu-card').forEach(el => el.style.display = '');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function filterMenu() {
-            const q = document.getElementById('srch').value.toLowerCase();
-            const cards = document.querySelectorAll('.menu-card');
-            const titles = document.querySelectorAll('.sec-title');
-
-            if(q.length > 0) {
+            var srchEl = document.getElementById('srch');
+            if (!srchEl) return;
+            var q = srchEl.value.toLowerCase();
+            
+            if (q.length > 0) {
                 document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
                 document.querySelectorAll('section').forEach(s => s.style.display = 'block');
-                titles.forEach(t => t.style.display = 'none');
-                cards.forEach(c => {
-                    const match = c.dataset.t.toLowerCase().includes(q);
-                    c.style.display = match ? 'flex' : 'none';
+                document.querySelectorAll('.sec-title').forEach(st => st.style.display = 'none');
+                document.querySelectorAll('.menu-card').forEach(c => {
+                    c.style.display = c.dataset.t.toLowerCase().includes(q) ? 'flex' : 'none';
                 });
             } else {
-                titles.forEach(t => t.style.display = 'block');
-                setTab(currentMainTab, document.querySelector('#mainTabRow .pill.active'));
+                setTab(currentTab, document.querySelector('#mainTabRow .pill.active'));
             }
         }
 
-        function buildCard(item) {
-            const a = document.createElement('a');
-            a.className = 'menu-card';
-            a.dataset.t = item.nameEn || item.nameAr;
-            a.onclick = () => openDishModal(item);
+        function openDishModal(card) {
+            var name = card.dataset.t || '';
+            var price = card.querySelector('.card-price') ? card.querySelector('.card-price').textContent : '';
+            var desc = card.dataset.desc || '';
+            var bgUrl = card.querySelector('.card-img').style.backgroundImage.slice(4, -1).replace(/"/g, "");
 
-            const imgDiv = document.createElement('div');
-            imgDiv.className = 'card-img';
-            if(item.image) {
-                const img = document.createElement('img');
-                img.src = item.image;
-                img.loading = 'lazy';
-                imgDiv.appendChild(img);
-            }
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('modalPrice').textContent = price;
+            document.getElementById('modalDesc').textContent = desc;
 
-            const body = document.createElement('div');
-            body.className = 'card-body';
-            
-            const name = document.createElement('h3');
-            name.className = 'card-name';
-            name.textContent = item.nameEn || item.nameAr;
-            
-            const price = document.createElement('span');
-            price.className = 'card-price';
-            price.textContent = item.price ? `${item.price} JD` : '';
+            var modalImg = document.getElementById('modalImg');
+            modalImg.innerHTML = bgUrl ? `<img src="${bgUrl}" style="width:100%;height:100%;object-fit:cover;">` : `<img src="images/tallo-logo.png" style="width:160px;margin:auto;">`;
 
-            body.appendChild(name);
-            body.appendChild(price);
-            a.appendChild(imgDiv);
-            a.appendChild(body);
-            return a;
-        }
-
-        function openDishModal(item) {
-            document.getElementById('modalTitle').textContent = item.nameEn || item.nameAr;
-            document.getElementById('modalPrice').textContent = item.price ? `${item.price} JD` : '';
-            document.getElementById('modalDesc').textContent = item.descriptionEn || item.descriptionAr || '';
-            
-            const mImg = document.getElementById('modalImg');
-            mImg.style.backgroundImage = item.image ? `url(${item.image})` : 'none';
-
-            const ingRow = document.getElementById('modalIngredients');
-            ingRow.innerHTML = '';
-            const ings = (item.ingredientsEn || item.ingredientsAr || '').split(',');
-            ings.forEach(ing => {
-                if(ing.trim()){
-                    const span = document.createElement('span');
-                    span.className = 'ing-pill';
-                    span.textContent = ing.trim();
-                    ingRow.appendChild(span);
-                }
-            });
-
-            document.getElementById('dishModal').classList.add('active');
+            document.getElementById('dishModal').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
 
         function closeDishModal() {
-            document.getElementById('dishModal').classList.remove('active');
+            document.getElementById('dishModal').classList.remove('open');
             document.body.style.overflow = '';
         }
 
         function closeModal(e) {
-            if(e.target.classList.contains('modal-overlay')) closeDishModal();
+            if (e.target === document.getElementById('dishModal')) closeDishModal();
+        }
+
+        const _fbCfg = {
+            apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+            authDomain: "tallow-ahbabna.firebaseapp.com",
+            projectId: "tallow-ahbabna",
+            storageBucket: "tallow-ahbabna.firebasestorage.app",
+            messagingSenderId: "1025966646494",
+            appId: "1:1025966646494:web:f89373fad63d988f298e4f",
+            databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(_fbCfg);
+        const db = firebase.database();
+
+        let _menuItems = null;
+        let _categoriesMeta = null;
+
+        function buildCard(item) {
+            const card = document.createElement('a');
+            card.className = 'menu-card';
+            card.setAttribute('data-t', item.nameEn || item.name || '');
+            card.setAttribute('data-desc', item.descEn || item.desc || '');
+            
+            const imgStyle = item.image ? `background-image:url('${item.image}')` : '';
+            const price = (item.price || '').toString().trim();
+            
+            card.innerHTML = `
+                <div class="card-img" style="${imgStyle}"></div>
+                <div class="card-body">
+                    <h3 class="card-name">${item.nameEn || item.name || ''}</h3>
+                    <span class="card-price">${price ? price + ' JD' : ''}</span>
+                </div>
+            `;
+            card.addEventListener('click', (e) => { e.preventDefault(); openDishModal(card); });
+            return card;
         }
 
         function renderFullMenu() {
+            if (!_menuItems || !_categoriesMeta) return;
+
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {
-                if(item.status === 'inactive') return;
-                if(!itemsByCat[item.category]) itemsByCat[item.category] = [];
+                if (item.status === 'inactive') return;
+                if (!item.category) return;
+                if (!itemsByCat[item.category]) itemsByCat[item.category] = [];
                 itemsByCat[item.category].push(item);
             });
 
-            const mainTabs = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
-            mainTabs.forEach(mainId => {
-                const navEl = document.getElementById(mainId + 'Nav');
-                const secEl = document.getElementById(mainId + '_sec');
-                if(!navEl || !secEl) return;
-                navEl.innerHTML = '';
-                secEl.innerHTML = '';
+            const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
+            sectionKeys.forEach(secKey => {
+                const navEl = document.getElementById(secKey + 'Nav');
+                const secEl = document.getElementById(secKey);
+                if (!navEl || !secEl) return;
 
-                const cats = Object.values(_categoriesMeta)
-                    .filter(c => c.section === mainId)
-                    .sort((a,b) => (a.order || 0) - (b.order || 0));
+                navEl.innerHTML = '';
+                const hero = secEl.querySelector('.section-hero');
+                secEl.innerHTML = '';
+                if (hero) secEl.appendChild(hero);
+
+                const cats = Object.entries(_categoriesMeta)
+                    .map(([id, val]) => ({ id, ...val }))
+                    .filter(c => c.section === secKey)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 cats.forEach(cat => {
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
                     btn.className = 'cat-btn';
                     btn.textContent = cat.nameEn || cat.nameAr;
-                    if(cat.icon) {
-                        const icon = document.createElement('i');
-                        icon.className = `fa-solid ${cat.icon}`;
-                        btn.prepend(icon);
-                    }
+                    if(cat.icon) btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ` + btn.innerHTML;
+                    btn.addEventListener('click', function() {
+                        navEl.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    });
                     navEl.appendChild(btn);
 
                     const h2 = document.createElement('h2');
                     h2.id = cat.id;
                     h2.className = 'sec-title';
                     h2.textContent = cat.nameEn || cat.nameAr;
+                    if(cat.icon) h2.innerHTML = `<i class="fa-solid ${cat.icon} sec-icon"></i> ` + h2.innerHTML;
                     
                     const grid = document.createElement('div');
                     grid.className = 'menu-grid';
@@ -352,13 +342,18 @@
         }
 
         function initListeners() {
-            if (typeof db === 'undefined') { setTimeout(initListeners, 500); return; }
-            db.ref('menu_items').on('value', (s) => { const d = s.val(); if(d){ _menuItems=d; renderFullMenu(); } });
-            db.ref('categories_meta').on('value', (s) => { const d = s.val(); if(d){ _categoriesMeta=d; renderFullMenu(); } });
+            db.ref('menu_items').on('value', snap => { _menuItems = snap.val(); renderFullMenu(); });
+            db.ref('categories_meta').on('value', snap => { _categoriesMeta = snap.val(); renderFullMenu(); });
         }
         initListeners();
+
+        window.addEventListener('load', () => {
+            var hash = window.location.hash.replace('#', '');
+            if (hash === 'intl') setTab('intl', document.querySelectorAll('.pill')[1]);
+            else if (hash === 'drinks') setTab('drinks', document.querySelectorAll('.pill')[3]);
+            else if (hash === 'argileh') setTab('argileh', document.querySelectorAll('.pill')[4]);
+        });
     </script>
-    <!-- Firebase Design Sync -->
     <script src="js/design-sync.js"></script>
     <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>

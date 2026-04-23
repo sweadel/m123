@@ -1,18 +1,35 @@
 <!DOCTYPE html>
+<!-- 
+  ==========================================================================
+  PROJECT: Tallo Ahbabna - Digital Menu
+  FILE: menu.html (Arabic Version)
+  DESCRIPTION: The dynamic menu page. Renders food and drink categories 
+               real-time from Firebase. Supports search and category filtering.
+  VERSION: 3.0 (Cleaned & Dynamic)
+  ==========================================================================
+-->
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>طلوا حبابنا | قائمة الطعام</title>
+    
+    <!-- Fonts: Premium Arabic & English Selection -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap">
+    
+    <!-- Core CSS & Icons -->
     <link rel="stylesheet" href="css/menu-final-v1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        /* FORCE STYLE OVERRIDE - لضمان عدم تغير التصميم مهما حدث */
+        /* 
+        --------------------------------------------------------------------------
+        DESIGN OVERRIDES
+        --------------------------------------------------------------------------
+        */
         .hdr-top {
             background-image: url('images/header-sadu-final.png') !important;
             background-color: #1a0505 !important;
@@ -26,14 +43,13 @@
             height: 105px !important;
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
         }
-        /* Arabic-specific overrides */
         body { direction: rtl; font-weight: 700; }
         .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
     </style>
 </head>
 
 <body>
-    <!-- Promo Banner -->
+    <!-- 1. Promo Banner (Managed via Admin Panel) -->
     <div id="promo-banner" class="promo-banner" style="display: none;">
         <div class="promo-content">
             <i class="fa-solid fa-bullhorn"></i>
@@ -41,21 +57,22 @@
         </div>
     </div>
 
+    <!-- 2. Sticky/Collapsing Header -->
     <header id="mainHeader">
-        <!-- ─── HDR TOP: Arched Design ─── -->
+        <!-- HDR TOP: Branding & Search -->
         <div class="hdr-top">
             <div class="arch-overlay"></div>
             
-            <!-- Back Button -->
-            <a href="index.html" class="back-btn" title="العودة للصفحة الرئيسية">
+            <!-- Back to Landing Page -->
+            <a href="index.html" class="back-btn" title="العودة">
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
             <div class="logo-wrap">
-                <img src="images/tallo-logo.png" alt="Tallo Ahbabna Logo">
+                <img src="images/tallo-logo.png" alt="Logo">
             </div>
 
-            <!-- Main Category Pills (Arabic, Intl, etc) -->
+            <!-- Main Tab Pills (Section Switcher) -->
             <div class="nav-row" id="mainTabRow">
                 <a href="javascript:void(0)" class="pill active" onclick="setTab('arabic', this)">المنيو العربي</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">الانترناشونال</a>
@@ -64,7 +81,7 @@
                 <a href="javascript:void(0)" class="pill" onclick="setTab('argileh', this)">الأراجيل</a>
             </div>
 
-            <!-- Search Row -->
+            <!-- Global Search Box -->
             <div class="search-row">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass" style="color: var(--gold); font-size: 1rem;"></i>
@@ -73,7 +90,7 @@
             </div>
         </div>
 
-        <!-- ─── HDR BOTTOM: Categories Navigation ─── -->
+        <!-- HDR BOTTOM: Category Shortcuts (Sub-Navigation) -->
         <div class="hdr-bottom">
             <div class="sub-nav" id="arabicNav"></div>
             <div class="sub-nav" style="display:none" id="intlNav"></div>
@@ -83,986 +100,73 @@
         </div>
     </header>
 
+    <!-- 3. Dynamic Content Container -->
     <div class="container">
+        <!-- Sections are filled dynamically by JS (initListeners -> renderFullMenu) -->
+        <section id="arabic" class="active">
+            <div class="section-hero">
+                <div class="hero-text">
+                    <div class="hero-title">المنيو العربي</div>
+                    <div class="hero-sub">إفطار · شعبيات · مشاوي · والمزيد</div>
+                </div>
+            </div>
+            <!-- Dynamic Category Groups (h2 + grid) go here -->
+        </section>
 
-        <!--  =========================================  -->
-        <!--  قسم الحلويات (Desserts)  -->
-        <!--  =========================================  -->
+        <section id="intl" style="display:none;">
+            <div class="section-hero">
+                <div class="hero-text">
+                    <div class="hero-title">الانترناشونال</div>
+                    <div class="hero-sub">مقبلات · باستا · بيتزا · سندويشات</div>
+                </div>
+            </div>
+        </section>
+
         <section id="desserts" style="display:none;">
             <div class="section-hero">
-                <div class="hero-icon"></div>
                 <div class="hero-text">
                     <div class="hero-title">الحلويات</div>
                     <div class="hero-sub">حلويات شرقية وغربية طازجة</div>
                 </div>
             </div>
-            <div id="desserts_sec"></div>
         </section>
 
-        <!--  =========================================  -->
-        <!--  قسم المشروبات (Drinks)  -->
-        <!--  =========================================  -->
-        <section id="drinks" class="active">
-
+        <section id="drinks" style="display:none;">
             <div class="section-hero">
-                <div class="hero-icon"></div>
                 <div class="hero-text">
                     <div class="hero-title">المشروبات</div>
-                    <div class="hero-sub">قهوة مختصة مشروبات باردة عصائر طازجة</div>
+                    <div class="hero-sub">قهوة مختصة · عصائر · مشروبات باردة</div>
                 </div>
-            </div>
-
-            <div id="drinks_sec">
-                <h2 id="s-specialty" class="sec-title">قهوة مختصة</h2>
-                <!-- لإضافة صنف جديد: انسخ السطر التالي وضعه تحت الأصناف الأخرى -->
-                <!-- <a class="menu-card" data-t="اسم الصنف الجديد"><div class="card-img"></div><div class="card-body"><h3 class="card-name">اسم الصنف</h3><span class="card-price">السعر</span></div></a> -->
-                <div class="menu-grid">
-                    <a class="menu-card" data-t="إسبريسو">
-                        <div class="card-img"></div>
-                        <div class="card-body">
-                            <h3 class="card-name">إسبريسو</h3><span class="card-price"></span>
-                        </div>
-                    </a>
-                    <a class="menu-card" data-t="أمريكانو">
-                        <div class="card-img"></div>
-                        <div class="card-body">
-                            <h3 class="card-name">أمريكانو</h3><span class="card-price"></span>
-                        </div>
-                    </a>
-                </div>
-            <!-- مياه معدنية، مشروبات غازية، ريد بول -->
-            <div class="menu-grid">
-                <a class="menu-card" data-t="مياه معدنية">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مياه معدنية</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="مشروبات غازية">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مشروبات غازية</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ريد بول">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ريد بول</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            </div> <!-- Close drinks_sec -->
-        </section>
-
-        <!--  =========================================  -->
-        <!--  المنيو العربي (Arabic)  -->
-        <!--  =========================================  -->
-        <section id="arabic" style="display:none;">
-
-            <div class="section-hero">
-                <div class="hero-icon"></div>
-                <div class="hero-text">
-                    <div class="hero-title">المنيو العربي</div>
-                    <div class="hero-sub">إفطار شعبيات مشاوي حلويات</div>
-                </div>
-            </div>
-
-            <div id="arabic_sec">
-                <h2 id="ar-break" class="sec-title">الإفطار والمناقيش</h2>
-                <!-- فطور عربي أصيل: مناقيش، حمص، فول، فلافل، أومليت، طبلية -->
-                <div class="menu-grid">
-                    <a class="menu-card" data-t="مناقيش زعتر">
-                        <div class="card-img"></div>
-                        <div class="card-body">
-                            <h3 class="card-name">مناقيش زعتر</h3><span class="card-price"></span>
-                        </div>
-                    </a>
-                <a class="menu-card" data-t="مناقيش جبنه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مناقيش جبنه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="مناقيش جبنه وزعتر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مناقيش جبنه وزعتر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="menu-grid">
-                <a class="menu-card" data-t="حمص">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">حمص</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فول">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فول</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فلافل طلوا حبابنا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فلافل طلوا حبابنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="اومليت خضار">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">اومليت خضار</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="اومليت جبنه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">اومليت جبنه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فته حمص">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فته حمص</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فته باذنجان/مقدوس">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فته باذنجان/مقدوس</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="اوفو الفورنو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">اوفو الفورنو</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="هاش براون">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">هاش براون</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="menu-grid">
-                <a class="menu-card" data-t="طبلية فطور عربي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">طبلية فطور عربي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="طبلية فطور غربي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">طبلية فطور غربي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="ar-salads" class="sec-title">مقبلات باردة وسلطات</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="التبوله العربيه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">التبوله العربيه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="تبولة رمان (بدون برغل)">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">تبولة رمان (بدون برغل)</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فتوشس طلوحبابنا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فتوشس طلوحبابنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سلطه بالطحينيه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سلطه بالطحينيه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سلطة باذنجان">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سلطة باذنجان</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="حمص بيروتي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">حمص بيروتي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="حمص صنوبر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">حمص صنوبر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="حمص حار">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">حمص حار</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="حمص لحمة بالصنوبر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">حمص لحمة بالصنوبر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="متبل باذنجان">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">متبل باذنجان</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بابا غنوج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بابا غنوج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="لبنه طريه مع زيت الزيتون والجوز والثوم">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">لبنه طريه مع زيت الزيتون والجوز والثوم</h3><span
-                            class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="لبنة بالزعتر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">لبنة بالزعتر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="لبنة طلو حبابنا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">لبنة طلو حبابنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="محمره">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">محمره</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="شنكليش مخلوط">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شنكليش مخلوط</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="مخللات مطعمنا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مخللات مطعمنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="صحن مزه / خضار مشكله">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">صحن مزه / خضار مشكله</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <!-- Removed duplicated title, added anchor -->
-            <h2 id="ar-salads-hot" class="sec-title">مقبلات ساخنة</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="روكيلا حلوم مشوي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">روكيلا حلوم مشوي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كبه مقليه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كبه مقليه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كبه مشويه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كبه مشويه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="صحن فلافل">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">صحن فلافل</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سمبوسك (4 قطع)">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سمبوسك (4 قطع)</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فطر طلوا حبابنا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فطر طلوا حبابنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كبدة دبس رمان">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كبدة دبس الرمان او البصل والفلفل</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="جوانح مشويه او مطفا بالثوم والليمون">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">جوانح مشويه او مطفا بالثوم والليمون</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بطاطا حاره">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بطاطا حاره</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="قلاية بندورة">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">قلاية بندورة</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="قلاية بندورة باللحمة">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">قلاية بندورة باللحمة</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <h2 id="ar-main" class="sec-title">الأطباق الرئيسية</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="منسف بلدي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">منسف بلدي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="مسخن الدجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مسخن الدجاج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="ar-grill" class="sec-title">من الفخار والفرن</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="صنية دجاج بالاعشاب والبطاطا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">صنية دجاج بالاعشاب والبطاطا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كفتة بالبندورة">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كفته بالبندورة او الطحينيه او الجميد</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فخارة الدجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فخارة الدجاج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فخارة لحمة">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فخارة لحمة</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="صنية فيليه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">صنية فيليه</h3><span class="card-price"></span>
-                    </div>
-            </div>
-            <h2 id="ar-grill-char" class="sec-title">مشاوي على الجمر</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="مشاوي مشكل" data-desc="متوفر: ربع كيلو، نصف كيلو، 1 كيلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مشاوي مشكل</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كباب حلبي" data-desc="متوفر: ربع كيلو، نصف كيلو، 1 كيلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كباب حلبي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كباب خشخاش" data-desc="متوفر: ربع كيلو، نصف كيلو، 1 كيلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كباب خشخاش</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="شقف" data-desc="متوفر: ربع كيلو، نصف كيلو، 1 كيلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شقف</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="شيش طاووق" data-desc="متوفر: ربع كيلو، نصف كيلو، 1 كيلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شيش طاووق</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ريش مشويه" data-desc="متوفر: ربع كيلو، نصف كيلو، 1 كيلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ريش مشويه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="دجاج نص دجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">دجاج (نص دجاج) مع بطاطا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="دجاج بالزعتر مع بطاطا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">دجاج بالزعتر مع بطاطا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="عرايس">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">عرايس</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="ar-soups" class="sec-title">شوربات يومية</h2>
-            <!-- شوربة العدس، الخضار، الفطر -->
-            <div class="menu-grid">
-                <a class="menu-card" data-t="شوربة العدس">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شوربة العدس</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="شوربة الخضار">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شوربة الخضار</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="شوربة الفطر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شوربة الفطر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="ar-sweets" class="sec-title">الحلويات</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="كنافه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كنافه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بقلاوه تركية">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بقلاوه تركية</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ام علي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ام علي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <h2 id="ar-lunch" class="sec-title">أطباق الغداء</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="منسف بلدي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">منسف بلدي بالجميد الكركي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="مقلوبة دجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مقلوبة دجاج بالخضار</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كبسة دجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كبسة دجاج تلو حبابنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="أوزي باللحم">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">أوزي باللحم والمكسرات</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فريكة بالدجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فريكة بالدجاج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="طبق اليوم">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">طبق اليوم (اسأل الموظف)</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            </div> <!-- Close arabic_sec -->
-        </section>
-
-
-
-        <!--  =========================================  -->
-        <!--  انترناشونل (International)  -->
-        <!--  =========================================  -->
-        <section id="intl" style="display:none;">
-
-            <div class="section-hero">
-                <div class="hero-icon"></div>
-                <div class="hero-text">
-                    <div class="hero-title">المنيو الانترناشونل</div>
-                    <div class="hero-sub">مقبلات باستا بيتزا سندويشات</div>
-                </div>
-            </div>
-
-            <div id="intl_sec">
-                <h2 id="in-app" class="sec-title">مزة ساخنة</h2>
-                <div class="menu-grid">
-                    <a class="menu-card" data-t="تشكن او بيف ناتشوز">
-                        <div class="card-img"></div>
-                        <div class="card-body">
-                            <h3 class="card-name">تشكن او بيف ناتشوز</h3><span class="card-price"></span>
-                        </div>
-                    </a>
-                <a class="menu-card" data-t="موزريلا ستيكس">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">موزريلا ستيكس</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فرايد تشكن تندر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فرايد تشكن تندر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="شرم دايناميت">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">شرم دايناميت</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بونلس تشكن">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بونلس تشكن</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بطاطا ويدجز">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بطاطا ويدجز</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بطاطا فرايز">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بطاطا فرايز</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <h2 id="in-salads" class="sec-title"><span class="sec-icon"></span><span>سلطات عالمية</span></h2>
-            <!-- سيزر، يونانية، كوب سلطة... -->
-            <div class="menu-grid">
-                <a class="menu-card" data-t="سلطة سيزر بالدجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سلطة سيزر بالدجاج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سلطة السيزر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سلطة السيزر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سلطه يونانيه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سلطه يونانيه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سلطة الكبريزه اليونانيه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سلطة الكبريزه اليونانيه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="المانجو شرم سالاد">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">المانجو شرم سالاد</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="السلطة الكراب">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">السلطة الكراب</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="سيتروس بيت روت سالاد">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سيتروس بيت روت سالاد</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="in-main" class="sec-title">أطباق لبلد</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="سويس رول كوردون بلو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">سويس رول كوردون بلو</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="دجاج بالليمون والاعشاب">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">دجاج بالليمون والاعشاب</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بولو الفريدو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بولو الفريدو</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="هامور ستيك المشوي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">هامور ستيك المشوي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ستيك السمك المقلي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ستيك السمك المقلي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="رويال سالمون">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">رويال سالمون</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بيبر ستيك">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيبر ستيك</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ماشروم ستيك">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ماشروم ستيك</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="in-pasta" class="sec-title"><span class="sec-icon"></span><span>باستا إيطالية</span></h2>
-            <!-- بولونيز، كريمة، بيستو، ألفريدو... -->
-            <div class="menu-grid">
-                <a class="menu-card" data-t="فيتوتشيني الفريدو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فيتوتشيني الفريدو</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بيني ارابياتا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيني ارابياتا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="لازانيا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">لازانيا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <h2 id="in-sand" class="sec-title"><span class="sec-icon"></span><span>ساندويشات وسناكات</span></h2>
-            <!-- برغر، فيلي ستيك، زنجر، كلاب... -->
-            <div class="menu-grid">
-                <a class="menu-card" data-t="انجوس تشيز برغر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">انجوس تشيز برغر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="باربيكيو فرايد تشكن برغر">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">باربيكيو فرايد تشكن برغر</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="تشكن سيزر ساندويتش">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">تشكن سيزر ساندويتش</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="جريل حلوم الابيستو ساندويش">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">جريل حلوم الابيستو ساندويش</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ستيك ساندويش">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ستيك ساندويش</h3><span class="card-price"></span>
-                    </div>
-                </a>
-
-                <a class="menu-card" data-t="زنجر ساندويش">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">زنجر ساندويش</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كلاب ساندويش">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كلاب ساندويش</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ساندويش شاورما دجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ساندويش شاورما دجاج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="ساندويش شاورما لحمه">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">ساندويش شاورما لحمه</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-
-            <h2 id="in-pizza" class="sec-title"><span class="sec-icon"></span><span>بيتزا يدوية الصنع</span></h2>
-            <!-- مارغريتا، بيبيروني، خضار، زنجر باربيكيو... -->
-            <div class="menu-grid">
-                <a class="menu-card" data-t="بيتزا مارجاريتا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيتزا مارجاريتا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بيتزا الخضار">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيتزا الخضار</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بيتزا بيبيروني">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيتزا بيبيروني</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بيتزا زنجر (باربيكيو)">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيتزا زنجر (باربكيو)</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بيتزا ميكس تشيز">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيتزا ميكس تشيز</h3><span class="card-price"></span>
-                    </div>
-                </a>
-
-                <a class="menu-card" data-t="بيتزا الفريدو">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بيتزا الفريدو</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            <h2 id="in-lunch" class="sec-title">أطباق الغداء</h2>
-            <div class="menu-grid">
-                <a class="menu-card" data-t="منسف بلدي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">منسف بلدي بالجميد الكركي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="مقلوبة دجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">مقلوبة دجاج بالخضار</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كبسة دجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كبسة دجاج تلو حبابنا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="أوزي باللحم">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">أوزي باللحم والمكسرات</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="فريكة بالدجاج">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">فريكة بالدجاج</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="طبق اليوم">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">طبق اليوم (اسأل الموظف)</h3><span class="card-price"></span>
-                    </div>
-                </a>
             </div>
         </section>
 
-        <!--  =========================================  -->
-        <!--  أراجيل (Argileh)  -->
-        <!--  =========================================  -->
         <section id="argileh" style="display:none;">
             <div class="section-hero">
-                <div class="hero-icon"></div>
                 <div class="hero-text">
                     <div class="hero-title">قائمة الأراجيل</div>
-                    <div class="hero-sub">عنب وتوت · بلو مست · والمزيد</div>
+                    <div class="hero-sub">أنواع فاخرة ومختارة</div>
                 </div>
             </div>
-
-            <div id="argileh_sec">
-                <h2 id="arg-all" class="sec-title">أنواع الأراجيل</h2>
-                <div class="menu-grid">
-                    <a class="menu-card" data-t="أرجيلة عنب وتوت">
-                        <div class="card-img"></div>
-                        <div class="card-body">
-                            <h3 class="card-name">أرجيلة عنب وتوت</h3><span class="card-price"></span>
-                        </div>
-                    </a>
-                <a class="menu-card" data-t="أرجيلة بلو مست">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">أرجيلة بلو مست</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="لمون ونعنع مزايا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">لمون ونعنع مزايا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="تفاحتين مزايا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">تفاحتين مزايا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="علكة وقرفة مزايا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">علكة وقرفة مزايا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="كاندي">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">كاندي</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="بطيخ ونعنع مزايا">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">بطيخ ونعنع مزايا</h3><span class="card-price"></span>
-                    </div>
-                </a>
-                <a class="menu-card" data-t="تفاحتين نخلة">
-                    <div class="card-img"></div>
-                    <div class="card-body">
-                        <h3 class="card-name">تفاحتين نخلة</h3><span class="card-price"></span>
-                    </div>
-                </a>
-            </div>
-            </div> <!-- Close argileh_sec -->
         </section>
+    </div>
 
-
-
-    </div><!-- /container -->
-
-    <!-- Social Bar -->
+    <!-- 4. Quick Contact/Social Bar -->
     <div class="social-bar">
         <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" target="_blank" class="s-link">
-            <svg viewBox="0 0 384 512" fill="#8B2030">
-                <path
-                    d="M215.7 499.2C267 435 384 279.4 384 192 384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" />
-            </svg>
             <span>الموقع</span>
         </a>
         <a href="https://wa.me/962779688633" target="_blank" class="s-link">
-            <svg viewBox="0 0 448 512" fill="#25D366">
-                <path
-                    d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-23.2-115-65.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
-            </svg>
             <span>واتساب</span>
         </a>
         <a href="https://www.instagram.com/tallo.hbabna/" target="_blank" class="s-link">
-            <svg viewBox="0 0 448 512" fill="#E1306C">
-                <path
-                    d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-            </svg>
             <span>إنستغرام</span>
         </a>
         <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" target="_blank" class="s-link">
-            <svg viewBox="0 0 512 512" fill="#1877F2">
-                <path
-                    d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 79.8 476.8 189.2 504.5V334.2H131.8V256h57.4v-58.8c0-56.9 33.9-88.3 85.7-88.3 24.8 0 50.8 4.4 50.8 4.4v55.9H297c-28.2 0-37 17.5-37 35.4V256H322l-8.4 78.2H260V504.5C370.2 476.8 512 376 512 256z" />
-            </svg>
             <span>فيسبوك</span>
         </a>
     </div>
 
-    <!--  DISH DETAIL MODAL  -->
+    <!-- 5. Dish Detail Modal (Bottom Sheet Style) -->
     <div class="modal-overlay" id="dishModal" onclick="closeModal(event)">
         <div class="modal-sheet" role="dialog" aria-modal="true">
             <button class="modal-close" onclick="closeDishModal()" aria-label="إغلاق">&times;</button>
@@ -1073,98 +177,78 @@
                     <h2 class="modal-title" id="modalTitle"></h2>
                     <span class="modal-price-badge" id="modalPrice"></span>
                 </div>
-                <p class="modal-label">المكونات</p>
-                <div class="ingredients-row" id="modalIngredients"></div>
                 <p class="modal-label">التفاصيل</p>
                 <p class="modal-desc" id="modalDesc"></p>
             </div>
         </div>
     </div>
 
+    <!-- 6. Scripts: Firebase & Logic -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
     <script>
+        /**
+         * MENU NAVIGATION LOGIC
+         */
         var currentTab = 'arabic';
 
-        /*  Tab switching  */
         function setTab(tabId, btn) {
             currentTab = tabId;
-            document.querySelectorAll('#mainTabRow .pill').forEach(function (b) { b.classList.remove('active') });
+            document.querySelectorAll('#mainTabRow .pill').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            document.querySelectorAll('section').forEach(function (s) { s.style.display = 'none'; s.classList.remove('active'); });
+            
+            document.querySelectorAll('section').forEach(s => { 
+                s.style.display = 'none'; 
+                s.classList.remove('active'); 
+            });
+            
             var targetSec = document.getElementById(tabId);
-            if (targetSec) { targetSec.style.display = 'block'; targetSec.classList.add('active'); }
-            document.querySelectorAll('.sub-nav').forEach(function (sn) { sn.style.display = 'none' });
+            if (targetSec) { 
+                targetSec.style.display = 'block'; 
+                targetSec.classList.add('active'); 
+            }
+            
+            document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
             var sn = document.getElementById(tabId + 'Nav');
             if (sn) sn.style.display = 'flex';
-            document.querySelectorAll('.sec-title').forEach(function (st) { st.style.display = ''; });
-            document.querySelectorAll('.menu-card').forEach(function (c) { c.style.display = 'flex'; });
-            // Clear search on tab switch
-            var srch = document.getElementById('menuSearch');
-            if (srch) srch.value = '';
+            
+            document.querySelectorAll('.sec-title, .menu-card').forEach(el => el.style.display = '');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /*  Search  */
-        function handleSearch() {
-            filterMenu();
-        }
-
         function filterMenu() {
-            // Support both old (srch) and new (menuSearch) input ids
-            var srchEl = document.getElementById('menuSearch') || document.getElementById('srch');
+            var srchEl = document.getElementById('srch');
             if (!srchEl) return;
             var q = srchEl.value.toLowerCase();
+            
             if (q.length > 0) {
-                document.querySelectorAll('.sub-nav').forEach(function (sn) { sn.style.display = 'none' });
-                document.querySelectorAll('section').forEach(function (s) { s.style.display = 'block' });
-                document.querySelectorAll('.sec-title').forEach(function (st) { st.style.display = 'none' });
-                document.querySelectorAll('.menu-card').forEach(function (c) {
+                document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
+                document.querySelectorAll('section').forEach(s => s.style.display = 'block');
+                document.querySelectorAll('.sec-title').forEach(st => st.style.display = 'none');
+                document.querySelectorAll('.menu-card').forEach(c => {
                     c.style.display = c.dataset.t.toLowerCase().includes(q) ? 'flex' : 'none';
                 });
             } else {
-                document.querySelectorAll('.sec-title').forEach(function (st) { st.style.display = ''; });
                 setTab(currentTab, document.querySelector('#mainTabRow .pill.active'));
             }
         }
 
-        /*  Sub-nav active state  */
-        document.querySelectorAll('.sub-nav .cat-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var pn = this.closest('.sub-nav');
-                if (pn) pn.querySelectorAll('.cat-btn').forEach(function (b) { b.classList.remove('active') });
-                this.classList.add('active');
-            });
-        });
-
-        /*  Dish detail modal  */
+        /**
+         * MODAL LOGIC
+         */
         function openDishModal(card) {
-            var name = card.querySelector('.card-name') ? card.querySelector('.card-name').textContent : (card.dataset.t || '');
+            var name = card.dataset.t || '';
             var price = card.querySelector('.card-price') ? card.querySelector('.card-price').textContent : '';
             var desc = card.dataset.desc || '';
-            var cardImgDiv = card.querySelector('.card-img');
-            var bgUrl = cardImgDiv ? cardImgDiv.style.backgroundImage.slice(4, -1).replace(/"/g, "") : "";
+            var bgUrl = card.querySelector('.card-img').style.backgroundImage.slice(4, -1).replace(/"/g, "");
 
             document.getElementById('modalTitle').textContent = name;
             document.getElementById('modalPrice').textContent = price;
             document.getElementById('modalDesc').textContent = desc;
 
-            // Handle Modal Image Display
             var modalImg = document.getElementById('modalImg');
-            modalImg.innerHTML = '';
-            
-            if (bgUrl) {
-                var imgEl = document.createElement('img');
-                imgEl.src = bgUrl;
-                imgEl.style.width = '100%';
-                imgEl.style.height = '100%';
-                imgEl.style.objectFit = 'contain';
-                modalImg.appendChild(imgEl);
-            } else {
-                // Default fallback if no image
-                var logo = document.createElement('img');
-                logo.src = 'images/tallo-logo.png';
-                logo.style.width = '160px';
-                modalImg.appendChild(logo);
-            }
+            modalImg.innerHTML = bgUrl ? `<img src="${bgUrl}" style="width:100%;height:100%;object-fit:cover;">` : `<img src="images/tallo-logo.png" style="width:160px;margin:auto;">`;
 
             document.getElementById('dishModal').classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -1179,37 +263,9 @@
             if (e.target === document.getElementById('dishModal')) closeDishModal();
         }
 
-        // Attach click to all cards
-        document.querySelectorAll('.menu-card').forEach(function (card) {
-            card.addEventListener('click', function (e) {
-                e.preventDefault();
-                openDishModal(this);
-            });
-        });
-
-        // Close on escape
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeDishModal();
-        });
-
-        // تمت إزالة تأثيرات السكرول المعقدة للعودة للشكل الطبيعي والنظيف
-
-
-
-        var initialTab = 'arabic';
-        var hash = window.location.hash.replace('#', '');
-        var pillIndex = 0;
-        if (hash === 'intl') { initialTab = 'intl'; pillIndex = 1; }
-        else if (hash === 'drinks') { initialTab = 'drinks'; pillIndex = 2; }
-        else if (hash === 'argileh') { initialTab = 'argileh'; pillIndex = 3; }
-        setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
-    </script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-    <script>
-        // ── Firebase Menu Integration ─────────────────────────────
+        /**
+         * FIREBASE INTEGRATION
+         */
         const _fbCfg = {
             apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
             authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -1222,61 +278,32 @@
         if (!firebase.apps.length) firebase.initializeApp(_fbCfg);
         const db = firebase.database();
 
-        // ── Find and CLEAR all grids for a section ──
-        function prepareGridsForSection(sectionId) {
-            const heading = document.getElementById(sectionId);
-            if (!heading) return [];
-            const grids = [];
-            let sibling = heading.nextElementSibling;
-            while (sibling) {
-                if (sibling.tagName === 'H2') break;
-                if (sibling && sibling.classList && sibling.classList.contains('menu-grid')) {
-                    grids.push(sibling);
-                    sibling.innerHTML = ""; // Clear it
-                }
-                sibling = sibling.nextElementSibling;
-            }
-            return grids;
-        }
-
-        // ── Cache for menu data to allow combined rendering ──
         let _menuItems = null;
         let _categoriesMeta = null;
 
-        // ── Helper: Build a card element ──────────────────────────
         function buildCard(item) {
             const card = document.createElement('a');
             card.className = 'menu-card';
-            if (item.image) card.setAttribute('data-img', item.image);
             card.setAttribute('data-t', item.nameAr || item.name || '');
             card.setAttribute('data-desc', item.descAr || item.desc || '');
             
-            const imgStyle = item.image
-                ? `background-image:url('${item.image}');background-size:cover;background-position:center;`
-                : '';
-            
-            const name = (document.documentElement.lang === 'en') ? (item.nameEn || item.nameAr || item.name || '') : (item.nameAr || item.name || '');
+            const imgStyle = item.image ? `background-image:url('${item.image}')` : '';
             const price = (item.price || '').toString().trim();
-            const priceDisplay = price ? price + ' د.أ' : '';
+            
             card.innerHTML = `
                 <div class="card-img" style="${imgStyle}"></div>
                 <div class="card-body">
-                    <h3 class="card-name">${name}</h3>
-                    <span class="card-price">${priceDisplay}</span>
+                    <h3 class="card-name">${item.nameAr || item.name || ''}</h3>
+                    <span class="card-price">${price ? price + ' د.أ' : ''}</span>
                 </div>
             `;
-            card.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (typeof openDishModal === 'function') openDishModal(this);
-            });
+            card.addEventListener('click', (e) => { e.preventDefault(); openDishModal(card); });
             return card;
         }
 
-        // ── Core: Render everything dynamically ────────────────────
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
 
-            // 1. Group active items by category
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {
                 if (item.status === 'inactive') return;
@@ -1285,99 +312,67 @@
                 itemsByCat[item.category].push(item);
             });
 
-            // 2. Clear and Render Sections & Sub-Navs
             const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
-                // Clear previous content but PRESERVE the section-hero
                 navEl.innerHTML = '';
                 const hero = secEl.querySelector('.section-hero');
-                secEl.innerHTML = "";
+                secEl.innerHTML = '';
                 if (hero) secEl.appendChild(hero);
 
-                // Get categories for this section
                 const cats = Object.entries(_categoriesMeta)
                     .map(([id, val]) => ({ id, ...val }))
                     .filter(c => c.section === secKey)
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 cats.forEach(cat => {
-                    // A. Add to Sub-Nav
+                    // Nav Button
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
                     btn.className = 'cat-btn';
-                    btn.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
-                    if(cat.icon) {
-                        const icon = document.createElement('i');
-                        icon.className = `fa-solid ${cat.icon}`;
-                        icon.style.fontSize = '0.9em';
-                        btn.prepend(icon);
-                        btn.style.gap = '6px';
-                    }
+                    btn.textContent = cat.nameAr;
+                    if(cat.icon) btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ` + btn.innerHTML;
                     btn.addEventListener('click', function() {
                         navEl.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
                     });
                     navEl.appendChild(btn);
 
-                    // B. Add to Section Content
+                    // Category Title
                     const h2 = document.createElement('h2');
                     h2.id = cat.id;
                     h2.className = 'sec-title';
-                    h2.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
-                    if(cat.icon) {
-                        const icon = document.createElement('i');
-                        icon.className = `fa-solid ${cat.icon} sec-icon`;
-                        h2.prepend(icon);
-                    }
+                    h2.textContent = cat.nameAr;
+                    if(cat.icon) h2.innerHTML = `<i class="fa-solid ${cat.icon} sec-icon"></i> ` + h2.innerHTML;
                     
                     const grid = document.createElement('div');
                     grid.className = 'menu-grid';
-                    
-                    // Fill with items
                     const items = itemsByCat[cat.id] || [];
                     items.forEach(item => grid.appendChild(buildCard(item)));
 
-                    // Don't show empty categories if preferred, but usually better to show title
                     secEl.appendChild(h2);
                     secEl.appendChild(grid);
                 });
             });
         }
 
-        // ── Firebase Listeners ────────────────────────────────────
         function initListeners() {
-            if (typeof db === 'undefined') {
-                setTimeout(initListeners, 500);
-                return;
-            }
-            
-            // Listen for Items
-            db.ref('menu_items').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    _menuItems = data;
-                    console.log("Items updated from Firebase:", Object.keys(_menuItems).length);
-                    renderFullMenu();
-                }
-            });
-
-            // Listen for Categories
-            db.ref('categories_meta').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    _categoriesMeta = data;
-                    renderFullMenu();
-                }
-            });
+            db.ref('menu_items').on('value', snap => { _menuItems = snap.val(); renderFullMenu(); });
+            db.ref('categories_meta').on('value', snap => { _categoriesMeta = snap.val(); renderFullMenu(); });
         }
         initListeners();
 
+        // Handle URL Hash
+        window.addEventListener('load', () => {
+            var hash = window.location.hash.replace('#', '');
+            if (hash === 'intl') setTab('intl', document.querySelectorAll('.pill')[1]);
+            else if (hash === 'drinks') setTab('drinks', document.querySelectorAll('.pill')[3]);
+            else if (hash === 'argileh') setTab('argileh', document.querySelectorAll('.pill')[4]);
+        });
     </script>
-    <!-- Firebase Design Sync -->
     <script src="js/design-sync.js"></script>
     <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>

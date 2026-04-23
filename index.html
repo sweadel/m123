@@ -1,412 +1,374 @@
 <!DOCTYPE html>
-<!--
- 
-  index.html  الصفحة الرئيسية لموقع طلوا حبابنا 
-  Tallo Ahbabna  Landing Page 
-  
-  المحتوى: 
-   فيديو خلفية يشتغل تلقائياً صامت (tallo-video.mp4) 
-   شعار المطعم في المنتصف 
-   4 أزرار مكدسة فوق بعض (عمود واحد) 
-   شريط سوشيال + موقع + واتساب + إنستغرام + فيسبوك 
- 
+<!-- 
+  ==========================================================================
+  PROJECT: Tallo Ahbabna - Digital Menu & Landing Page
+  FILE: index.html
+  DESCRIPTION: The main gateway for customers. Features a video background,
+               restaurant logo, and quick access buttons to the menu and feedback.
+  VERSION: 3.0 (Cleaned & Documented)
+  ==========================================================================
 -->
 <html lang="ar" dir="rtl">
 
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <meta name="theme-color" content="#C5A022">
- <meta name="description" content="مطعم طلوا حبابنا  مادبا، الأردن. اكتشف قائمة طعامنا الكاملة">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#C5A022">
+    <meta name="description" content="مطعم طلوا حبابنا - مادبا، الأردن. اكتشف قائمة طعامنا الكاملة وجرب أصنافنا المميزة.">
 
- <!--  Open Graph: يحسّن مظهر الرابط عند مشاركته على واتساب وغيره  -->
- <meta property="og:type" content="website">
- <meta property="og:title" content="طلوا حبابنا | مادبا">
- <meta property="og:description" content="تفضل وشوف قائمتنا الكاملة ">
- <meta property="og:image" content="images/tallo-logo.png">
- <meta property="og:locale" content="ar_SA">
+    <!-- Social Media Meta Tags (Open Graph) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="طلوا حبابنا | مادبا">
+    <meta property="og:description" content="تفضل وشوف قائمتنا الكاملة - تجربة طعام فريدة في قلب مادبا">
+    <meta property="og:image" content="images/tallo-logo.png">
+    <meta property="og:locale" content="ar_SA">
 
- <!--  PWA: يتيح إضافة الموقع لشاشة الهاتف كتطبيق  -->
- <link rel="manifest" href="manifest.json">
- <link rel="apple-touch-icon" href="images/tallo-logo.png">
+    <!-- Progressive Web App (PWA) Support -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/tallo-logo.png">
 
- <title>طلوا حبابنا | مادبا</title>
+    <title>طلوا حبابنا | مادبا</title>
 
- <!--  Google Font: IBM Plex Sans Arabic  خط عربي فخم  -->
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
+    <!-- Typography: IBM Plex Sans Arabic (Premium & Modern) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
 
- <style>
- /* 
- متغيرات التصميم  Design Tokens
-  */
- :root {
-  --gold: #E5C467;
-  /* الذهبي الفاتح والراقي */
-  --gold-dark: #C5A022;
-  /* ذهبي داكن للـ hover */
- --dark: #080808;
- /* خلفية سوداء */
- --glass: rgba(8, 8, 8, .75);
- /* شفافية داكنة */
- }
+    <style>
+        /* 
+        --------------------------------------------------------------------------
+        DESIGN SYSTEM & TOKENS
+        --------------------------------------------------------------------------
+        */
+        :root {
+            --gold: #E5C467;        /* Light Elegant Gold */
+            --gold-dark: #C5A022;   /* Deep Gold for Interactive States */
+            --dark: #080808;        /* True Black Background */
+            --glass: rgba(8, 8, 8, .75); /* Dark Glassmorphism Effect */
+            --overlay-op: .52;      /* Default Video Overlay Opacity */
+        }
 
- *,
- *::before,
- *::after, input, button {
- margin: 0;
- padding: 0;
- box-sizing: border-box;
- font-family: 'IBM Plex Sans Arabic', sans-serif !important;
- font-weight: 600;
+        /* Global Reset */
+        *, *::before, *::after, input, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'IBM Plex Sans Arabic', sans-serif !important;
+            font-weight: 600;
+        }
 
- }
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling on the landing page */
+        }
 
- html,
- body {
- height: 100%;
- overflow: hidden;
- }
+        body {
+            background: var(--dark);
+            direction: rtl;
+            position: relative;
+        }
 
- body {
- font-family: 'IBM Plex Sans Arabic', sans-serif;
+        /* 
+        --------------------------------------------------------------------------
+        VIDEO BACKGROUND
+        --------------------------------------------------------------------------
+        */
+        .vid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
 
- background: var(--dark);
- direction: rtl;
- position: relative;
- }
+        .vid-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
 
- /* 
- الفيديو كخلفية كاملة
- - object-fit:cover يملأ الشاشة بدون تشويه
- - autoplay + muted + loop مطلوبة للمتصفحات
-  */
- .vid-bg {
- position: fixed;
- inset: 0;
- /* يساوي top:0 right:0 bottom:0 left:0 */
- z-index: 0;
- overflow: hidden;
- }
+        /* Dark overlay over video to ensure text readability */
+        .vid-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, var(--overlay-op));
+            transition: background 0.3s ease;
+        }
 
- .vid-bg video {
- width: 100%;
- height: 100%;
- object-fit: cover;
- /* يملأ بالكامل دون تشويه */
- object-position: center;
- }
+        /* 
+        --------------------------------------------------------------------------
+        LOGO SECTION
+        --------------------------------------------------------------------------
+        */
+        .logo-wrap {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            padding-top: 7vh;
+            pointer-events: none;
+        }
 
- /*  طبقة قتامة فوق الفيديو لإظهار النصوص  */
- .vid-bg::after {
- content: '';
- position: absolute;
- inset: 0;
- background: rgba(0, 0, 0, var(--overlay-op, .52));
- /* تعتيم بالتحكم الديناميكي */
- }
+        .logo-wrap img {
+            height: 300px;
+            width: auto;
+            filter: drop-shadow(0 4px 30px rgba(0, 0, 0, .9));
+            transition: height 0.4s ease;
+        }
 
- /* 
- شعار المطعم  Logo
-  */
- .logo-wrap {
- position: fixed;
- top: 0;
- left: 50%;
- transform: translateX(-50%);
- z-index: 10;
- display: flex;
- justify-content: center;
- padding-top: 7vh;
- pointer-events: none;
- /* لا يستجيب للنقر */
- }
+        /* 
+        --------------------------------------------------------------------------
+        INTERACTIVE PANEL (Buttons & Social)
+        --------------------------------------------------------------------------
+        */
+        .panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            background: linear-gradient(transparent, var(--glass) 18%, rgba(6, 6, 6, .75));
+            padding: 14px 20px 0;
+            border-radius: 24px 24px 0 0;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
 
- .logo-wrap img {
- /* لتكبير أو تصغير الشعار: غيّر الرقم 220px بالأسفل */
- height: 300px;
-  width: auto;
-  filter: drop-shadow(0 4px 30px rgba(0, 0, 0, .9));
- }
+        /* Button Column */
+        .btn-col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
- /* 
- اللوحة السفلية  Bottom Panel
- تحتوي الأزرار وشريط السوشيال
-  */
- .panel {
- position: fixed;
- bottom: 0;
- left: 0;
- width: 100%;
- z-index: 10;
- background: linear-gradient(transparent, var(--glass) 18%, rgba(6, 6, 6, .75));
- padding: 14px 20px 0;
- border-radius: 24px 24px 0 0;
- backdrop-filter: blur(10px);
- -webkit-backdrop-filter: blur(10px);
- }
+        /* Base Button Styles */
+        .main-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all .22s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            gap: 10px;
+            letter-spacing: .02em;
+        }
 
- /* 
- الأزرار  مكدسة عمودياً (flex-direction:column)
-  */
- .btn-col {
- display: flex;
- flex-direction: column;
- /* فوق بعض */
- gap: 10px;
- margin-bottom: 10px;
- }
+        /* Gold Variant: Primary Action */
+        .main-btn.gold {
+            background: linear-gradient(135deg, #C5A022, #a8841c);
+            color: #000;
+            box-shadow: 0 4px 18px rgba(197, 160, 34, .45);
+        }
 
- .main-btn {
- display: flex;
- align-items: center;
- justify-content: center;
- padding: 15px 20px;
- border-radius: 14px;
- font-family: 'IBM Plex Sans Arabic', sans-serif;
- font-weight: 700;
- font-size: 1.1rem;
- text-decoration: none;
- transition: all .22s;
- border: none;
- cursor: pointer;
- gap: 10px;
- letter-spacing: .02em;
- }
+        .main-btn.gold:hover, .main-btn.gold:active {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(197, 160, 34, .6);
+        }
 
- /* زر ذهبي  للمنيو العربي والإنجليزي */
- .main-btn.gold {
- background: linear-gradient(135deg, #C5A022, #a8841c);
- color: #000;
- box-shadow: 0 4px 18px rgba(197, 160, 34, .45);
- }
+        /* Ghost Variant: Secondary Action */
+        .main-btn.ghost {
+            background: rgba(255, 255, 255, .1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .18);
+        }
 
- .main-btn.gold:hover,
- .main-btn.gold:active {
- background: var(--gold-dark);
- transform: translateY(-1px);
- }
+        .main-btn.ghost:hover, .main-btn.ghost:active {
+            background: rgba(255, 255, 255, .18);
+            transform: translateY(-1px);
+        }
 
- /* زر شفاف  للتقييم */
- .main-btn.ghost {
- background: rgba(255, 255, 255, .1);
- color: #fff;
- border: 1px solid rgba(255, 255, 255, .18);
- }
+        /* Footer Tagline */
+        .tagline {
+            text-align: center;
+            color: rgba(255, 255, 255, .4);
+            font-size: .78rem;
+            padding: 6px 0 0;
+            letter-spacing: .4px;
+        }
 
- .main-btn.ghost:hover,
- .main-btn.ghost:active {
- background: rgba(255, 255, 255, .18);
- }
+        /* Social Media Bar */
+        .social-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 0 14px;
+            border-top: 1px solid rgba(255, 255, 255, .07);
+            margin-top: 8px;
+        }
 
- /* تسمية صغيرة تحت الأزرار */
- .tagline {
- text-align: center;
- color: rgba(255, 255, 255, .4);
- font-size: .78rem;
- padding: 6px 0 0;
- letter-spacing: .4px;
- }
+        .s-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, .65);
+            font-size: .65rem;
+            font-weight: 700;
+            gap: 3px;
+            transition: color .2s;
+        }
 
- /* 
- شريط السوشيال  Social Bar
-  */
- .social-bar {
- display: flex;
- justify-content: space-around;
- align-items: center;
- padding: 12px 0 14px;
- border-top: 1px solid rgba(255, 255, 255, .07);
- margin-top: 8px;
- }
+        .s-link:hover, .s-link:active {
+            color: var(--gold);
+        }
 
- .s-link {
- display: flex;
- flex-direction: column;
- align-items: center;
- text-decoration: none;
- color: rgba(255, 255, 255, .65);
- font-size: .65rem;
- font-weight: 700;
- gap: 3px;
- transition: color .2s;
- }
-
- .s-link:hover,
- .s-link:active {
- color: var(--gold);
- }
-
- .s-link svg {
- width: 22px;
- height: 22px;
- }
-
- /* 
- موبايل صغير  تعديلات بسيطة
-  */
- @media (max-width: 380px) {
- .logo-wrap img {
- height: 160px;
- }
-
- .main-btn {
- font-size: .92rem;
- padding: 13px 16px;
- }
- }
- </style>
+        /* Mobile Optimization */
+        @media (max-width: 380px) {
+            .logo-wrap img { height: 160px; }
+            .main-btn { font-size: .92rem; padding: 13px 16px; }
+        }
+    </style>
 </head>
 
 <body>
 
- <!--  فيديو الخلفية 
- autoplay: يشتغل تلقائياً
- muted: صامت (شرط للـ autoplay في المتصفحات)
- loop: يعيد الفيديو تلقائياً
- playsinline: مهم للـ iPhone
- poster: صورة تظهر قبل تحميل الفيديو
--->
- <div class="vid-bg">
- <video autoplay muted loop playsinline preload="auto" poster="images/drinks-bg.png">
- <source src="images/tallo-video.mp4" type="video/mp4">
- <!-- إذا الفيديو مش مدعوم تظهر الصورة من الـ poster -->
- </video>
- </div>
+    <!-- Background Video Layer -->
+    <div class="vid-bg">
+        <video autoplay muted loop playsinline preload="auto" poster="images/drinks-bg.png">
+            <source id="home-video-source" src="images/tallo-video.mp4" type="video/mp4">
+        </video>
+    </div>
 
- <!--  شعار المطعم  -->
- <div class="logo-wrap">
- <img src="images/tallo-logo.png" alt="طلوا حبابنا  مادبا" loading="eager">
- </div>
+    <!-- Central Logo Layer -->
+    <div class="logo-wrap">
+        <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
+    </div>
 
- <!--  اللوحة السفلية  -->
- <div class="panel">
+    <!-- Control Panel -->
+    <div class="panel">
+        <div class="btn-col">
+            <!-- Navigation Buttons -->
+            <a href="menu.html#arabic" id="btn_arabic" class="main-btn gold">
+                قائمة الطعام - عربي
+            </a>
 
- <!-- 4 أزرار مكدسة فوق بعض -->
- <div class="btn-col">
+            <a href="menu-en.html" id="btn_english" class="main-btn gold">
+                Tallo Menu - English
+            </a>
 
- <!-- أزرار المنيو الرئيسية: لتغيير الرابط عدل href ولتغيير الاسم عدل النص بين العلامات -->
- <!-- زر 1: قائمة الطعام بالعربي -->
- <a href="menu.html#arabic" id="btn_arabic" class="main-btn gold">
- قائمة الطعام  عربي
-  </a>
+            <a href="feedback.html" id="btn_feedback_ar" class="main-btn ghost">
+                شاركنا تجربتك
+            </a>
 
- <!-- زر 2: قائمة الطعام بالإنجليزي -->
- <a href="menu-en.html" id="btn_english" class="main-btn gold">
- Tallo Menu  English
-  </a>
+            <a href="feedback-en.html" id="btn_feedback_en" class="main-btn ghost">
+                Share Your Experience
+            </a>
+        </div>
 
- <!-- زر 3: تقييم التجربة بالعربي -->
- <a href="feedback.html" id="btn_feedback_ar" class="main-btn ghost">
- 
- شاركنا تجربتك
- </a>
+        <p class="tagline">طلوا حبابنا - مادبا، الأردن</p>
 
- <!-- زر 4: تقييم التجربة بالإنجليزي -->
- <a href="feedback-en.html" id="btn_feedback_en" class="main-btn ghost">
- 
- Share Your Experience
- </a>
+        <!-- Social Bar Links -->
+        <div class="social-bar">
+            <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link">
+                <span>الموقع</span>
+            </a>
 
- </div><!-- /btn-col -->
+            <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link">
+                <span>واتساب</span>
+            </a>
 
- <!-- نص صغير تعريفي -->
- <p class="tagline">طلوا حبابنا  مادبا، الأردن</p>
+            <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link">
+                <span>إنستغرام</span>
+            </a>
 
- <!--  شريط السوشيال 
- يحتوي روابط: الموقع على الخريطة، واتساب، إنستغرام، فيسبوك
- -->
- <div class="social-bar">
+            <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" id="link_facebook" target="_blank" rel="noopener" class="s-link">
+                <span>فيسبوك</span>
+            </a>
+        </div>
+    </div>
 
- <!-- Google Maps  موقع المطعم -->
- <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link">
- 
- <span>الموقع</span>
- </a>
+    <!-- Firebase Integration for Real-time Content & Design Sync -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="js/design-sync.js"></script>
 
- <!-- WhatsApp  تواصل مباشر -->
- <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link">
- 
- <span>واتساب</span>
- </a>
+    <script>
+        /**
+         * Home Page Real-time Settings Listener
+         * Fetches data from Firebase Database under 'settings/home'
+         */
+        function initHomeSync() {
+            if (typeof firebase === 'undefined') {
+                setTimeout(initHomeSync, 500);
+                return;
+            }
 
- <!-- Instagram -->
- <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link">
- 
- <span>إنستغرام</span>
- </a>
+            const homeRef = firebase.database().ref('settings/home');
+            homeRef.on('value', snap => {
+                const d = snap.val();
+                if (!d) return;
 
- <!-- Facebook -->
- <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" target="_blank" rel="noopener"
- class="s-link">
- 
- <span>فيسبوك</span>
- </a>
+                // 1. Update Video Background
+                const video = document.querySelector('.vid-bg video');
+                const source = document.getElementById('home-video-source');
+                if (d.homeVideo && source.src !== d.homeVideo) {
+                    source.src = d.homeVideo;
+                    video.load();
+                }
 
- </div><!-- /social-bar -->
+                // 2. Update Video Overlay Opacity
+                if (d.homeOverlay !== undefined) {
+                    document.documentElement.style.setProperty('--overlay-op', d.homeOverlay);
+                }
 
- </div><!-- /panel -->
+                // 3. Update Logo Size
+                if (d.homeLogoSize) {
+                    const logo = document.getElementById('main-logo');
+                    if(logo) logo.style.height = d.homeLogoSize + 'px';
+                }
 
-	<!-- Firebase SDKs -->
-	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-	<script src="js/design-sync.js"></script>
+                // 4. Update Tagline Text
+                if (d.homeTagline) {
+                    document.querySelector('.tagline').textContent = d.homeTagline;
+                }
 
-	<script>
-		// --- Home Settings Listener ---
-		const homeRef = firebase.database().ref('settings/home');
-		homeRef.on('value', snap => {
-			const d = snap.val();
-			if (!d) return;
+                // 5. Toggle Buttons Visibility
+                const toggle = (id, show) => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = show ? 'flex' : 'none';
+                };
+                
+                toggle('btn_arabic', d.showBtnAr);
+                toggle('btn_english', d.showBtnEn);
+                toggle('btn_feedback_ar', d.showBtnFeed);
+                toggle('btn_feedback_en', d.showBtnFeed);
 
-			// Video
-			const video = document.querySelector('.vid-bg video');
-			const source = video.querySelector('source');
-			if (d.homeVideo && source.src !== d.homeVideo) {
-				source.src = d.homeVideo;
-				video.load();
-			}
+                // 6. Update Social Links
+                const setLink = (id, url, prefix = '') => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (url) { 
+                            el.href = prefix + url; 
+                            el.style.display = 'flex'; 
+                        } else { 
+                            el.style.display = 'none'; 
+                        }
+                    }
+                };
+                setLink('link_whatsapp', d.whatsapp, 'https://wa.me/');
+                setLink('link_instagram', d.instagram);
+                setLink('link_facebook', d.facebook);
+                setLink('link_maps', d.maps);
+            });
+        }
 
-			// Overlay
-			if (d.homeOverlay) {
-				document.documentElement.style.setProperty('--overlay-op', d.homeOverlay);
-			}
+        initHomeSync();
 
-			// Logo Size
-			if (d.homeLogoSize) {
-				document.querySelector('.logo-wrap img').style.height = d.homeLogoSize + 'px';
-			}
-
-			// Tagline
-			if (d.homeTagline) {
-				document.querySelector('.tagline').textContent = d.homeTagline;
-			}
-
-			// Buttons Visibility
-			document.getElementById('btn_arabic').style.display = d.showBtnAr ? 'flex' : 'none';
-			document.getElementById('btn_english').style.display = d.showBtnEn ? 'flex' : 'none';
-			
-			const feedBtnAr = document.getElementById('btn_feedback_ar');
-			const feedBtnEn = document.getElementById('btn_feedback_en');
-			if(feedBtnAr) feedBtnAr.style.display = d.showBtnFeed ? 'flex' : 'none';
-			if(feedBtnEn) feedBtnEn.style.display = d.showBtnFeed ? 'flex' : 'none';
-
-			// Social Links
-			const setLink = (id, url) => {
-				const el = document.getElementById(id);
-				if (el) {
-					if (url) { el.href = url; el.style.display = 'flex'; }
-					else { el.style.display = 'none'; }
-				}
-			};
-			setLink('link_whatsapp', d.whatsapp ? `https://wa.me/${d.whatsapp}` : '');
-			setLink('link_instagram', d.instagram);
-			setLink('link_facebook', d.facebook);
-			setLink('link_maps', d.maps);
-		});
-	</script>
-	<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Register Error:", err));
+        }
+    </script>
 </body>
 
 </html>
