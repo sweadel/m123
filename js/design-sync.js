@@ -29,12 +29,12 @@
     const db = firebase.database();
     const designRef = db.ref('settings/design');
 
-    // 3. Listen for changes
+    // 3. Listen for changes - مؤقتاً تم إيقاف التزامن لمنع التخبيص والتعارض
     designRef.on('value', snapshot => {
         const d = snapshot.val();
         if (!d) return;
 
-        applyDesign(d);
+        // applyDesign(d); // معطل مؤقتاً لحفظ التنسيق الأصلي للمنيو
     });
 
     function applyDesign(d) {
