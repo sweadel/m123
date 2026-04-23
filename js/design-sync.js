@@ -51,17 +51,18 @@
                 font-family: var(--font-main) !important;
                 font-weight: ${d.fontBold ? '800' : '400'} !important;
             }
-            .arched-header {
+            .hdr-top {
                 background-image: url('${d.headerBg || 'images/header-sadu-final.png'}') !important;
             }
-            .header-overlay {
-                opacity: ${d.headerOpacity || 0.3} !important;
+            header:not(.compressed) .hdr-top::before {
+                background: rgba(0, 0, 0, ${d.headerOpacity || 0.35}) !important;
             }
-            .logo-img {
+            .logo-wrap img {
                 height: ${d.logoHeight || 105}px !important;
             }
             .promo-banner {
                 background: var(--gold) !important;
+                color: #000 !important;
             }
         `;
         style.innerHTML = css;

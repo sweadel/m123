@@ -225,14 +225,17 @@ header {
   right: 0;
   display: flex;
   justify-content: flex-start; 
-  gap: 12px;
-  padding: 0 20px;
+  gap: 10px;
+  padding: 0; /* Hug the edge as requested */
   z-index: 15;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .nav-row::-webkit-scrollbar { display: none; }
+
+.pill:first-child { margin-inline-start: 12px; } /* Small gap for the first item */
+.pill:last-child { margin-inline-end: 12px; }
 
 .pill {
   flex: 0 0 auto;
@@ -373,10 +376,6 @@ header {
 
 /* الهيدر عند الضغط للأسفل - يتصغر */
 header.compressed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
@@ -384,8 +383,8 @@ header.compressed .hdr-top {
   min-height: 0;
   height: 60px; /* Small bar height */
   padding: 0;
-  background-image: none !important; /* Hide sadu to keep it clean */
-  background: rgba(8, 8, 8, 0.95);
+  background-image: none !important; 
+  background: #080808 !important; /* Solid background to prevent conflicts */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(197, 160, 34, 0.2);
