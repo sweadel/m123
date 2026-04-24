@@ -45,7 +45,7 @@
             --gold-dark: #C5A022;   /* Deep Gold for Interactive States */
             --dark: #080808;        /* True Black Background */
             --glass: rgba(8, 8, 8, .75); /* Dark Glassmorphism Effect */
-            --overlay-op: .30;      /* Reduced from .52 for a brighter look */
+            --overlay-op: .20;      /* Maximum brightness */
             --home-logo-h: 240px;   /* Increased back to 240px for better visibility */
         }
 
@@ -132,12 +132,12 @@
             left: 0;
             width: 100%;
             z-index: 10;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
-            padding: 15px 20px 10px; /* Even more compact */
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+            padding: 5px 20px 0; /* Minimal padding */
             border-radius: 28px 28px 0 0;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         /* Button Column */
@@ -417,22 +417,24 @@
          */
         function playIntroAudio() {
             const audio = new Audio('intro-audio.m4a');
-            audio.volume = 0.5;
+            audio.volume = 1.0; // Max volume
             audio.preload = 'auto';
-            audio.load(); // Preload for faster response
             
             const startPlay = () => {
                 audio.play().then(() => {
-                    console.log("Audio playing");
-                    document.removeEventListener('click', startPlay);
-                    document.removeEventListener('touchstart', startPlay);
-                    document.removeEventListener('mousedown', startPlay);
-                }).catch(e => console.warn("Play blocked:", e));
+                    // Success
+                    ['click','touchstart','mousedown','scroll'].forEach(ev => 
+                        document.removeEventListener(ev, startPlay)
+                    );
+                }).catch(e => console.warn("Retry on next touch..."));
             };
 
-            document.addEventListener('click', startPlay);
-            document.addEventListener('touchstart', startPlay);
-            document.addEventListener('mousedown', startPlay);
+            ['click','touchstart','mousedown','scroll'].forEach(ev => 
+                document.addEventListener(ev, startPlay, {passive: true})
+            );
+            
+            // Try initial play (might work on some mobile if interaction happened already)
+            startPlay();
         }
         playIntroAudio();
 
