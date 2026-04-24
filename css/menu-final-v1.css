@@ -213,25 +213,49 @@ header {
 
 .logo-wrap {
   position: absolute;
-  top: 10%;
+  top: 45px; /* Fixed top instead of % to prevent jumping */
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
   pointer-events: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  /* خلفية داكنة متدرجة لزيادة التباين مع اللوجو الذهبي */
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0) 75%);
-  padding: 35px;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Radiant glow for the logo */
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 80%);
+  padding: 40px;
   border-radius: 50%;
 }
 
 .logo-wrap img {
-  height: 145px;
+  height: 160px; /* Increased default size */
   width: auto;
-  /* ظل أسود قوي + توهج ذهبي خفيف */
   filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.95)) 
           drop-shadow(0 0 15px rgba(229, 196, 103, 0.4));
-  animation: logoGlow 4s infinite alternate ease-in-out;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Shrunk State (Applied via JS on Scroll) ── */
+header.shrunk .hdr-top {
+  min-height: 160px !important;
+  transform: translateY(-80px);
+}
+
+header.shrunk .logo-wrap {
+  top: 105px;
+  transform: translateX(-50%) scale(0.5);
+  opacity: 0.8;
+  padding: 10px;
+}
+
+header.shrunk .nav-row {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+}
+
+header.shrunk .search-row {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
 }
 
 @keyframes logoGlow {

@@ -30,9 +30,6 @@
         DESIGN OVERRIDES (Base styles, others managed via Admin)
         --------------------------------------------------------------------------
         */
-        .hdr-top {
-            min-height: 360px !important;
-        }
         .arch-overlay {
             background-image: url('images/header-arch-final.png') !important;
             display: block !important;
@@ -374,6 +371,22 @@
             else if (hash === 'drinks') setTab('drinks', document.querySelectorAll('.pill')[3]);
             else if (hash === 'argileh') setTab('argileh', document.querySelectorAll('.pill')[4]);
         });
+
+        /**
+         * 7. COLLAPSING HEADER LOGIC
+         */
+        function handleScroll() {
+            const header = document.getElementById('mainHeader');
+            if (!header) return;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 80) {
+                header.classList.add('shrunk');
+            } else {
+                header.classList.remove('shrunk');
+            }
+        }
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('load', handleScroll);
     </script>
     <script src="js/design-sync.js"></script>
     <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
