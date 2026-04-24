@@ -38,7 +38,6 @@
 
     function applyDesign(d) {
         // --- A. CSS Variables Injection ---
-        // Using variables allows us to update colors while keeping the premium structure intact
         let css = `
             :root {
                 --gold: ${d.primaryColor || '#C5A022'};
@@ -46,12 +45,25 @@
                 --bg: ${d.pageBg || '#0B0B0E'};
                 --card-bg: ${d.cardBg || 'rgba(255, 255, 255, 0.03)'};
                 --font-main: '${d.fontFamily || 'IBM Plex Sans Arabic'}', sans-serif;
+                --btn-radius: ${d.btnShape || '8px'};
+                --glass-blur: ${d.glassBlur || '10'}px;
             }
             body { 
                 background-color: var(--bg);
                 font-family: var(--font-main);
                 font-weight: ${d.fontBold ? '800' : '700'};
             }
+            .pill, .btn, .cat-btn, .search-box { border-radius: var(--btn-radius) !important; }
+            .menu-card { 
+                background: var(--card-bg) !important; 
+                backdrop-filter: blur(var(--glass-blur)) !important;
+            }
+            .hdr-top { 
+                background-image: url('${d.headerBg || 'images/header-sadu-final.png'}') !important;
+                background-color: rgba(0,0,0,${d.headerOpacity || 0.3}) !important;
+                background-blend-mode: multiply;
+            }
+            .logo-wrap img { height: ${d.logoHeight || 105}px !important; }
             .sec-title { color: var(--gold); }
             .pill.active { background: var(--gold); color: #000; }
             .promo-banner { background: var(--gold); color: #000; }
@@ -60,6 +72,16 @@
 
         // --- B. DOM Updates ---
         
+        // Update Tab Labels
+        const pills = document.querySelectorAll('#mainTabRow .pill');
+        if (pills.length >= 5) {
+            if(d.labelArabic) pills[0].textContent = d.labelArabic;
+            if(d.labelIntl)   pills[1].textContent = d.labelIntl;
+            if(d.labelDesserts) pills[2].textContent = d.labelDesserts;
+            if(d.labelDrinks)   pills[3].textContent = d.labelDrinks;
+            if(d.labelArgileh)  pills[4].textContent = d.labelArgileh;
+        }
+
         // Logo Synchronization
         const logos = document.querySelectorAll('#main-logo, .logo-wrap img');
         logos.forEach(img => { 

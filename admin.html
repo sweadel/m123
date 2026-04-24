@@ -1761,7 +1761,7 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     </div>
                 </div>
 
-                <!-- TYPOGRAPHY -->
+                <!-- TYPOGRAPHY & STYLE -->
                 <div class="table-wrap" style="padding:24px;">
                     <div class="form-section-label" style="margin-bottom:20px; color:var(--gold);"><i class="fa-solid fa-font"></i> 2. الخطوط ونوع العرض</div>
                     
@@ -1784,12 +1784,21 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <label class="switch"><input type="checkbox" id="d_fontBold" checked><span class="slider"></span></label>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom:20px;">
                         <label class="form-label">نمط البطاقات (Card Style)</label>
                         <select id="d_cardStyle" class="f-ctrl">
                             <option value="modern">عصري (Modern) — ظلال وبروز</option>
                             <option value="glass">زجاجي (Glass) — شفافية وأناقة</option>
                             <option value="flat">مسطح (Flat) — بسيط وهادئ</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">شكل الأزرار (Button Shape)</label>
+                        <select id="d_btnShape" class="f-ctrl">
+                            <option value="8px">منحني بسيط (Default)</option>
+                            <option value="25px">دائري بالكامل (Capsule)</option>
+                            <option value="0px">حواف حادة (Sharp)</option>
                         </select>
                     </div>
                 </div>
@@ -1807,8 +1816,16 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <div class="form-group">
                             <label class="form-label">نقش خلفية الهيدر (Pattern Image)</label>
                             <input type="text" id="d_headerBg" class="f-ctrl" placeholder="images/sadu-pattern.png">
-                            <label class="form-label" style="margin-top:15px;">نسبة التعتيم (Opacity 0-1)</label>
-                            <input type="number" id="d_headerOpacity" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.3">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
+                                <div>
+                                    <label class="form-label">تعتيم الهيدر (0-1)</label>
+                                    <input type="number" id="d_headerOpacity" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.3">
+                                </div>
+                                <div>
+                                    <label class="form-label">حدة الشفافية (Blur)</label>
+                                    <input type="number" id="d_glassBlur" class="f-ctrl" step="1" min="0" max="30" placeholder="10">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

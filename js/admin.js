@@ -307,6 +307,8 @@ function saveDesign() {
         labelDrinks:   gv('d_labelDrinks'),
         labelArgileh:  gv('d_labelArgileh'),
         showSearch:    gc('d_showSearch'),
+        btnShape:      gv('d_btnShape'),
+        glassBlur:     gv('d_glassBlur'),
         pillActiveBg:  gv('pill_activeBg'),
         pillTextColor: gv('pill_textColor'),
         bannerActive:  gc('d_bannerActive'),
