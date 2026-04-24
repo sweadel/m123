@@ -36,18 +36,21 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-/* Fetch Strategy: Network First for HTML/JS */
+/* Fetch Strategy: Network First for HTML/JS/Media */
 self.addEventListener('fetch', function(e) {
   const url = new URL(e.request.url);
-  const isDynamic = url.pathname.endsWith('.html') || url.pathname.includes('js/');
+  const isDynamic = url.pathname.endsWith('.html') || 
+                    url.pathname.includes('js/') ||
+                    url.pathname.endsWith('.m4a') || 
+                    url.pathname.endsWith('.mp4');
 
   if (isDynamic) {
-    // استراتيجية: الإنترنت أولاً للملفات البرمجية والصفحات
+    // الإنترنت أولاً لهذه الملفات لضمان أحدث نسخة وعدم تعليق الميديا
     e.respondWith(
       fetch(e.request).catch(() => caches.match(e.request))
     );
   } else {
-    // استراتيجية: الكاش أولاً للصور والخطوط
+    // الكاش أولاً للصور والخطوط
     e.respondWith(
       caches.match(e.request).then(cached => {
         return cached || fetch(e.request).then(res => {
