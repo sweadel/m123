@@ -410,27 +410,24 @@
             });
         }
 
-        initHomeSync();
+        // initHomeSync(); // Disabled to prevent admin overwrites during design phase
 
         /**
          * 7. Auto Play Intro Audio
          * Play on the first user interaction.
          */
+        const introAudio = new Audio('intro-audio.m4a');
+        introAudio.volume = 1.0;
+
         function playIntroAudio() {
-            const audio = new Audio('intro-audio.m4a');
-            audio.volume = 0.8;
-            
             const startPlay = () => {
-                audio.play().then(() => {
+                introAudio.play().then(() => {
                     document.removeEventListener('click', startPlay);
                     document.removeEventListener('touchstart', startPlay);
                 }).catch(() => {
-                    // Fail silently if blocked, wait for listener
+                    // Fail silently, retry on next interaction
                 });
             };
-
-            // Attempt to play immediately on refresh
-            startPlay();
 
             document.addEventListener('click', startPlay);
             document.addEventListener('touchstart', startPlay);
