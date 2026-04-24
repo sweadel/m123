@@ -114,7 +114,7 @@
         }
 
         .logo-wrap img {
-            height: 300px;
+            height: var(--home-logo-h, 300px);
             width: auto;
             filter: drop-shadow(0 4px 30px rgba(0, 0, 0, .9));
             transition: height 0.4s ease;
@@ -332,12 +332,16 @@
                 if (!d) return;
 
                 // 1. Update Video Background
-                const video = document.querySelector('.vid-bg video');
+                const video = document.getElementById('bgVideo');
                 const source = document.getElementById('home-video-source');
-                if (d.homeVideo && source.src !== d.homeVideo) {
-                    source.src = d.homeVideo;
+                const currentSrc = source.getAttribute('src');
+                
+                if (d.homeVideo && currentSrc !== d.homeVideo) {
+                    console.log("Setting new video source:", d.homeVideo);
+                    source.setAttribute('src', d.homeVideo);
                     video.load();
-                    video.muted = true; // Enforce mute
+                    video.muted = true;
+                    video.play().catch(e => console.log("Video playback failed after sync"));
                 }
 
                 // 2. Update Video Overlay Opacity
@@ -347,8 +351,7 @@
 
                 // 3. Update Logo Size
                 if (d.homeLogoSize) {
-                    const logo = document.getElementById('main-logo');
-                    if(logo) logo.style.height = d.homeLogoSize + 'px';
+                    document.documentElement.style.setProperty('--home-logo-h', d.homeLogoSize + 'px', 'important');
                 }
 
                 // 4. Update Tagline Text
