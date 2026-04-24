@@ -413,49 +413,24 @@
         initHomeSync();
 
         /**
-         * 7. Ultra-Robust Audio Unlocker
-         * Browsers block audio until a user gesture. This script waits for ANY gesture
-         * and 'unlocks' the audio context immediately.
+         * 7. Auto Play Intro Audio
+         * Play on the first user interaction.
          */
         function playIntroAudio() {
-            // Add a cache-buster to ensure we load the fresh file
-            const audioUrl = 'intro-audio.m4a?v=' + Date.now();
-            const audio = new Audio(audioUrl);
-            audio.volume = 1.0;
-            audio.preload = 'auto';
-
-            let hasPlayed = false;
-
-            const forcePlay = () => {
-                if (hasPlayed) return;
-                
+            const audio = new Audio('intro-audio.m4a');
+            audio.volume = 0.8;
+            
+            const startPlay = () => {
                 audio.play().then(() => {
-                    hasPlayed = true;
-                    // Remove all triggers once audio starts
-                    ['click', 'touchstart', 'mousedown', 'scroll', 'keydown'].forEach(ev => {
-                        window.removeEventListener(ev, forcePlay);
-                    });
-                    console.log("Audio unlocked and playing!");
-                }).catch(err => {
-                    console.warn("Autoplay still waiting for a real user gesture...");
-                });
+                    document.removeEventListener('click', startPlay);
+                    document.removeEventListener('touchstart', startPlay);
+                }).catch(() => {});
             };
 
-            // Aggressive trigger list
-            ['click', 'touchstart', 'mousedown', 'scroll', 'keydown'].forEach(ev => {
-                window.addEventListener(ev, forcePlay, { passive: true, once: false });
-            });
-
-            // Initial attempt (works if session is already 'active')
-            forcePlay();
+            document.addEventListener('click', startPlay);
+            document.addEventListener('touchstart', startPlay);
         }
-        
-        // Run as soon as possible
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', playIntroAudio);
-        } else {
-            playIntroAudio();
-        }
+        playIntroAudio();
 
         /**
          * 8. Enhanced Video Management
