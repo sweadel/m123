@@ -334,10 +334,17 @@
                 // 1. Update Video Background
                 const video = document.getElementById('bgVideo');
                 const source = document.getElementById('home-video-source');
+                if (!video || !source) return;
+
+                const normalize = (url) => {
+                    if (!url) return '';
+                    const a = document.createElement('a');
+                    a.href = url;
+                    return a.href;
+                };
+
                 const currentSrc = source.getAttribute('src');
-                
-                if (d.homeVideo && currentSrc !== d.homeVideo) {
-                    console.log("Setting new video source:", d.homeVideo);
+                if (d.homeVideo && normalize(currentSrc) !== normalize(d.homeVideo)) {
                     source.setAttribute('src', d.homeVideo);
                     video.load();
                     video.muted = true;
