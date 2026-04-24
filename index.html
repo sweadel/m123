@@ -275,11 +275,6 @@
         <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
     </div>
 
-    <!-- Hidden Audio Element for Intro -->
-    <audio id="bgAudio" preload="auto">
-        <source src="intro-audio.m4a" type="audio/mp4">
-    </audio>
-
     <!-- Control Panel -->
     <div class="panel">
         <div class="btn-col">
@@ -334,139 +329,39 @@
 
     <script>
         /**
-         * Home Page Real-time Settings Listener
-         * Fetches data from Firebase Database under 'settings/home'
-         */
-        function initHomeSync() {
-            if (typeof firebase === 'undefined') {
-                setTimeout(initHomeSync, 500);
-                return;
-            }
-
-            const homeRef = firebase.database().ref('settings/home');
-            homeRef.on('value', snap => {
-                const d = snap.val();
-                if (!d) return;
-
-                // 1. Update Video Background
-                const video = document.getElementById('bgVideo');
-                const source = document.getElementById('home-video-source');
-                if (video && source) {
-                    const normalize = (url) => {
-                        if (!url) return '';
-                        const a = document.createElement('a');
-                        a.href = url;
-                        return a.href;
-                    };
-
-                    const currentSrc = source.getAttribute('src');
-                    if (d.homeVideo && normalize(currentSrc) !== normalize(d.homeVideo)) {
-                        console.log("Syncing video to:", d.homeVideo);
-                        source.setAttribute('src', d.homeVideo);
-                        video.load();
-                        video.muted = true;
-                        video.play().catch(e => console.warn("Video failed to play after sync:", e));
-                    }
-                }
-
-                // 2. Update Video Overlay Opacity
-                if (d.homeOverlay !== undefined && d.homeOverlay !== '') {
-                    document.documentElement.style.setProperty('--overlay-op', d.homeOverlay);
-                }
-
-                // 3. Update Logo Size
-                if (d.homeLogoSize && d.homeLogoSize !== '') {
-                    document.documentElement.style.setProperty('--home-logo-h', d.homeLogoSize + 'px', 'important');
-                }
-
-                // 4. Update Tagline Text
-                if (d.homeTagline) {
-                    const taglineEl = document.querySelector('.tagline');
-                    if(taglineEl) taglineEl.textContent = d.homeTagline;
-                }
-
-                // 5. Toggle Buttons Visibility
-                const toggle = (id, show) => {
-                    const el = document.getElementById(id);
-                    if (el) el.style.display = (show !== false) ? 'flex' : 'none';
-                };
-                
-                toggle('btn_arabic', d.showBtnAr);
-                toggle('btn_english', d.showBtnEn);
-                toggle('btn_feedback_ar', d.showBtnFeed);
-                toggle('btn_feedback_en', d.showBtnFeed);
-
-                // 6. Update Social Links
-                const setLink = (id, url, prefix = '') => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        if (url) { 
-                            el.href = prefix + url; 
-                            el.style.display = 'flex'; 
-                        } else { 
-                            el.style.display = 'none'; 
-                        }
-                    }
-                };
-                setLink('link_whatsapp', d.whatsapp, 'https://wa.me/');
-                setLink('link_instagram', d.instagram);
-                setLink('link_facebook', d.facebook);
-                setLink('link_maps', d.maps);
-            });
-        }
-
-        // initHomeSync(); // Disabled to prevent admin overwrites during design phase
-
-        /**
-         * 7. Robust Audio Unlocker
+         * Intro Audio Logic (The simple way)
          */
         function playIntroAudio() {
-            const audio = document.getElementById('bgAudio');
-            if (!audio) return;
+            const audio = new Audio('intro-audio.m4a');
+            audio.volume = 0.7;
             
-            audio.volume = 1.0;
-
             const startPlay = () => {
                 audio.play().then(() => {
-                    ['click', 'touchstart', 'mousedown'].forEach(ev => 
-                        document.removeEventListener(ev, startPlay)
-                    );
+                    document.removeEventListener('click', startPlay);
+                    document.removeEventListener('touchstart', startPlay);
                 }).catch(() => {});
             };
 
-            ['click', 'touchstart', 'mousedown'].forEach(ev => 
-                document.addEventListener(ev, startPlay)
-            );
-            
-            // Try initial
-            startPlay();
+            document.addEventListener('click', startPlay);
+            document.addEventListener('touchstart', startPlay);
         }
         playIntroAudio();
 
         /**
-         * 8. Video Management (Ensuring Mute)
+         * Background Video Control
          */
         function handleVideoPlayback() {
             const video = document.getElementById('bgVideo');
             if (!video) return;
-
             video.muted = true;
-            video.volume = 0; // Absolute mute
             video.play().catch(() => {
                 const playOnInteract = () => {
-                    video.muted = true;
                     video.play();
                     document.removeEventListener('click', playOnInteract);
                 };
                 document.addEventListener('click', playOnInteract);
             });
-
-            setInterval(() => {
-                if (video.paused) video.play().catch(() => {});
-                if (!video.muted) video.muted = true; // Force mute
-            }, 2000);
         }
-        
         window.addEventListener('load', handleVideoPlayback);
 
         if ('serviceWorker' in navigator) {
