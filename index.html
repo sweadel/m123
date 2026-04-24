@@ -340,28 +340,39 @@
         }
 
         /**
-         * 2. Intro Audio Logic (Simple & Reliable)
+         * 2. Intro Audio Logic (Aggressive Autoplay Attempt)
          */
         function playIntroAudio() {
             const audio = new Audio('intro-audio.m4a');
             audio.volume = 1.0;
             
-            const startPlay = () => {
-                console.log("Audio: Attempting to play...");
+            // محاولة التشغيل التلقائي فوراً
+            const attemptPlay = () => {
                 audio.play().then(() => {
-                    console.log("Audio: Playing successfully!");
-                    window.removeEventListener('pointerdown', startPlay);
-                    window.removeEventListener('click', startPlay);
+                    console.log("Audio: Autoplay Success!");
                 }).catch((err) => {
-                    console.warn("Audio: Playback blocked/failed", err);
+                    console.warn("Audio: Autoplay blocked, waiting for interaction...", err);
+                    
+                    // إذا رفض المتصفح، ننتظر أول لمسة للشاشة لتشغيل الصوت فوراً
+                    const playOnFirstTouch = () => {
+                        audio.play().then(() => {
+                            window.removeEventListener('pointerdown', playOnFirstTouch);
+                            window.removeEventListener('click', playOnFirstTouch);
+                        });
+                    };
+                    window.addEventListener('pointerdown', playOnFirstTouch);
+                    window.addEventListener('click', playOnFirstTouch);
                 });
             };
 
-            window.addEventListener('pointerdown', startPlay);
-            window.addEventListener('click', startPlay);
+            // محاولة التشغيل عند تحميل الصفحة
+            if (document.readyState === 'complete') {
+                attemptPlay();
+            } else {
+                window.addEventListener('load', attemptPlay);
+            }
         }
         
-        // Start waiting for interaction immediately
         playIntroAudio();
 
         /**
