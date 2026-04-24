@@ -416,14 +416,12 @@
          * 7. Auto Play Intro Audio (Plays Once per Session)
          */
         function playIntroAudio() {
-            if (sessionStorage.getItem('introPlayed')) return;
-            
+            // Removed sessionStorage check to play on every refresh
             const audio = new Audio('intro-audio.m4a');
             audio.volume = 0.5;
             
             const startPlay = () => {
                 audio.play().then(() => {
-                    sessionStorage.setItem('introPlayed', 'true');
                     document.removeEventListener('click', startPlay);
                     document.removeEventListener('touchstart', startPlay);
                 }).catch(() => {});
