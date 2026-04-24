@@ -253,7 +253,7 @@
 
     <!-- Background Video Layer -->
     <div class="vid-bg">
-        <video autoplay muted loop playsinline preload="auto" poster="images/drinks-bg.png">
+        <video id="bgVideo" autoplay muted loop playsinline preload="auto">
             <source id="home-video-source" src="images/tallo-video.mp4" type="video/mp4">
         </video>
     </div>
@@ -337,6 +337,7 @@
                 if (d.homeVideo && source.src !== d.homeVideo) {
                     source.src = d.homeVideo;
                     video.load();
+                    video.muted = true; // Enforce mute
                 }
 
                 // 2. Update Video Overlay Opacity
@@ -417,7 +418,15 @@
         }
         playIntroAudio();
 
-        // PWA Service Worker Registration
+        // 8. Ensure Video is Playing Muted
+        window.addEventListener('load', () => {
+            const v = document.getElementById('bgVideo');
+            if (v) {
+                v.muted = true;
+                v.play().catch(e => console.log("Video autoplay blocked/failed"));
+            }
+        });
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Register Error:", err));
         }
