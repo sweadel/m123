@@ -1,4 +1,4 @@
-const CACHE = 'tallo-v100-final'; // كاش جديد لإجبار المتصفح على التحديث التام
+const CACHE = 'tallo-v101-force-refresh'; // قوة تحديث شاملة لجميع الأجهزة
 
 const ASSETS = [
   'index.html',

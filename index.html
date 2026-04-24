@@ -344,19 +344,19 @@
          */
         function playIntroAudio() {
             const audio = new Audio('intro-audio.m4a');
-            audio.volume = 0.9;
+            audio.volume = 1.0;
             
             const startPlay = () => {
+                console.log("Audio: Attempting to play...");
                 audio.play().then(() => {
-                    // Success! Remove the listener
+                    console.log("Audio: Playing successfully!");
                     window.removeEventListener('pointerdown', startPlay);
                     window.removeEventListener('click', startPlay);
-                }).catch(() => {
-                    // Failed (likely still no gesture), keep waiting
+                }).catch((err) => {
+                    console.warn("Audio: Playback blocked/failed", err);
                 });
             };
 
-            // Listen for any touch or click on the entire window
             window.addEventListener('pointerdown', startPlay);
             window.addEventListener('click', startPlay);
         }
