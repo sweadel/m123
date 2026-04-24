@@ -424,8 +424,13 @@
                 audio.play().then(() => {
                     document.removeEventListener('click', startPlay);
                     document.removeEventListener('touchstart', startPlay);
-                }).catch(() => {});
+                }).catch(() => {
+                    // Fail silently if blocked, wait for listener
+                });
             };
+
+            // Attempt to play immediately on refresh
+            startPlay();
 
             document.addEventListener('click', startPlay);
             document.addEventListener('touchstart', startPlay);
