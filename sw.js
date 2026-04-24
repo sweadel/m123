@@ -36,21 +36,22 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-/* Fetch Strategy: Network First for HTML/JS/Media */
+/* Fetch Strategy: Network First for HTML/JS, Native for Media */
 self.addEventListener('fetch', function(e) {
   const url = new URL(e.request.url);
-  const isDynamic = url.pathname.endsWith('.html') || 
-                    url.pathname.includes('js/') ||
-                    url.pathname.endsWith('.m4a') || 
-                    url.pathname.endsWith('.mp4');
+  
+  // تجاوز نظام الكاش تماماً لملفات الصوت والفيديو لضمان عملها 100%
+  if (url.pathname.endsWith('.m4a') || url.pathname.endsWith('.mp4')) {
+    return; // اترك المتصفح يتعامل معها بشكل طبيعي
+  }
+
+  const isDynamic = url.pathname.endsWith('.html') || url.pathname.includes('js/');
 
   if (isDynamic) {
-    // الإنترنت أولاً لهذه الملفات لضمان أحدث نسخة وعدم تعليق الميديا
     e.respondWith(
       fetch(e.request).catch(() => caches.match(e.request))
     );
   } else {
-    // الكاش أولاً للصور والخطوط
     e.respondWith(
       caches.match(e.request).then(cached => {
         return cached || fetch(e.request).then(res => {
