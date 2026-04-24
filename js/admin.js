@@ -242,9 +242,9 @@ REFS.design.on('value', snapshot => {
 
     // 3. Header
     sv('d_logoUrl', d.logoUrl || 'images/tallo-logo.png');
-    sv('d_logoHeight', d.logoHeight || 105);
+    sv('d_logoHeight', d.logoHeight || 145);
     sv('d_headerBg', d.headerBg || 'images/header-sadu-final.png');
-    sv('d_headerOpacity', d.headerOpacity || 0.3);
+    sv('d_headerOpacity', d.headerOpacity || 0.15);
 
     // 4. Tabs & Search
     sv('d_labelArabic', d.labelArabic || 'المنيو العربي');

@@ -60,10 +60,10 @@
             }
             .hdr-top { 
                 background-image: url('${d.headerBg || 'images/header-sadu-final.png'}') !important;
-                background-color: rgba(0,0,0,${d.headerOpacity || 0.3}) !important;
-                background-blend-mode: multiply;
+                background-color: rgba(0,0,0,${(d.headerOpacity !== undefined && d.headerOpacity !== '') ? d.headerOpacity : 0.15}) !important;
+                background-blend-mode: normal;
             }
-            .logo-wrap img { height: ${d.logoHeight || 105}px !important; }
+            .logo-wrap img { height: ${d.logoHeight || 145}px !important; }
             .sec-title { color: var(--gold); }
             .pill.active { background: var(--gold); color: #000; }
             .promo-banner { background: var(--gold); color: #000; }
