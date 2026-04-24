@@ -120,12 +120,12 @@ REFS.categories.on('value', snapshot => {
 // ══════════════ 6. DELETED ITEMS LISTENER ══════════════
 REFS.deleted.on('value', snapshot => {
     const data  = snapshot.val();
-    const tbody = document.getElementById('deleted-items-body');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    const grid  = document.getElementById('deleted-items-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
 
     if (!data) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-trash-can"></i><h3>السلة فارغة</h3><p>لا توجد أصناف محذوفة</p></div></td></tr>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-trash-can"></i><h3>السلة فارغة</h3><p>لا توجد أصناف محذوفة</p></div>`;
         return;
     }
 
@@ -133,20 +133,28 @@ REFS.deleted.on('value', snapshot => {
         const date    = new Date(item.deletedAt).toLocaleString('ar-EG');
         const catObj  = categoryItems.find(c => c.id === item.category);
         const catName = catObj ? catObj.nameAr : (item.category || '-');
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td style="color:var(--text-3);font-size:0.75rem;">${date}</td>
-            <td><strong>${item.name || ''}</strong>${item.nameEn ? `<span style="color:var(--text-2);font-size:0.78rem;"> / ${item.nameEn}</span>` : ''}</td>
-            <td><span class="cat-chip">${catName}</span></td>
-            <td class="price-cell">${item.price ? item.price + ' د.أ' : '—'}</td>
-            <td>
-                <div class="row-actions">
-                    <button class="act-btn toggle" onclick="restoreItem('${key}')" title="استعادة"><i class="fa-solid fa-rotate-left"></i></button>
-                    <button class="act-btn del" onclick="permanentDelete('${key}')" title="حذف نهائي"><i class="fa-solid fa-trash-can"></i></button>
+        
+        const card = document.createElement('div');
+        card.className = 'deleted-card';
+        card.innerHTML = `
+            <div class="dc-header">
+                <div class="dc-thumb" style="background-image:url('${item.image || 'images/tallo-logo.png'}')"></div>
+                <div class="dc-info">
+                    <div class="dc-name">${item.name || 'بدون اسم'}</div>
+                    <div class="dc-en">${item.nameEn || ''}</div>
                 </div>
-            </td>
+            </div>
+            <div class="dc-meta">
+                <div><i class="fa-solid fa-folder"></i> ${catName}</div>
+                <div><i class="fa-solid fa-clock"></i> ${date}</div>
+                <div><i class="fa-solid fa-tag"></i> ${item.price ? item.price + ' د.أ' : '—'}</div>
+            </div>
+            <div class="dc-actions">
+                <button class="btn btn-secondary btn-sm" onclick="restoreItem('${key}')" style="flex:1;"><i class="fa-solid fa-rotate-left"></i> استعادة</button>
+                <button class="btn btn-danger btn-sm" onclick="permanentDelete('${key}')" style="padding:7px 10px;"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
         `;
-        tbody.appendChild(tr);
+        grid.appendChild(card);
     });
 });
 
@@ -386,33 +394,38 @@ function saveHomeSettings() {
 
 // ══════════════ 9. USERS LISTENER ══════════════
 REFS.users.on('value', snapshot => {
-    const data  = snapshot.val();
-    const tbody = document.getElementById('users-tbody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    const grid = document.getElementById('users-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
 
     if (!data) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-users"></i><h3>لا يوجد حسابات</h3><p>أضف مستخدمين جدد</p></div></td></tr>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-users"></i><h3>لا يوجد حسابات</h3><p>أضف مستخدمين جدد</p></div>`;
         return;
     }
 
     const roleMap = { admin: '👑 مدير نظام', manager: '🛠️ مدير فرع', viewer: '👁️ مشاهد' };
     Object.entries(data).forEach(([key, user]) => {
         const date = user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-EG') : '-';
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>${user.username}</strong></td>
-            <td><span class="cat-chip">${roleMap[user.role] || user.role}</span></td>
-            <td style="color:var(--text-3);font-size:0.78rem;">${date}</td>
-            <td><span class="status-pill active">نشط</span></td>
-            <td>
-                <div class="row-actions">
-                    <button class="act-btn edit" onclick="editUser('${key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                    <button class="act-btn del" onclick="deleteUser('${key}')" title="حذف"><i class="fa-solid fa-user-slash"></i></button>
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.innerHTML = `
+            <div class="user-card-header">
+                <div class="user-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                <div class="user-info">
+                    <div class="user-name">${user.username}</div>
+                    <div class="user-role">${roleMap[user.role] || user.role}</div>
                 </div>
-            </td>
+            </div>
+            <div class="user-card-body">
+                <div class="u-meta"><i class="fa-regular fa-calendar"></i> انضم في: ${date}</div>
+                <div class="u-meta"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> حالة الحساب: نشط</div>
+            </div>
+            <div class="user-card-actions">
+                <button class="btn btn-secondary btn-sm" onclick="editUser('${key}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteUser('${key}')"><i class="fa-solid fa-trash"></i> حذف</button>
+            </div>
         `;
-        tbody.appendChild(tr);
+        grid.appendChild(card);
     });
 });
 
@@ -472,28 +485,34 @@ function deleteUser(key) {
 // ══════════════ 10. AUDIT LOG LISTENER ══════════════
 REFS.logs.limitToLast(100).on('value', snapshot => {
     const data  = snapshot.val();
-    const tbody = document.getElementById('audit-tbody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    const timeline = document.getElementById('audit-timeline');
+    if (!timeline) return;
+    timeline.innerHTML = '';
 
     if (!data) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><h3>لا توجد سجلات</h3><p>ستظهر هنا كل التعديلات التي تقوم بها</p></div></td></tr>`;
+        timeline.innerHTML = `<div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><h3>لا توجد سجلات</h3><p>ستظهر هنا كل التعديلات التي تقوم بها</p></div>`;
         return;
     }
 
     const entries = Object.entries(data).reverse();
     entries.forEach(([logKey, entry]) => {
         const date = new Date(entry.timestamp).toLocaleString('ar-EG');
-        const tr = document.createElement('tr');
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
 
-        // Build undo button only for item edits with snapshot
-        let undoBtn = '—';
+        let icon = 'fa-pen';
+        let iconBg = 'var(--blue)';
+        if(entry.action.includes('إضافة') || entry.action.includes('استعادة')) { icon = 'fa-plus'; iconBg = 'var(--green)'; }
+        if(entry.action.includes('حذف')) { icon = 'fa-trash'; iconBg = 'var(--red)'; }
+
+        // Build undo button
+        let undoBtn = '';
         if (entry.snapshot && (entry.action === 'تعديل صنف') && entry.itemKey) {
-            undoBtn = `<button class="act-btn toggle" onclick="revertLog('${entry.itemKey}', '${logKey}')" title="تراجع عن التعديل"><i class="fa-solid fa-rotate-left"></i></button>`;
+            undoBtn = `<button class="btn btn-secondary btn-sm" onclick="revertLog('${entry.itemKey}', '${logKey}')"><i class="fa-solid fa-rotate-left"></i> تراجع عن هذا التعديل</button>`;
         }
 
         // Detailed changes formatting
-        let detailsHtml = `<div style="font-weight:600;margin-bottom:4px;">${entry.details || ''}</div>`;
+        let detailsHtml = `<div class="tl-title">${entry.details || ''}</div>`;
         if (entry.diff && entry.diff.length > 0) {
             detailsHtml += `<div class="log-diff-list">`;
             entry.diff.forEach(d => {
@@ -507,14 +526,19 @@ REFS.logs.limitToLast(100).on('value', snapshot => {
             detailsHtml += `</div>`;
         }
 
-        tr.innerHTML = `
-            <td style="color:var(--text-3);font-size:0.75rem;white-space:nowrap;">${date}</td>
-            <td><span class="cat-chip">${entry.user || 'Admin'}</span></td>
-            <td><span class="status-pill ${getLogClass(entry.action)}" style="font-size:0.72rem;">${entry.action}</span></td>
-            <td>${detailsHtml}</td>
-            <td>${undoBtn}</td>
+        item.innerHTML = `
+            <div class="tl-icon" style="background:${iconBg}"><i class="fa-solid ${icon}"></i></div>
+            <div class="tl-content">
+                <div class="tl-header">
+                    <span class="tl-action">${entry.action}</span>
+                    <span class="tl-date">${date}</span>
+                </div>
+                <div class="tl-user"><i class="fa-solid fa-user-circle"></i> بواسطة: ${entry.user || 'Admin'}</div>
+                <div class="tl-body">${detailsHtml}</div>
+                ${undoBtn ? `<div class="tl-actions">${undoBtn}</div>` : ''}
+            </div>
         `;
-        tbody.appendChild(tr);
+        timeline.appendChild(item);
     });
 });
 
@@ -670,6 +694,12 @@ function updateStats() {
     if (el('stat-total'))  el('stat-total').textContent  = menuItems.length;
     if (el('stat-active')) el('stat-active').textContent = menuItems.filter(i => i.status !== 'inactive').length;
     if (el('stat-hidden')) el('stat-hidden').textContent = menuItems.filter(i => i.status === 'inactive').length;
+    
+    // Add feedback count stat if the element exists
+    REFS.feedback.once('value').then(snap => {
+        const feedCount = snap.val() ? Object.keys(snap.val()).length : 0;
+        if (el('stat-feedback')) el('stat-feedback').textContent = feedCount;
+    });
 }
 
 function updateBadge() {
@@ -1199,13 +1229,13 @@ function exportToCSV() {
 // ══════════════ 25. FEEDBACK MANAGEMENT ══════════════
 REFS.feedback.on('value', snapshot => {
     const data = snapshot.val();
-    const tbody = document.getElementById('feedback-tbody');
+    const grid = document.getElementById('feedback-grid');
     const badge = document.getElementById('feedback-count-badge');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    if (!grid) return;
+    grid.innerHTML = '';
 
     if (!data) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-comment-dots"></i><h3>لا توجد آراء حالياً</h3><p>ستظهر هنا التقييمات المرسلة من الزبائن</p></div></td></tr>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-comment-dots"></i><h3>لا توجد آراء حالياً</h3><p>ستظهر هنا التقييمات المرسلة من الزبائن</p></div>`;
         if(badge) badge.textContent = '0';
         return;
     }
@@ -1215,31 +1245,37 @@ REFS.feedback.on('value', snapshot => {
 
     entries.forEach(([key, f]) => {
         const date = f.timestamp ? new Date(f.timestamp).toLocaleString('ar-EG') : (f.dateStr || '-');
-        const tr = document.createElement('tr');
+        const card = document.createElement('div');
+        card.className = 'feedback-card';
         
-        let ratingsHtml = '<div style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;">';
+        let ratingsHtml = '<div class="f-ratings">';
         if(f.ratings) {
             Object.entries(f.ratings).forEach(([label, val]) => {
                 const labelAr = { service: 'الخدمة', food: 'الطعام', atmosphere: 'الأجواء' }[label] || label;
-                ratingsHtml += `<div>${labelAr}: ${'⭐'.repeat(val)}</div>`;
+                ratingsHtml += `<div class="f-rate-item"><span>${labelAr}</span> <span class="stars">${'⭐'.repeat(val)}${'<i class="fa-regular fa-star" style="color:var(--text-3);opacity:0.3;font-size:0.7rem;"></i>'.repeat(5-val)}</span></div>`;
             });
         }
         ratingsHtml += '</div>';
 
-        tr.innerHTML = `
-            <td style="color:var(--text-3);font-size:0.75rem;">${date}</td>
-            <td>
-                <div style="font-weight:700;">${f.name || 'مجهول'}</div>
-                <div style="font-size:0.75rem;color:var(--text-2);">${f.phone || ''}</div>
-                <div style="font-size:0.7rem;color:var(--text-3);">طاولة: ${f.table || '-'}</div>
-            </td>
-            <td>${ratingsHtml}</td>
-            <td style="font-size:0.85rem;max-width:300px;white-space:normal;">${f.comments || '<span style="color:var(--text-3);">لا توجد ملاحظات</span>'}</td>
-            <td>
-                <button class="act-btn del" onclick="deleteFeedback('${key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
-            </td>
+        card.innerHTML = `
+            <div class="f-card-header">
+                <div class="f-avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="f-user-info">
+                    <div class="f-name">${f.name || 'زبون (غير معروف)'}</div>
+                    <div class="f-date">${date}</div>
+                </div>
+                <button class="icon-btn danger f-del" onclick="deleteFeedback('${key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <div class="f-card-meta">
+                ${f.phone ? `<div><i class="fa-solid fa-phone"></i> ${f.phone}</div>` : ''}
+                ${f.table ? `<div><i class="fa-solid fa-chair"></i> طاولة: ${f.table}</div>` : ''}
+            </div>
+            ${ratingsHtml}
+            <div class="f-card-comment">
+                ${f.comments ? `"${f.comments}"` : '<span style="color:var(--text-3);font-style:italic;">بدون تعليق نصي</span>'}
+            </div>
         `;
-        tbody.appendChild(tr);
+        grid.appendChild(card);
     });
 });
 

@@ -413,6 +413,40 @@ html, body {
 .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--text); line-height: 1; }
 .stat-sub { font-size: 0.68rem; color: var(--text-3); margin-top: 3px; }
 
+/* ── QUICK ACTIONS (DASHBOARD) ── */
+.dash-action-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+    color: var(--text);
+    text-decoration: none;
+    font-family: inherit;
+}
+.dash-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    background: var(--bg-2);
+    border-color: var(--border-g);
+}
+.dac-icon {
+    width: 54px; height: 54px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+.dac-text { font-weight: 700; font-size: 0.95rem; }
+.dac-sub { font-size: 0.72rem; color: var(--text-3); }
+
 /* ══════════════ FILTERS BAR ══════════════ */
 .filters-bar {
     display: flex;
@@ -485,6 +519,11 @@ html, body {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: box-shadow var(--transition);
+}
+.table-wrap:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
 }
 
 .data-table {
@@ -598,10 +637,147 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-top: 6px;
-    padding-right: 10px;
-    border-right: 2px solid var(--border);
 }
+
+/* ══════════════ USER CARDS ══════════════ */
+.user-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.user-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    border-color: var(--border-g);
+}
+.user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+.user-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--bg-2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold);
+    font-size: 1.2rem;
+    border: 1px solid var(--border-g);
+}
+.user-info .user-name { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+.user-info .user-role { font-size: 0.75rem; color: var(--gold); margin-top: 2px; }
+.user-card-body {
+    display: flex; flex-direction: column; gap: 8px;
+    font-size: 0.8rem; color: var(--text-2);
+}
+.u-meta i { width: 16px; text-align: center; color: var(--text-3); margin-left: 6px; }
+.user-card-actions {
+    display: flex; gap: 8px; margin-top: auto;
+}
+.user-card-actions .btn { flex: 1; justify-content: center; }
+
+/* ══════════════ FEEDBACK CARDS ══════════════ */
+.feedback-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.feedback-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    border-color: var(--gold-mid);
+}
+.f-card-header {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.f-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--bg-2); color: var(--gold);
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    border: 1px solid var(--border-g);
+}
+.f-user-info { flex: 1; }
+.f-name { font-weight: 700; color: var(--text); font-size: 1.05rem; }
+.f-date { font-size: 0.75rem; color: var(--text-3); margin-top: 2px; }
+.f-card-meta {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    font-size: 0.8rem; color: var(--text-2);
+}
+.f-card-meta i { color: var(--gold); opacity: 0.8; }
+.f-ratings {
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--bg-2); padding: 12px; border-radius: 8px;
+}
+.f-rate-item { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text); }
+.f-rate-item .stars { letter-spacing: 2px; }
+.f-card-comment {
+    font-size: 0.9rem; color: var(--text-2); line-height: 1.6;
+    margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--border);
+    font-style: italic;
+}
+
+/* ══════════════ TIMELINE (AUDIT LOG) ══════════════ */
+.timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-right: 20px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    width: 2px;
+    background: var(--border);
+}
+.timeline-item {
+    position: relative;
+    padding-right: 24px;
+}
+.tl-icon {
+    position: absolute;
+    right: -32px;
+    top: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; color: #fff;
+    box-shadow: 0 0 0 4px var(--bg-0);
+    z-index: 2;
+}
+.tl-content {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    transition: background var(--transition);
+}
+.tl-content:hover { background: var(--bg-2); }
+.tl-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+}
+.tl-action { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.tl-date { font-size: 0.75rem; color: var(--text-3); }
+.tl-user { font-size: 0.75rem; color: var(--text-2); margin-bottom: 12px; }
+.tl-user i { margin-left: 4px; }
+.tl-body { font-size: 0.85rem; color: var(--text-2); }
+.tl-title { font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.tl-actions { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 
 .log-diff-item {
     font-size: 0.75rem;
@@ -732,15 +908,31 @@ html, body {
     background: var(--bg-1);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 18px;
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    transition: all var(--transition);
+    gap: 16px;
+    transition: all 0.3s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
-.cat-card:hover { border-color: var(--border-g); background: var(--bg-2); }
+.cat-card:hover { 
+    border-color: var(--gold-mid); 
+    background: var(--bg-2);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.cat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, transparent 50%, var(--gold-glow) 50%);
+    opacity: 0.3;
+}
 
 .cat-card-icon {
     width: 44px;
@@ -781,6 +973,36 @@ html, body {
 .meta-tag.gold { background: var(--gold-glow); color: var(--gold); border: 1px solid var(--border-g); }
 
 .cat-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* ══════════════ DELETED CARDS ══════════════ */
+.deleted-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform var(--transition);
+}
+.deleted-card:hover { transform: translateY(-3px); border-color: var(--red); }
+.dc-header { display: flex; align-items: center; gap: 12px; }
+.dc-thumb {
+    width: 44px; height: 44px; border-radius: 8px;
+    background-size: cover; background-position: center;
+    border: 1px solid var(--border); background-color: var(--bg-2);
+}
+.dc-info { flex: 1; min-width: 0; }
+.dc-name { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+.dc-en { font-size: 0.75rem; color: var(--text-3); }
+.dc-meta {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 10px; background: var(--bg-2); border-radius: 8px;
+    font-size: 0.72rem; color: var(--text-2);
+}
+.dc-meta div { display: flex; align-items: center; gap: 6px; }
+.dc-meta i { width: 14px; text-align: center; color: var(--gold); }
+.dc-actions { display: flex; gap: 8px; margin-top: 4px; }
 
 /* ══════════════ BUTTONS ══════════════ */
 .btn {
@@ -966,17 +1188,21 @@ html, body {
 .f-ctrl {
     background: var(--bg-2);
     border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 10px 13px;
+    border-radius: 10px;
+    padding: 12px 14px;
     color: var(--text);
     font-family: inherit;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     outline: none;
-    transition: border-color var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
 }
 
-.f-ctrl:focus { border-color: var(--gold); }
+.f-ctrl:focus { 
+    border-color: var(--gold); 
+    box-shadow: 0 0 0 3px var(--gold-glow);
+    background: var(--bg-3);
+}
 .f-ctrl option { background: var(--bg-2); }
 
 textarea.f-ctrl { resize: vertical; min-height: 80px; }
@@ -1274,22 +1500,10 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                 </div>
             </div>
             
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>التاريخ</th>
-                            <th>الزبون</th>
-                            <th>التقييمات</th>
-                            <th>الملاحظات</th>
-                            <th>إجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="feedback-tbody">
-                        <!-- Loaded dynamically -->
-                    </tbody>
-                </table>
+            <div class="feedback-grid" id="feedback-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px; padding:20px;">
+                <div style="text-align:center;padding:40px;color:var(--text-3);grid-column:1/-1;">جاري تحميل آراء الزبائن...</div>
             </div>
+
         </div>
 
         <div class="view active" id="view-dashboard">
@@ -1338,27 +1552,47 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <p class="stat-sub">تصنيفات المنيو</p>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(243,156,18,0.1); border-color:rgba(243,156,18,0.25); color:#f39c12;"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div class="stat-info">
+                        <h3>آراء الزبائن</h3>
+                        <p class="stat-num" id="stat-feedback">—</p>
+                        <p class="stat-sub">إجمالي التقييمات</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap:12px; margin-top:8px;">
-                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-menu')">
-                    <i class="fa-solid fa-utensils" style="font-size:1.1rem; color:var(--gold);"></i> إدارة الأصناف
+            <div class="form-section-label" style="margin-top:24px;margin-bottom:16px;"><i class="fa-solid fa-bolt"></i> اختصارات سريعة</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:16px;">
+                <button class="dash-action-card" onclick="navigateTo('view-menu')">
+                    <div class="dac-icon" style="color:var(--gold);background:var(--gold-glow);"><i class="fa-solid fa-utensils"></i></div>
+                    <div class="dac-text">إدارة الأصناف</div>
+                    <div class="dac-sub">إضافة وتعديل الأطباق</div>
                 </button>
-                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-cats')">
-                    <i class="fa-solid fa-folder-tree" style="font-size:1.1rem; color:var(--blue);"></i> إدارة الأقسام
+                <button class="dash-action-card" onclick="navigateTo('view-cats')">
+                    <div class="dac-icon" style="color:var(--blue);background:rgba(52,152,219,0.15);"><i class="fa-solid fa-folder-tree"></i></div>
+                    <div class="dac-text">إدارة الأقسام</div>
+                    <div class="dac-sub">ترتيب وتصنيف المنيو</div>
                 </button>
-                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-design')">
-                    <i class="fa-solid fa-paint-roller" style="font-size:1.1rem; color:#e74c3c;"></i> التصميم
+                <button class="dash-action-card" onclick="navigateTo('view-design')">
+                    <div class="dac-icon" style="color:var(--red);background:rgba(231,76,60,0.15);"><i class="fa-solid fa-paint-roller"></i></div>
+                    <div class="dac-text">التصميم</div>
+                    <div class="dac-sub">تغيير الألوان والمظهر</div>
                 </button>
-                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-home')">
-                    <i class="fa-solid fa-house" style="font-size:1.1rem; color:#2ecc71;"></i> الصفحة الرئيسية
+                <button class="dash-action-card" onclick="navigateTo('view-feedback')">
+                    <div class="dac-icon" style="color:#f39c12;background:rgba(243,156,18,0.15);"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div class="dac-text">آراء الزبائن</div>
+                    <div class="dac-sub">متابعة التقييمات</div>
                 </button>
-                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-deleted')">
-                    <i class="fa-solid fa-trash-can" style="font-size:1.1rem; color:var(--red);"></i> المحذوفات
+                <button class="dash-action-card" onclick="navigateTo('view-home')">
+                    <div class="dac-icon" style="color:var(--green);background:rgba(46,204,113,0.15);"><i class="fa-solid fa-house"></i></div>
+                    <div class="dac-text">الصفحة الرئيسية</div>
+                    <div class="dac-sub">الروابط والفيديو</div>
                 </button>
-                <a class="btn btn-secondary" href="menu.html" target="_blank" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;">
-                    <i class="fa-solid fa-eye" style="font-size:1.1rem; color:var(--green);"></i> معاينة المنيو
+                <a class="dash-action-card" href="menu.html" target="_blank" style="text-decoration:none;">
+                    <div class="dac-icon" style="color:#9b59b6;background:rgba(155,89,182,0.15);"><i class="fa-solid fa-eye"></i></div>
+                    <div class="dac-text">معاينة المنيو</div>
+                    <div class="dac-sub">شاهد شكل المنيو للزبون</div>
                 </a>
             </div>
         </div>
@@ -1473,22 +1707,10 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     <p>استعادة أي صنف محذوف أو حذفه نهائياً</p>
                 </div>
             </div>
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>وقت الحذف</th>
-                            <th>اسم الصنف</th>
-                            <th>القسم</th>
-                            <th>السعر</th>
-                            <th>إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="deleted-items-body">
-                        <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3);">جاري التحميل...</td></tr>
-                    </tbody>
-                </table>
+            <div class="deleted-grid" id="deleted-items-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; padding:20px;">
+                <div style="text-align:center;padding:40px;color:var(--text-3);grid-column:1/-1;">جاري تحميل المحذوفات...</div>
             </div>
+
         </div>
 
         <!-- ─── DESIGN & APPEARANCE ─── -->
@@ -1757,21 +1979,8 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     </button>
                 </div>
             </div>
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>المستخدم</th>
-                            <th>الصلاحية</th>
-                            <th>تاريخ الإنشاء</th>
-                            <th>الحالة</th>
-                            <th>إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-tbody">
-                        <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3);">جاري التحميل...</td></tr>
-                    </tbody>
-                </table>
+            <div class="accounts-grid" id="users-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; padding:20px;">
+                <div style="text-align:center;padding:40px;color:var(--text-3);grid-column:1/-1;">جاري التحميل...</div>
             </div>
         </div>
 
@@ -1788,21 +1997,10 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     </button>
                 </div>
             </div>
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>الوقت</th>
-                            <th>المستخدم</th>
-                            <th>العملية</th>
-                            <th>التفاصيل</th>
-                            <th>تراجع</th>
-                        </tr>
-                    </thead>
-                    <tbody id="audit-tbody">
-                        <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3);">جاري تحميل السجل...</td></tr>
-                    </tbody>
-                </table>
+            <div class="timeline-wrap" style="padding: 20px; max-width: 800px; margin: 0 auto;">
+                <div id="audit-timeline" class="timeline">
+                    <div style="text-align:center;padding:40px;color:var(--text-3);">جاري تحميل السجل...</div>
+                </div>
             </div>
         </div>
 
