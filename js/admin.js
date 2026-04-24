@@ -106,6 +106,53 @@ REFS.menu.on('value', snapshot => {
     console.error(err);
 });
 
+// ══════════════ 4.1 FEEDBACK & USER LIVE STATS ══════════════
+REFS.feedback.on('value', snapshot => {
+    const count = snapshot.val() ? Object.keys(snapshot.val()).length : 0;
+    const el = document.getElementById('stat-feedback');
+    const badge = document.getElementById('feedback-count-badge');
+    if (el) el.textContent = count;
+    if (badge) badge.textContent = count;
+});
+
+REFS.users.on('value', snapshot => {
+    const count = snapshot.val() ? Object.keys(snapshot.val()).length : 0;
+    const el = document.getElementById('stat-users');
+    if (el) el.textContent = count;
+    renderUserGrid(snapshot.val());
+});
+
+function renderUserGrid(data) {
+    const grid = document.getElementById('users-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    if (!data) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">لا توجد حسابات أخرى</div>';
+        return;
+    }
+    Object.entries(data).forEach(([key, user]) => {
+        const card = document.createElement('div');
+        card.className = 'account-card';
+        card.style.cssText = 'background:var(--bg-1); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:12px;';
+        card.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px; height:40px; border-radius:50%; background:var(--gold-glow); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700; color:var(--text);">${user.username}</div>
+                    <div style="font-size:0.7rem; color:var(--text-3);">${user.role === 'admin' ? 'مدير نظام' : 'مدير فرع'}</div>
+                </div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:4px;">
+                <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="editUser(\'${key}\')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteUser(\'${key}\')"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
 // ══════════════ 5. CATEGORIES LISTENER ══════════════
 REFS.categories.on('value', snapshot => {
     const data = snapshot.val();
