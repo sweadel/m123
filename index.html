@@ -114,10 +114,10 @@
         }
 
         .logo-wrap img {
-            height: var(--home-logo-h, 300px);
+            height: var(--home-logo-h, 320px);
             width: auto;
-            filter: drop-shadow(0 4px 30px rgba(0, 0, 0, .9));
-            transition: height 0.4s ease;
+            filter: drop-shadow(0 4px 35px rgba(0, 0, 0, .85));
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         /* 
@@ -131,19 +131,23 @@
             left: 0;
             width: 100%;
             z-index: 10;
-            background: linear-gradient(transparent, var(--glass) 18%, rgba(6, 6, 6, .75));
-            padding: 14px 20px 0;
-            border-radius: 24px 24px 0 0;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: linear-gradient(transparent, var(--glass) 25%, rgba(4, 4, 4, .85));
+            padding: 16px 20px 0;
+            border-radius: 28px 28px 0 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* Button Column */
         .btn-col {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 12px;
+            margin-bottom: 12px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Base Button Styles */
@@ -151,49 +155,53 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px 20px;
-            border-radius: 14px;
-            font-size: 1.1rem;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 1.15rem;
             text-decoration: none;
-            transition: all .22s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
-            gap: 10px;
+            gap: 12px;
             letter-spacing: .02em;
         }
 
         /* Gold Variant: Primary Action */
         .main-btn.gold {
-            background: linear-gradient(135deg, #C5A022, #a8841c);
+            background: linear-gradient(135deg, #E5C467, #C5A022);
             color: #000;
-            box-shadow: 0 4px 18px rgba(197, 160, 34, .45);
+            box-shadow: 0 5px 20px rgba(197, 160, 34, .4);
+            font-weight: 800;
         }
 
         .main-btn.gold:hover, .main-btn.gold:active {
-            background: var(--gold-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 22px rgba(197, 160, 34, .6);
+            background: #E5C467;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(197, 160, 34, .55);
         }
 
         /* Ghost Variant: Secondary Action */
         .main-btn.ghost {
-            background: rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .08);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, .18);
+            border: 1px solid rgba(255, 255, 255, .15);
+            font-weight: 700;
         }
 
         .main-btn.ghost:hover, .main-btn.ghost:active {
-            background: rgba(255, 255, 255, .18);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, .15);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, .3);
         }
 
         /* Footer Tagline */
         .tagline {
             text-align: center;
-            color: rgba(255, 255, 255, .4);
-            font-size: .78rem;
-            padding: 6px 0 0;
-            letter-spacing: .4px;
+            color: rgba(255, 255, 255, .45);
+            font-size: .8rem;
+            padding: 8px 0 0;
+            letter-spacing: .5px;
+            margin-bottom: 75px; /* Space for the floating social bar */
         }
 
         /* Social Media Bar (Floating Premium) */
@@ -203,18 +211,18 @@
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 40px);
-            max-width: 400px;
-            background: rgba(15, 15, 15, 0.7);
-            padding: 12px 10px;
+            max-width: 450px;
+            background: rgba(20, 18, 16, 0.85);
+            padding: 14px 10px;
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
 
         .s-link {
@@ -222,29 +230,32 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: .65rem;
-            font-weight: 700;
-            gap: 4px;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: .7rem;
+            font-weight: 800;
+            gap: 5px;
             transition: all .2s;
             flex: 1;
         }
 
         .s-link i {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: var(--gold);
-            margin-bottom: 2px;
+            margin-bottom: 1px;
+            filter: drop-shadow(0 0 5px rgba(229, 196, 103, 0.3));
         }
 
         .s-link:hover, .s-link:active {
             color: #fff;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
         /* Mobile Optimization */
         @media (max-width: 380px) {
-            .logo-wrap img { height: 160px; }
-            .main-btn { font-size: .92rem; padding: 13px 16px; }
+            .logo-wrap { padding-top: 5vh; }
+            .logo-wrap img { height: 210px !important; } /* Improved mobile size */
+            .main-btn { font-size: 1rem; padding: 14px 16px; }
+            .tagline { font-size: 0.75rem; margin-bottom: 70px; }
         }
     </style>
 </head>
@@ -334,42 +345,44 @@
                 // 1. Update Video Background
                 const video = document.getElementById('bgVideo');
                 const source = document.getElementById('home-video-source');
-                if (!video || !source) return;
+                if (video && source) {
+                    const normalize = (url) => {
+                        if (!url) return '';
+                        const a = document.createElement('a');
+                        a.href = url;
+                        return a.href;
+                    };
 
-                const normalize = (url) => {
-                    if (!url) return '';
-                    const a = document.createElement('a');
-                    a.href = url;
-                    return a.href;
-                };
-
-                const currentSrc = source.getAttribute('src');
-                if (d.homeVideo && normalize(currentSrc) !== normalize(d.homeVideo)) {
-                    source.setAttribute('src', d.homeVideo);
-                    video.load();
-                    video.muted = true;
-                    video.play().catch(e => console.log("Video playback failed after sync"));
+                    const currentSrc = source.getAttribute('src');
+                    if (d.homeVideo && normalize(currentSrc) !== normalize(d.homeVideo)) {
+                        console.log("Syncing video to:", d.homeVideo);
+                        source.setAttribute('src', d.homeVideo);
+                        video.load();
+                        video.muted = true;
+                        video.play().catch(e => console.warn("Video failed to play after sync:", e));
+                    }
                 }
 
                 // 2. Update Video Overlay Opacity
-                if (d.homeOverlay !== undefined) {
+                if (d.homeOverlay !== undefined && d.homeOverlay !== '') {
                     document.documentElement.style.setProperty('--overlay-op', d.homeOverlay);
                 }
 
                 // 3. Update Logo Size
-                if (d.homeLogoSize) {
+                if (d.homeLogoSize && d.homeLogoSize !== '') {
                     document.documentElement.style.setProperty('--home-logo-h', d.homeLogoSize + 'px', 'important');
                 }
 
                 // 4. Update Tagline Text
                 if (d.homeTagline) {
-                    document.querySelector('.tagline').textContent = d.homeTagline;
+                    const taglineEl = document.querySelector('.tagline');
+                    if(taglineEl) taglineEl.textContent = d.homeTagline;
                 }
 
                 // 5. Toggle Buttons Visibility
                 const toggle = (id, show) => {
                     const el = document.getElementById(id);
-                    if (el) el.style.display = show ? 'flex' : 'none';
+                    if (el) el.style.display = (show !== false) ? 'flex' : 'none';
                 };
                 
                 toggle('btn_arabic', d.showBtnAr);
@@ -400,45 +413,54 @@
 
         /**
          * 7. Auto Play Intro Audio (Plays Once per Session)
-         * Respects browser autoplay policies with interaction fallback.
          */
         function playIntroAudio() {
             if (sessionStorage.getItem('introPlayed')) return;
             
             const audio = new Audio('intro-audio.m4a');
-            audio.volume = 0.6;
+            audio.volume = 0.5;
             
             const startPlay = () => {
                 audio.play().then(() => {
                     sessionStorage.setItem('introPlayed', 'true');
-                    // Remove listeners once played
                     document.removeEventListener('click', startPlay);
                     document.removeEventListener('touchstart', startPlay);
-                }).catch(err => {
-                    console.warn("Autoplay blocked by browser. Waiting for user interaction...");
-                });
+                }).catch(() => {});
             };
 
-            // Attempt autoplay immediately
-            startPlay();
-            
-            // Fallback: Play on first click or touch
             document.addEventListener('click', startPlay);
             document.addEventListener('touchstart', startPlay);
         }
         playIntroAudio();
 
-        // 8. Ensure Video is Playing Muted
-        window.addEventListener('load', () => {
-            const v = document.getElementById('bgVideo');
-            if (v) {
-                v.muted = true;
-                v.play().catch(e => console.log("Video autoplay blocked/failed"));
-            }
-        });
+        /**
+         * 8. Enhanced Video Management
+         * Ensures video stays playing and handles mobile restrictions.
+         */
+        function handleVideoPlayback() {
+            const video = document.getElementById('bgVideo');
+            if (!video) return;
+
+            video.muted = true;
+            video.play().catch(() => {
+                // Fallback: Play on interaction
+                const playOnInteract = () => {
+                    video.play();
+                    document.removeEventListener('click', playOnInteract);
+                };
+                document.addEventListener('click', playOnInteract);
+            });
+
+            // Re-check periodically to ensure it hasn't paused (e.g., after power saving)
+            setInterval(() => {
+                if (video.paused) video.play().catch(() => {});
+            }, 3000);
+        }
+        
+        window.addEventListener('load', handleVideoPlayback);
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Register Error:", err));
+            navigator.serviceWorker.register('sw.js').catch(() => {});
         }
     </script>
 </body>
