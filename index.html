@@ -329,26 +329,43 @@
 
     <script>
         /**
-         * Intro Audio Logic (The simple way)
+         * 1. Clear any stuck Service Workers (Cache Fix)
+         */
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+
+        /**
+         * 2. Intro Audio Logic (Simple & Reliable)
          */
         function playIntroAudio() {
             const audio = new Audio('intro-audio.m4a');
-            audio.volume = 0.7;
+            audio.volume = 0.9;
             
             const startPlay = () => {
                 audio.play().then(() => {
-                    document.removeEventListener('click', startPlay);
-                    document.removeEventListener('touchstart', startPlay);
-                }).catch(() => {});
+                    // Success! Remove the listener
+                    window.removeEventListener('pointerdown', startPlay);
+                    window.removeEventListener('click', startPlay);
+                }).catch(() => {
+                    // Failed (likely still no gesture), keep waiting
+                });
             };
 
-            document.addEventListener('click', startPlay);
-            document.addEventListener('touchstart', startPlay);
+            // Listen for any touch or click on the entire window
+            window.addEventListener('pointerdown', startPlay);
+            window.addEventListener('click', startPlay);
         }
+        
+        // Start waiting for interaction immediately
         playIntroAudio();
 
         /**
-         * Background Video Control
+         * 3. Background Video Control (Always Muted)
          */
         function handleVideoPlayback() {
             const video = document.getElementById('bgVideo');
@@ -357,16 +374,12 @@
             video.play().catch(() => {
                 const playOnInteract = () => {
                     video.play();
-                    document.removeEventListener('click', playOnInteract);
+                    window.removeEventListener('pointerdown', playOnInteract);
                 };
-                document.addEventListener('click', playOnInteract);
+                window.addEventListener('pointerdown', playOnInteract);
             });
         }
         window.addEventListener('load', handleVideoPlayback);
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        }
     </script>
 </body>
 
