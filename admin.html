@@ -155,15 +155,16 @@ html, body {
 }
 
 .nav-link:hover {
-    background: var(--bg-2);
+    background: rgba(255,255,255,0.03);
     color: var(--text);
 }
 
 .nav-link.active {
-    background: var(--gold-glow);
+    background: linear-gradient(270deg, var(--gold-glow) 0%, rgba(200,168,75,0.02) 100%);
     color: var(--gold);
-    font-weight: 600;
-    border: 1px solid var(--border-g);
+    font-weight: 700;
+    border-right: 3px solid var(--gold);
+    padding-right: 11px; /* Offset for border */
 }
 
 .nav-link i {
