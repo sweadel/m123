@@ -35,228 +35,172 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
 
     <style>
-        /* 
-        --------------------------------------------------------------------------
-        DESIGN SYSTEM & TOKENS
-        --------------------------------------------------------------------------
-        */
         :root {
-            --gold: #E5C467;        /* Light Elegant Gold */
-            --gold-dark: #C5A022;   /* Deep Gold for Interactive States */
-            --dark: #080808;        /* True Black Background */
-            --glass: rgba(8, 8, 8, .75); /* Dark Glassmorphism Effect */
-            --overlay-op: .20;      /* Maximum brightness */
-            --home-logo-h: 240px;   /* Increased back to 240px for better visibility */
+            --gold: #C5A022;
+            --gold-glow: rgba(197, 160, 34, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #FFFFFF;
+            --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
         }
 
-        /* Global Reset */
-        *, *::before, *::after, input, button {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'IBM Plex Sans Arabic', sans-serif !important;
-            font-weight: 600;
-        }
-
-        html, body {
-            height: 100%;
-            overflow: hidden; /* Prevent scrolling on the landing page */
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            background: var(--dark);
+            background-color: #000;
+            color: var(--text-main);
+            font-family: var(--font-arabic);
+            overflow: hidden;
+            height: 100dvh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             direction: rtl;
-            position: relative;
         }
 
-        /* 
-        --------------------------------------------------------------------------
-        VIDEO BACKGROUND
-        --------------------------------------------------------------------------
-        */
+        /* Video Background with Radial Shadow */
         .vid-bg {
             position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: #000;
         }
-
         .vid-bg video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.65;
         }
-
-        /* Dark overlay over video to ensure text readability */
         .vid-bg::after {
             content: '';
             position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, var(--overlay-op));
-            transition: background 0.3s ease;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.85) 100%);
+            z-index: -1;
         }
 
-        /* 
-        --------------------------------------------------------------------------
-        LOGO SECTION
-        --------------------------------------------------------------------------
-        */
-        .logo-wrap {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            padding-top: 5vh; /* Balanced position */
-            pointer-events: none;
-        }
-
-        .logo-wrap img {
-            height: var(--home-logo-h, 320px);
-            width: auto;
-            filter: drop-shadow(0 4px 35px rgba(0, 0, 0, .85));
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* 
-        --------------------------------------------------------------------------
-        INTERACTIVE PANEL (Buttons & Social)
-        --------------------------------------------------------------------------
-        */
-        .panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
+        /* Layout Container */
+        .container {
             width: 100%;
+            max-width: 450px;
+            padding: 20px;
             z-index: 10;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
-            padding: 5px 20px 0; /* Minimal padding */
-            border-radius: 28px 28px 0 0;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        /* Button Column */
-        .btn-col {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 12px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+            align-items: center;
         }
 
-        /* Base Button Styles */
+        /* Premium Logo Animation */
+        .logo-wrap {
+            margin-bottom: 45px;
+            transition: all 0.5s ease;
+        }
+        .logo-wrap img {
+            width: 240px;
+            filter: drop-shadow(0 15px 45px rgba(0,0,0,0.9));
+            animation: logoEntrance 1.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Button Grid */
+        .btn-col {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
         .main-btn {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 20px; /* Reduced from 16px */
-            border-radius: 50px; /* More rounded/pill shape */
-            font-size: 1rem; /* Reduced from 1.15rem */
+            padding: 16px 24px;
+            border-radius: 100px;
             text-decoration: none;
-            transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            cursor: pointer;
-            gap: 12px;
-            letter-spacing: .02em;
-        }
-
-        /* Gold Variant: Primary Action */
-        .main-btn.gold {
-            background: linear-gradient(135deg, #E5C467, #C5A022);
-            color: #000;
-            box-shadow: 0 5px 20px rgba(197, 160, 34, .4);
-            font-weight: 800;
-        }
-
-        .main-btn.gold:hover, .main-btn.gold:active {
-            background: #E5C467;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(197, 160, 34, .55);
-        }
-
-        /* Ghost Variant: Secondary Action */
-        .main-btn.ghost {
-            background: rgba(255, 255, 255, .08);
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, .15);
+            animation: btnSlideIn 0.8s backwards;
+        }
+
+        /* Gold Style */
+        .main-btn.gold {
+            background: rgba(197, 160, 34, 0.18);
+            color: var(--gold);
+            border-color: rgba(197, 160, 34, 0.35);
             font-weight: 700;
         }
-
-        .main-btn.ghost:hover, .main-btn.ghost:active {
-            background: rgba(255, 255, 255, .15);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, .3);
+        .main-btn.gold:active {
+            transform: scale(0.96);
+            background: var(--gold);
+            color: #000;
         }
 
-        /* Footer Tagline */
+        /* Ghost Style */
+        .main-btn.ghost {
+            background: var(--glass);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+        .main-btn.ghost:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Info Text */
         .tagline {
-            text-align: center;
-            color: rgba(255, 255, 255, .45);
-            font-size: .8rem;
-            padding: 8px 0 0;
-            letter-spacing: .5px;
-            margin-bottom: 75px; /* Space for the floating social bar */
+            margin-top: 35px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 400;
         }
 
-        /* Social Media Bar (Floating Premium) */
+        /* Social Bar */
         .social-bar {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 450px;
-            background: rgba(20, 18, 16, 0.85);
-            padding: 14px 10px;
+            margin-top: 25px;
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 22px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            gap: 25px;
+            justify-content: center;
         }
-
         .s-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.65);
-            font-size: .7rem;
-            font-weight: 800;
-            gap: 5px;
-            transition: all .2s;
-            flex: 1;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            transition: all 0.3s;
         }
-
-        .s-link i {
-            font-size: 1.25rem;
+        .s-link:active {
             color: var(--gold);
-            margin-bottom: 1px;
-            filter: drop-shadow(0 0 5px rgba(229, 196, 103, 0.3));
+            transform: scale(1.2);
         }
 
-        .s-link:hover, .s-link:active {
-            color: #fff;
-            transform: translateY(-3px);
+        /* Animations */
+        @keyframes logoEntrance {
+            0% { opacity: 0; transform: scale(0.85) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes btnSlideIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile Optimization */
-        @media (max-width: 380px) {
-            .logo-wrap { padding-top: 3vh; }
-            .logo-wrap img { height: 120px !important; } /* Proportional reduction for small mobile */
-            .main-btn { font-size: 1rem; padding: 14px 16px; }
-            .tagline { font-size: 0.75rem; margin-bottom: 70px; }
+        /* Staggered Button Entrance */
+        .btn-col a:nth-child(1) { animation-delay: 0.4s; }
+        .btn-col a:nth-child(2) { animation-delay: 0.5s; }
+        .btn-col a:nth-child(3) { animation-delay: 0.6s; }
+        .btn-col a:nth-child(4) { animation-delay: 0.7s; }
+
+        /* Mobile specific tweaks */
+        @media (max-height: 700px) {
+            .logo-wrap img { width: 190px; }
+            .logo-wrap { margin-bottom: 25px; }
+            .main-btn { padding: 12px 20px; font-size: 1rem; }
+            .tagline { margin-top: 20px; }
         }
     </style>
 </head>
@@ -270,54 +214,43 @@
         </video>
     </div>
 
-    <!-- Central Logo Layer -->
-    <div class="logo-wrap">
-        <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
-    </div>
+    <!-- Central Content Container -->
+    <div class="container">
+        <!-- Logo Section -->
+        <div class="logo-wrap">
+            <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
+        </div>
 
-    <!-- Control Panel -->
-    <div class="panel">
+        <!-- Interactive Buttons Section -->
         <div class="btn-col">
-            <!-- Navigation Buttons -->
             <a href="menu.html#arabic" id="btn_arabic" class="main-btn gold">
                 قائمة الطعام - عربي
             </a>
-
             <a href="menu-en.html" id="btn_english" class="main-btn gold">
                 Tallo Menu - English
             </a>
-
             <a href="feedback.html" id="btn_feedback_ar" class="main-btn ghost">
                 شاركنا تجربتك
             </a>
-
             <a href="feedback-en.html" id="btn_feedback_en" class="main-btn ghost">
                 Share Your Experience
             </a>
         </div>
 
+        <!-- Social Bar & Location -->
         <p class="tagline">طلوا حبابنا - مادبا، الأردن</p>
-
-        <!-- Social Bar Links -->
         <div class="social-bar">
-            <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link">
+            <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link" title="الموقع">
                 <i class="fa-solid fa-location-dot"></i>
-                <span>الموقع</span>
             </a>
-
-            <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link">
+            <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link" title="واتساب">
                 <i class="fa-brands fa-whatsapp"></i>
-                <span>واتساب</span>
             </a>
-
-            <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link">
+            <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link" title="إنستغرام">
                 <i class="fa-brands fa-instagram"></i>
-                <span>إنستغرام</span>
             </a>
-
-            <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" id="link_facebook" target="_blank" rel="noopener" class="s-link">
+            <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" id="link_facebook" target="_blank" rel="noopener" class="s-link" title="فيسبوك">
                 <i class="fa-brands fa-facebook-f"></i>
-                <span>فيسبوك</span>
             </a>
         </div>
     </div>
