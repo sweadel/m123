@@ -413,30 +413,49 @@
         initHomeSync();
 
         /**
-         * 7. Auto Play Intro Audio (Plays Once per Session)
+         * 7. Ultra-Robust Audio Unlocker
+         * Browsers block audio until a user gesture. This script waits for ANY gesture
+         * and 'unlocks' the audio context immediately.
          */
         function playIntroAudio() {
-            const audio = new Audio('intro-audio.m4a');
-            audio.volume = 1.0; // Max volume
+            // Add a cache-buster to ensure we load the fresh file
+            const audioUrl = 'intro-audio.m4a?v=' + Date.now();
+            const audio = new Audio(audioUrl);
+            audio.volume = 1.0;
             audio.preload = 'auto';
-            
-            const startPlay = () => {
+
+            let hasPlayed = false;
+
+            const forcePlay = () => {
+                if (hasPlayed) return;
+                
                 audio.play().then(() => {
-                    // Success
-                    ['click','touchstart','mousedown','scroll'].forEach(ev => 
-                        document.removeEventListener(ev, startPlay)
-                    );
-                }).catch(e => console.warn("Retry on next touch..."));
+                    hasPlayed = true;
+                    // Remove all triggers once audio starts
+                    ['click', 'touchstart', 'mousedown', 'scroll', 'keydown'].forEach(ev => {
+                        window.removeEventListener(ev, forcePlay);
+                    });
+                    console.log("Audio unlocked and playing!");
+                }).catch(err => {
+                    console.warn("Autoplay still waiting for a real user gesture...");
+                });
             };
 
-            ['click','touchstart','mousedown','scroll'].forEach(ev => 
-                document.addEventListener(ev, startPlay, {passive: true})
-            );
-            
-            // Try initial play (might work on some mobile if interaction happened already)
-            startPlay();
+            // Aggressive trigger list
+            ['click', 'touchstart', 'mousedown', 'scroll', 'keydown'].forEach(ev => {
+                window.addEventListener(ev, forcePlay, { passive: true, once: false });
+            });
+
+            // Initial attempt (works if session is already 'active')
+            forcePlay();
         }
-        playIntroAudio();
+        
+        // Run as soon as possible
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', playIntroAudio);
+        } else {
+            playIntroAudio();
+        }
 
         /**
          * 8. Enhanced Video Management
