@@ -265,7 +265,7 @@
 
     <!-- Background Video Layer -->
     <div class="vid-bg">
-        <video id="bgVideo" autoplay muted loop playsinline preload="auto">
+        <video id="bgVideo" autoplay muted loop playsinline preload="metadata" poster="images/wide-bg.png">
             <source id="home-video-source" src="images/tallo-video.mp4" type="video/mp4">
         </video>
     </div>
@@ -376,19 +376,23 @@
         playIntroAudio();
 
         /**
-         * 3. Background Video Control (Always Muted)
+         * 3. Background Video Control (Always Muted & Optimized)
          */
         function handleVideoPlayback() {
             const video = document.getElementById('bgVideo');
             if (!video) return;
             video.muted = true;
-            video.play().catch(() => {
-                const playOnInteract = () => {
-                    video.play();
-                    window.removeEventListener('pointerdown', playOnInteract);
-                };
-                window.addEventListener('pointerdown', playOnInteract);
-            });
+            
+            // تأخير التشغيل قليلاً لراحة المعالج (CPU)
+            setTimeout(() => {
+                video.play().catch(() => {
+                    const playOnInteract = () => {
+                        video.play();
+                        window.removeEventListener('pointerdown', playOnInteract);
+                    };
+                    window.addEventListener('pointerdown', playOnInteract);
+                });
+            }, 500);
         }
         window.addEventListener('load', handleVideoPlayback);
     </script>
