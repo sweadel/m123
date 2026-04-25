@@ -761,13 +761,21 @@ function updateBadge() {
 }
 
 // ══════════════ 15. GLOBAL SEARCH ══════════════
+/**
+ * 1. وظائف البحث المتقدم (Global Search) مع ميزة الانتظار الذكي (Debounce)
+ * لمنع "التهنيق" عند البحث السريع.
+ */
+let searchTimeout;
 function onGlobalSearch() {
-    navigateTo('view-menu');
-    const gs = document.getElementById('globalSearch')?.value || '';
-    const fs = document.getElementById('filterSearch');
-    if (fs) fs.value = gs;
-    renderTable();
-    renderGrid();
+    navigateTo('view-menu'); // الانتقال لصفحة المنيو فور البدء بالبحث
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        const gs = document.getElementById('globalSearch')?.value || '';
+        const fs = document.getElementById('filterSearch');
+        if (fs) fs.value = gs;
+        renderTable();
+        renderGrid();
+    }, 250);
 }
 
 // ══════════════ 16. IMAGE PREVIEW ══════════════

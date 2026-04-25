@@ -314,16 +314,20 @@
                 itemsByCat[item.category].push(item);
             });
 
+            // بناء كل قسم (عربي، انترناشونال، إلخ)
             const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
-                navEl.innerHTML = '';
+                // 1. بناء أزرار التنقل في الذاكرة (Fragment)
+                const navFrag = document.createDocumentFragment();
+                // 2. بناء محتوى القسم في الذاكرة (Fragment)
+                const secFrag = document.createDocumentFragment();
+
                 const hero = secEl.querySelector('.section-hero');
-                secEl.innerHTML = '';
-                if (hero) secEl.appendChild(hero);
+                if (hero) secFrag.appendChild(hero.cloneNode(true));
 
                 const cats = Object.entries(_categoriesMeta)
                     .map(([id, val]) => ({ id, ...val }))
@@ -336,7 +340,7 @@
                     btn.className = 'cat-btn';
                     btn.textContent = cat.nameEn || cat.nameAr;
                     if(cat.icon) btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ` + btn.innerHTML;
-                    navEl.appendChild(btn);
+                    navFrag.appendChild(btn);
 
                     const h2 = document.createElement('h2');
                     h2.id = cat.id;
@@ -349,16 +353,44 @@
                     const items = itemsByCat[cat.id] || [];
                     items.forEach(item => grid.appendChild(buildCard(item)));
 
-                    secEl.appendChild(h2);
-                    secEl.appendChild(grid);
+                    secFrag.appendChild(h2);
+                    secFrag.appendChild(grid);
+                });
+
+                // 3. التحديث اللحظي للشاشة
+                window.requestAnimationFrame(() => {
+                    navEl.innerHTML = '';
+                    navEl.appendChild(navFrag);
+                    secEl.innerHTML = '';
+                    secEl.appendChild(secFrag);
                 });
             });
         }
 
+        let _renderTimeout;
+        /**
+         * طلب رسم المنيو بطريقة ذكية تمنع الاهتزاز (Debounced Render)
+         */
+        function requestRender() {
+            clearTimeout(_renderTimeout);
+            // ننتظر 50 ميكرو ثانية لضمان وصول كل البيانات معاً
+            _renderTimeout = setTimeout(() => {
+                window.requestAnimationFrame(() => {
+                    renderFullMenu();
+                });
+            }, 50);
+        }
+
         // بدء الاستماع للتغييرات في قاعدة البيانات
         function initListeners() {
-            db.ref('menu_items').on('value', snap => { _menuItems = snap.val(); renderFullMenu(); });
-            db.ref('categories_meta').on('value', snap => { _categoriesMeta = snap.val(); renderFullMenu(); });
+            db.ref('menu_items').on('value', snap => { 
+                _menuItems = snap.val(); 
+                requestRender(); 
+            });
+            db.ref('categories_meta').on('value', snap => { 
+                _categoriesMeta = snap.val(); 
+                requestRender(); 
+            });
         }
         initListeners();
 
@@ -378,7 +410,5 @@
     </script>
     <!-- تسجيل خدمة العمل بدون إنترنت (Service Worker) -->
     <script src="sw-register.js" onerror="console.log('SW fallback')"></script>
-</body>
-</html>
 </body>
 </html>

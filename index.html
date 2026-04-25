@@ -63,6 +63,7 @@
             justify-content: center; /* توسيط المحتوى أفقياً */
             text-align: center;
             direction: rtl; /* الكتابة من اليمين لليسام */
+            transition: opacity 0.3s ease; /* تسريع حركة الاختفاء */
         }
 
         /* إعدادات فيديو الخلفية */
@@ -230,16 +231,16 @@
 
         <!-- قسم أزرار التفاعل -->
         <div class="btn-col">
-            <a href="menu.html#arabic" id="btn_arabic" class="main-btn gold">
+            <a href="javascript:void(0)" onclick="navigateTo('menu.html#arabic')" id="btn_arabic" class="main-btn gold">
                 قائمة الطعام - عربي
             </a>
-            <a href="menu-en.html" id="btn_english" class="main-btn gold">
+            <a href="javascript:void(0)" onclick="navigateTo('menu-en.html')" id="btn_english" class="main-btn gold">
                 Tallo Menu - English
             </a>
-            <a href="feedback.html" id="btn_feedback_ar" class="main-btn ghost">
+            <a href="javascript:void(0)" onclick="navigateTo('feedback.html')" id="btn_feedback_ar" class="main-btn ghost">
                 شاركنا تجربتك
             </a>
-            <a href="feedback-en.html" id="btn_feedback_en" class="main-btn ghost">
+            <a href="javascript:void(0)" onclick="navigateTo('feedback-en.html')" id="btn_feedback_en" class="main-btn ghost">
                 Share Your Experience
             </a>
         </div>
@@ -312,7 +313,7 @@
 
             // محاولات متكررة تلقائية
             play();
-            setTimeout(play, 500);
+            setTimeout(play, 300);
             setTimeout(play, 1500);
         }
 
@@ -320,7 +321,15 @@
         window.addEventListener('DOMContentLoaded', initExtremeAutoplay);
 
         /**
-         * 2. منطق فيديو الخلفية
+         * 2. وظيفة الانتقال الناعم بين الصفحات
+         */
+        function navigateTo(url) {
+            document.body.style.opacity = '0';
+            setTimeout(() => { window.location.href = url; }, 300);
+        }
+
+        /**
+         * 3. منطق فيديو الخلفية
          */
         function initVideo() {
             const video = document.getElementById('bgVideo');
