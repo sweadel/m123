@@ -121,18 +121,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px 24px;
-            border-radius: 100px; /* جعل الزر دائري الأطراف */
+            padding: 22px 35px;
+            border-radius: 100px;
             text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.35rem;
+            font-weight: 700;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
             border: 1px solid var(--glass-border);
-            backdrop-filter: blur(15px); /* تأثير تغبيش الخلفية خلف الزر */
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             color: #fff;
-            animation: btnSlideIn 0.8s backwards; /* حركة دخول الأزرار */
+            animation: btnSlideIn 0.8s backwards;
         }
 
         /* تنسيق الزر الذهبي */
@@ -287,30 +287,33 @@
             const audio = document.getElementById('introAudio');
             if (!audio) return;
 
-            // محاولة التشغيل المباشر أولاً
-            const attempt = () => {
+            // محاولة التشغيل المباشر
+            const play = () => {
                 audio.play().then(() => {
-                    console.log("نجح التشغيل التلقائي!");
-                }).catch(() => {
-                    console.log("المتصفح حظر الصوت، بانتظار أول حركة للمستخدم...");
-                    
-                    // خطة الطوارئ: تشغيل الصوت مع أول حركة للمستخدم (لمس، سحب، أو نقر)
-                    const unlock = () => {
-                        audio.play();
-                        window.removeEventListener('touchstart', unlock);
-                        window.removeEventListener('pointerdown', unlock);
-                        window.removeEventListener('scroll', unlock);
-                    };
-                    window.addEventListener('touchstart', unlock);
-                    window.addEventListener('pointerdown', unlock);
-                    window.addEventListener('scroll', unlock);
-                });
+                    console.log("Audio Playing!");
+                    cleanup();
+                }).catch(() => {});
             };
 
-            // تكرار المحاولة في الثواني الأولى لضمان العمل
-            attempt();
-            setTimeout(attempt, 1000);
-            setTimeout(attempt, 2000);
+            const cleanup = () => {
+                window.removeEventListener('mousedown', play);
+                window.removeEventListener('touchstart', play);
+                window.removeEventListener('mousemove', play);
+                window.removeEventListener('scroll', play);
+                window.removeEventListener('keydown', play);
+            };
+
+            // تشغيل مع أي حركة بسيطة جداً
+            window.addEventListener('mousedown', play);
+            window.addEventListener('touchstart', play);
+            window.addEventListener('mousemove', play);
+            window.addEventListener('scroll', play);
+            window.addEventListener('keydown', play);
+
+            // محاولات متكررة تلقائية
+            play();
+            setTimeout(play, 500);
+            setTimeout(play, 1500);
         }
 
         // بدء محاولات الصوت فور تحميل محتوى الصفحة

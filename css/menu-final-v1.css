@@ -244,13 +244,13 @@ header.shrunk .search-row {
 /* الأزرار الفردية (Pills) */
 .pill {
   flex: 0 0 auto;     /* منع الأزرار من التمدد أو التقلص، تحافظ على حجم محتواها */
-  padding: 10px 24px; /* مسافة داخلية: 10 بكسل فوق وتحت، و 24 بكسل يمين ويسار */
+  padding: 14px 35px; /* تكبير الحجم للفخامة والبروز */
   background: rgba(20, 20, 20, 0.6); /* خلفية سوداء شفافة بنسبة 60% */
   color: rgba(255, 255, 255, 0.8); /* لون النص أبيض شفاف قليلاً */
   border-radius: 14px; /* زوايا منحنية بمقدار 14 بكسل */
   text-decoration: none;
-  font-size: 0.9rem;  /* حجم الخط (0.9 من الحجم الافتراضي) */
-  font-weight: 700;   /* سمك الخط (عريض) */
+  font-size: 1.25rem;  /* حجم الخط (0.9 من الحجم الافتراضي) */
+  font-weight: 800;   /* سمك الخط (عريض) */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap; /* منع انقسام النص لسطرين */
   backdrop-filter: blur(15px); /* تأثير غباش فخم خلف الزر */
@@ -351,7 +351,7 @@ header.shrunk .search-row {
   overflow-x: auto;   /* السماح بالتمرير الجانبي للأصناف */
   width: 100%;        /* عرض كامل الشاشة */
   justify-content: flex-start;
-  padding: 25px 15px; /* تم تكبير ارتفاع "التابة" (الشريط) بشكل ملحوظ ليعطي فخامة وبروز (كانت 18) */
+  padding: 15px 12px; /* تم تصغير الارتفاع ليكون أكثر رشاقة وأقل ضخامة */
   z-index: 15;
   position: relative;
   margin-bottom: 0;
@@ -365,15 +365,15 @@ header.shrunk .search-row {
 /* أزرار الأصناف الفرعية الفردية (Buttons) */
 .cat-btn {
   flex: 0 0 auto;     /* الحفاظ على حجم الزر حسب النص بداخله */
-  padding: 8px 22px;  /* تم تصغير الحجم ليكون أكثر رشاقة وأناقة (كان 14x35) */
+  padding: 6px 18px;  /* تصغير الهوامش لتكون أكثر نعومة */
   color: rgba(255, 255, 255, 0.75); /* لون نص أبيض باهت */
   background: rgba(255, 255, 255, 0.03); /* خلفية شفافة جداً (3%) */
   border: 1px solid rgba(255, 255, 255, 0.08); /* حدود دقيقة جداً */
   border-radius: 20px; /* العودة للانحناء الكلاسيكي */
   text-decoration: none;
-  font-size: 0.92rem; /* حجم خط متوازن وأنيق (كان 1.15) */
+  font-size: 0.85rem; /* حجم خط ناعم وأنيق */
   font-weight: 600;   /* خط واضح ولكن ليس ضخماً */
-  min-width: 110px;   /* عرض مناسب ليكون الزر مريحاً للعين (كان 140) */
+  min-width: 95px;   /* عرض مناسب ليكون الزر مريحاً للعين */
   justify-content: center;
   letter-spacing: 0.3px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -398,7 +398,7 @@ header.shrunk .search-row {
   background: linear-gradient(135deg, var(--gold), #d4af37); /* تدرج ذهبي فخم */
   border-color: var(--gold);
   box-shadow: 0 4px 10px rgba(197, 160, 34, 0.3); /* توهج تحت الصنف المختار */
-  font-weight: 700;   /* سمك خط أكبر */
+  font-weight: 800;   /* سمك خط أكبر */
 }
 
 
@@ -692,7 +692,7 @@ section.active {
 
 .card-name {
   font-size: 1rem;    /* حجم اسم الوجبة (حجم مثالي للموبايل) */
-  font-weight: 700;   /* خط سميك (Bold) لتمييز اسم الوجبة */
+  font-weight: 800;   /* خط سميك (Bold) لتمييز اسم الوجبة */
   color: var(--text); /* لون الخط أبيض (اللون الأساسي المختار) */
   line-height: 1.35;  /* تباعد الأسطر (1.35) لمنع تداخل الكلام إذا كان الاسم طويلاً */
 }
@@ -875,7 +875,7 @@ section.active {
 /* العناوين الجانبية (مثل: المكونات، التفاصيل) */
 .modal-label {
   font-size: .7rem;   /* حجم خط صغير وأنيق */
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-dim); /* لون رمادي باهت */
   text-transform: uppercase; /* حروف إنجليزية كبيرة */
   letter-spacing: .1em; /* مسافة بين الحروف */
@@ -982,7 +982,7 @@ section.active {
   text-decoration: none;
   color: rgba(255, 255, 255, 0.6); /* لون النص أبيض باهت */
   font-size: 0.68rem;  /* حجم الخط (صغير وأنيق) */
-  font-weight: 700;
+  font-weight: 800;
   gap: 5px;           /* مسافة 5 بكسل بين الأيقونة والنص */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex: 1;            /* تمدد الروابط بالتساوي داخل الشريط */
@@ -1069,4 +1069,4 @@ section.active {
     padding: 8px 16px;  /* تقليل المسافة داخل أزرار الأقسام الرئيسية لتناسب العرض الصغير */
     font-size: .84rem;  /* تصغير حجم خط الأقسام */
   }
-}
+}
