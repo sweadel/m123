@@ -12,9 +12,7 @@
 
     <div class="admin-wrapper">
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <img src="images/tallo-logo.png" alt="طلو أحبابنا">
-            </div>
+            <div class="sidebar-header"><img src="images/tallo-logo.png" alt="طلو أحبابنا"></div>
             <nav class="sidebar-menu">
                 <a href="javascript:void(0)" class="menu-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a>
                 <a href="javascript:void(0)" class="menu-item" data-view="view-menu" onclick="navigateTo('view-menu')"><i class="fa-solid fa-bowl-food"></i> قائمة الطعام</a>
@@ -36,117 +34,57 @@
                 <h2 style="font-size:1.1rem;">لوحة التحكم</h2>
             </div>
 
-            <!-- DASHBOARD VIEW -->
             <section class="view active" id="view-dashboard">
-                <div class="page-header"><div class="page-title"><h1>أهلاً بك، <span id="current-user-display">المدير</span> 👋</h1><p>ملخص مطعمك اليوم.</p></div></div>
+                <div class="page-header"><div class="page-title"><h1>أهلاً بك 👋</h1><p>ملخص مطعمك اليوم.</p></div></div>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-utensils"></i></div><div class="stat-info"><h3>إجمالي الأصناف</h3><div class="stat-num" id="stat-total">0</div></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-utensils"></i></div><div class="stat-info"><h3>الوجبات</h3><div class="stat-num" id="stat-total">0</div></div></div>
                     <div class="stat-card"><div class="stat-icon" style="color:var(--gold);"><i class="fa-solid fa-layer-group"></i></div><div class="stat-info"><h3>الأقسام</h3><div class="stat-num" id="stat-cats">0</div></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="color:#2ecc71;"><i class="fa-solid fa-comment-dots"></i></div><div class="stat-info"><h3>الآراء</h3><div class="stat-num" id="stat-feed">0</div></div></div>
                 </div>
             </section>
 
-            <!-- MENU VIEW (إدارة المنيو المطورة) -->
             <section class="view" id="view-menu" style="display:none;">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h1>إدارة المنيو</h1>
-                        <p>تصفح الوجبات حسب القسم وانقلها بسهولة.</p>
-                    </div>
-                    <button class="btn-primary" onclick="openItemModal()">
-                        <i class="fa-solid fa-plus"></i> وجبة جديدة
-                    </button>
-                </div>
-                
+                <div class="page-header"><div class="page-title"><h1>إدارة المنيو</h1></div><button class="btn-primary" onclick="openItemModal()"><i class="fa-solid fa-plus"></i> وجبة جديدة</button></div>
                 <div class="data-card">
-                    <div class="table-header" style="flex-wrap: wrap; gap: 15px;">
-                        <!-- فلتر الأقسام بشكل احترافي -->
-                        <div class="cat-filter-tabs" id="catFilterTabs" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px; width:100%;">
-                            <!-- سيتم ملؤه من JS -->
-                        </div>
-                        <div style="display:flex; gap:10px; width:100%;">
-                            <input type="text" id="globalSearch" class="form-control" placeholder="ابحث عن وجبة..." style="flex:1;" oninput="onGlobalSearch()">
-                            <select id="filterCategory" class="form-control" style="width:180px;" onchange="renderTable()">
-                                <option value="all">كل الأقسام</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>الصورة</th>
-                                    <th>اسم الوجبة</th>
-                                    <th>نقل إلى قسم</th> <!-- ميزة النقل السريع -->
-                                    <th>السعر</th>
-                                    <th>الحالة</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="menu-table-body"></tbody>
-                        </table>
-                    </div>
+                    <div class="table-header"><div class="cat-filter-tabs" id="catFilterTabs"></div><input type="text" id="globalSearch" class="form-control" placeholder="بحث..." oninput="onGlobalSearch()"></div>
+                    <div style="overflow-x:auto;"><table><thead><tr><th>الصورة</th><th>الاسم</th><th>نقل</th><th>السعر</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="menu-table-body"></tbody></table></div>
                 </div>
             </section>
 
-            <!-- CATEGORIES VIEW -->
             <section class="view" id="view-categories" style="display:none;">
-                <div class="page-header"><div class="page-title"><h1>إدارة الأقسام</h1><p>إضافة وتعديل الأقسام والتابات.</p></div><button class="btn-primary" onclick="openCatModal()"><i class="fa-solid fa-folder-plus"></i> قسم جديد</button></div>
-                <div class="data-card">
-                    <table><thead><tr><th>الاسم بالعربي</th><th>الاسم بالإنجليزي</th><th>التاب (Section)</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="cat-table-body"></tbody></table>
-                </div>
+                <div class="page-header"><h1>إدارة الأقسام</h1><button class="btn-primary" onclick="openCatModal()">قسم جديد</button></div>
+                <div class="data-card"><table><thead><tr><th>الاسم عربي</th><th>القسم الرئيسي</th><th>الترتيب</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="cat-table-body"></tbody></table></div>
             </section>
 
-            <!-- LOGS VIEW -->
-            <section class="view" id="view-logs" style="display:none;"><div class="page-header"><h1>السجل</h1></div><div class="data-card"><table><thead><tr><th>الوقت</th><th>الحدث</th></tr></thead><tbody id="logs-table-body"></tbody></table></div></section>
-            
-            <!-- TRASH VIEW -->
-            <section class="view" id="view-trash" style="display:none;"><div class="page-header"><h1>المحذوفات</h1></div><div class="data-card"><table><thead><tr><th>الاسم</th><th>إجراء</th></tr></thead><tbody id="trash-table-body"></tbody></table></div></section>
+            <section class="view" id="view-design" style="display:none;">
+                <div class="page-header"><h1>إعدادات التصميم</h1><button class="btn-primary" onclick="saveDesignSettings()">حفظ الألوان</button></div>
+                <div class="data-card" style="padding:20px;"><div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"><div><label>اللون الأساسي</label><input type="color" id="d_primary" class="form-control"></div><div><label>لون الخلفية</label><input type="color" id="d_bg" class="form-control"></div></div></div>
+            </section>
+
+            <section class="view" id="view-home" style="display:none;">
+                <div class="page-header"><h1>إعدادات الرئيسية</h1><button class="btn-primary" onclick="saveHomeSettings()">حفظ الإعدادات</button></div>
+                <div class="data-card" style="padding:20px;"><div><label>رابط فيديو الخلفية</label><input type="text" id="h_video" class="form-control"></div><div style="margin-top:10px;"><label>الجملة الترحيبية</label><input type="text" id="h_tagline" class="form-control"></div></div>
+            </section>
+
+            <section class="view" id="view-feedback" style="display:none;"><div class="page-header"><h1>آراء الزبائن</h1></div><div class="data-card"><table><thead><tr><th>الوقت</th><th>الاسم</th><th>التقييم</th><th>التعليق</th></tr></thead><tbody id="feed-table-body"></tbody></table></div></section>
+            <section class="view" id="view-logs" style="display:none;"><div class="page-header"><h1>سجل العمليات</h1></div><div class="data-card"><table><thead><tr><th>الوقت</th><th>الحدث</th><th>التفاصيل</th></tr></thead><tbody id="logs-table-body"></tbody></table></div></section>
+            <section class="view" id="view-trash" style="display:none;"><div class="page-header"><h1>سلة المحذوفات</h1></div><div class="data-card"><table><thead><tr><th>الاسم</th><th>تاريخ الحذف</th><th>إجراء</th></tr></thead><tbody id="trash-table-body"></tbody></table></div></section>
         </main>
     </div>
 
-    <!-- MODAL: ITEM (معدل ليشمل الوصفين) -->
+    <!-- MODALS -->
     <div class="modal-overlay" id="itemModal">
         <div class="modal-content">
-            <div class="modal-header"><h2 id="modalTitle">إدارة الصنف</h2><button onclick="closeItemModal()">&times;</button></div>
-            <div class="modal-body">
-                <form id="itemForm">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <div class="form-group"><label>الاسم (عربي)</label><input type="text" id="itemName" class="form-control" required></div>
-                        <div class="form-group"><label>الاسم (English)</label><input type="text" id="itemNameEn" class="form-control"></div>
-                        <div class="form-group"><label>القسم</label><select id="itemCategory" class="form-control" required></select></div>
-                        <div class="form-group"><label>السعر</label><input type="text" id="itemPrice" class="form-control"></div>
-                    </div>
-                    <div class="form-group" style="margin-top:10px;"><label>رابط الصورة</label><input type="text" id="itemImg" class="form-control"></div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                        <div class="form-group"><label>الوصف (عربي)</label><textarea id="itemDesc" class="form-control" rows="3"></textarea></div>
-                        <div class="form-group"><label>الوصف (English)</label><textarea id="itemDescEn" class="form-control" rows="3"></textarea></div>
-                    </div>
-                </form>
-            </div>
+            <div class="modal-header"><h2 id="modalTitle">إدارة الوجبة</h2><button onclick="closeItemModal()">&times;</button></div>
+            <div class="modal-body"><form id="itemForm"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="text" id="itemName" class="form-control" placeholder="الاسم عربي" required><input type="text" id="itemNameEn" class="form-control" placeholder="الاسم إنجليزي"><select id="itemCategory" class="form-control" required></select><input type="text" id="itemPrice" class="form-control" placeholder="السعر"></div><input type="text" id="itemImg" class="form-control" placeholder="رابط الصورة" style="margin-top:10px;"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;"><textarea id="itemDesc" class="form-control" placeholder="وصف عربي" rows="2"></textarea><textarea id="itemDescEn" class="form-control" placeholder="وصف إنجليزي" rows="2"></textarea></div></form></div>
             <div class="modal-footer"><button class="btn-primary" onclick="saveItem()">حفظ البيانات</button></div>
         </div>
     </div>
 
-    <!-- MODAL: CATEGORY -->
     <div class="modal-overlay" id="catModal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="catModalTitle">إدارة القسم</h2><button onclick="closeCatModal()">&times;</button></div>
-            <div class="modal-body">
-                <form id="catForm">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <input type="text" id="catNameAr" class="form-control" placeholder="الاسم عربي" required>
-                        <input type="text" id="catNameEn" class="form-control" placeholder="الاسم إنجليزي">
-                        <select id="catSection" class="form-control" required>
-                            <option value="arabic">المنيو العربي</option>
-                            <option value="intl">الانترناشونال</option>
-                            <option value="desserts">الحلويات</option>
-                            <option value="drinks">المشروبات</option>
-                            <option value="argileh">الأراجيل</option>
-                        </select>
-                        <input type="number" id="catOrder" class="form-control" placeholder="الترتيب (رقم)">
-                    </div>
-                </form>
-            </div>
+            <div class="modal-body"><form id="catForm"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="text" id="catNameAr" class="form-control" placeholder="الاسم عربي" required><input type="text" id="catNameEn" class="form-control" placeholder="الاسم إنجليزي"><select id="catSection" class="form-control" required><option value="arabic">المنيو العربي</option><option value="intl">الانترناشونال</option><option value="desserts">الحلويات</option><option value="drinks">المشروبات</option><option value="argileh">الأراجيل</option></select><input type="number" id="catOrder" class="form-control" placeholder="الترتيب"></div><input type="text" id="catIcon" class="form-control" placeholder="أيقونة" style="margin-top:10px;"></form></div>
             <div class="modal-footer"><button class="btn-primary" onclick="saveCategory()">حفظ القسم</button></div>
         </div>
     </div>
