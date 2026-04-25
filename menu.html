@@ -314,17 +314,13 @@
             return card;
         }
 
-        /**
-         * رسم المنيو بالكامل بناءً على البيانات القادمة من Firebase
-         */
+        // الوظيفة الرئيسية لعرض المنيو بالكامل بناءً على الأقسام والوجبات
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
 
-            // إخفاء الهياكل المؤقتة (Loading skeletons)
             const skel = document.getElementById('skeletons-arabic');
             if (skel) skel.style.display = 'none';
 
-            // توزيع الوجبات على تصنيفاتهم
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {
                 if (item.status === 'inactive') return;
@@ -340,11 +336,11 @@
                 const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
-                // 1. بناء أزرار التنقل في ذاكرة المتصفح أولاً (Fragment)
+                // 1. بناء أزرار التنقل في الذاكرة (Fragment)
                 const navFrag = document.createDocumentFragment();
-                // 2. بناء محتوى القسم في ذاكرة المتصفح أولاً (Fragment)
+                // 2. بناء محتوى القسم في الذاكرة (Fragment)
                 const secFrag = document.createDocumentFragment();
-                
+
                 const hero = secEl.querySelector('.section-hero');
                 if (hero) secFrag.appendChild(hero.cloneNode(true));
 
@@ -354,19 +350,13 @@
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 cats.forEach(cat => {
-                    // بناء الأزرار
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
                     btn.className = 'cat-btn';
                     btn.textContent = cat.nameAr;
                     if(cat.icon) btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ` + btn.innerHTML;
-                    btn.addEventListener('click', function() {
-                        navEl.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                    });
                     navFrag.appendChild(btn);
 
-                    // بناء الوجبات
                     const h2 = document.createElement('h2');
                     h2.id = cat.id;
                     h2.className = 'sec-title';
@@ -382,7 +372,7 @@
                     secFrag.appendChild(grid);
                 });
 
-                // 3. التحديث الفعلي للشاشة يحدث في لحظة واحدة فقط لمنع الاهتزاز
+                // 3. التحديث اللحظي للشاشة
                 window.requestAnimationFrame(() => {
                     navEl.innerHTML = '';
                     navEl.appendChild(navFrag);
