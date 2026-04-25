@@ -640,17 +640,17 @@ section.active {
 /* ── منطقة الصورة (Card Image Container) ── */
 .card-img {
   width: 100%;        /* تأخذ كامل عرض البطاقة */
-  aspect-ratio: 1 / 1; /* جعل المنطقة مربعة تماماً (الطول يساوي العرض) لانتظام الشكل */
-  background-color: var(--surface); /* لون خلفية يظهر قبل تحميل الصورة */
-  /* في حال عدم وجود صورة للوجبة، يظهر شعار المطعم كصورة افتراضية */
+  aspect-ratio: 1 / 1; /* تثبيت الأبعاد لمنع القفز */
+  background-color: #2a0a0a; /* لون ثابت يظهر فوراً */
   background-image: url('../images/tallo-logo.png');
   background-position: center;
-  background-size: 44%; /* حجم اللوجو الافتراضي في المنتصف */
+  background-size: 40%;
   background-repeat: no-repeat;
-  overflow: hidden;   /* منع أي أجزاء من الصورة من الخروج عن حدود البطاقة */
+  overflow: hidden;
   position: relative;
-  flex-shrink: 0;     /* منع الصورة من التقلص في حال كان النص طويلاً جداً */
-  transition: background-size 0.3s ease;
+  flex-shrink: 0;
+  transform: translateZ(0); /* تسريع عبر كارت الشاشة */
+  transition: opacity 0.3s ease;
 }
 
 /* عندما يتم إضافة رابط صورة فعلية للوجبة (من لوحة التحكم) */
