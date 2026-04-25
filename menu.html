@@ -35,6 +35,16 @@
         }
         body { direction: rtl; font-weight: 700; }
         .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
+        
+        /* تأثير الظهور الناعم لإلغاء التخبط */
+        .fade-in {
+            animation: fadeInItems 0.6s ease forwards;
+            opacity: 0;
+        }
+        @keyframes fadeInItems {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 
@@ -320,10 +330,6 @@
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
 
-            // إخفاء الهياكل المؤقتة (Loading skeletons)
-            const skel = document.getElementById('skeletons-arabic');
-            if (skel) skel.style.display = 'none';
-
             // توزيع الوجبات على تصنيفاتهم
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {
@@ -333,16 +339,13 @@
                 itemsByCat[item.category].push(item);
             });
 
-            // بناء كل قسم (عربي، انترناشونال، إلخ)
             const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
-                // 1. بناء أزرار التنقل في ذاكرة المتصفح أولاً (Fragment)
                 const navFrag = document.createDocumentFragment();
-                // 2. بناء محتوى القسم في ذاكرة المتصفح أولاً (Fragment)
                 const secFrag = document.createDocumentFragment();
                 
                 const hero = secEl.querySelector('.section-hero');
@@ -354,7 +357,6 @@
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 cats.forEach(cat => {
-                    // بناء الأزرار
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
                     btn.className = 'cat-btn';
@@ -366,7 +368,6 @@
                     });
                     navFrag.appendChild(btn);
 
-                    // بناء الوجبات
                     const h2 = document.createElement('h2');
                     h2.id = cat.id;
                     h2.className = 'sec-title';
@@ -374,7 +375,7 @@
                     if(cat.icon) h2.innerHTML = `<i class="fa-solid ${cat.icon} sec-icon"></i> ` + h2.innerHTML;
                     
                     const grid = document.createElement('div');
-                    grid.className = 'menu-grid';
+                    grid.className = 'menu-grid fade-in'; // إضافة تأثير ظهور ناعم
                     const items = itemsByCat[cat.id] || [];
                     items.forEach(item => grid.appendChild(buildCard(item)));
 
@@ -382,28 +383,31 @@
                     secFrag.appendChild(grid);
                 });
 
-                // 3. التحديث الفعلي للشاشة يحدث في لحظة واحدة فقط لمنع الاهتزاز
+                // التحديث الفعلي: نمسح ونضيف في خطوة واحدة سريعة جداً
                 window.requestAnimationFrame(() => {
+                    // إخفاء الهياكل المؤقتة فقط عند أول ظهور حقيقي للبيانات
+                    const skel = document.getElementById('skeletons-arabic');
+                    if (skel) skel.style.opacity = '0'; 
+                    
                     navEl.innerHTML = '';
                     navEl.appendChild(navFrag);
+                    
+                    // استخدام تأثير انتقال بسيط لمنع "القفزة" البصرية
+                    secEl.style.opacity = '0.99'; 
                     secEl.innerHTML = '';
                     secEl.appendChild(secFrag);
+                    setTimeout(() => { if(skel) skel.remove(); secEl.style.opacity = '1'; }, 50);
                 });
             });
         }
 
         let _renderTimeout;
-        /**
-         * طلب رسم المنيو بطريقة ذكية تمنع الاهتزاز (Debounced Render)
-         */
         function requestRender() {
-            clearTimeout(_renderTimeout);
-            // ننتظر 50 ميكرو ثانية لضمان وصول كل البيانات معاً
+            if (_renderTimeout) return; // منع تكرار الطلبات في نفس اللحظة
             _renderTimeout = setTimeout(() => {
-                window.requestAnimationFrame(() => {
-                    renderFullMenu();
-                });
-            }, 50);
+                renderFullMenu();
+                _renderTimeout = null;
+            }, 150); // وقت انتظار بسيط لجمع كل التغييرات معاً
         }
 
         // بدء مراقبة التغييرات في قاعدة البيانات
