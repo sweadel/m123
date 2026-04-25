@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .rate-us-btn { position: fixed; bottom: 20px; right: 20px; background: var(--gold); color: #000; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(197,160,34,0.4); z-index: 1000; cursor: pointer; transition: 0.3s; }
+        .feedback-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(5px); text-align: center; }
+        .feedback-modal.active { display: flex; }
+        .feedback-content { background: #1a1a1a; padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); }
+        .star-rating { display: flex; gap: 10px; margin: 20px 0; justify-content: center; font-size: 1.8rem; color: #555; }
+        .star-rating i.active { color: var(--gold); }
+        .feedback-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 12px; margin-bottom: 15px; outline: none; }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -15,20 +24,41 @@
             <div class="header-content">
                 <img src="images/tallo-logo.png" alt="Tallo Ahbabna" class="logo">
                 <h1 id="site-tagline">Welcome to Tallo Ahbabna</h1>
-                <div class="header-actions">
-                    <a href="menu.html" class="lang-switch">العربية</a>
-                </div>
+                <div class="header-actions"><a href="menu.html" class="lang-switch">العربية</a></div>
             </div>
             <div class="header-arch"></div>
         </header>
 
         <nav class="category-nav" id="category-tabs"></nav>
         <main class="menu-container" id="menu-sections"></main>
+
+        <!-- Rate Us Button -->
+        <div class="rate-us-btn" onclick="openFeedback()"><i class="fa-solid fa-star"></i></div>
+
+        <!-- Feedback Modal -->
+        <div class="feedback-modal" id="feedbackModal">
+            <div class="feedback-content">
+                <h2 style="color:var(--gold); margin-bottom:10px;">Your Opinion Matters ✨</h2>
+                <p style="font-size:0.9rem; color:#aaa;">Help us improve</p>
+                <div class="star-rating" id="stars">
+                    <i class="fa-solid fa-star" data-val="1"></i>
+                    <i class="fa-solid fa-star" data-val="2"></i>
+                    <i class="fa-solid fa-star" data-val="3"></i>
+                    <i class="fa-solid fa-star" data-val="4"></i>
+                    <i class="fa-solid fa-star" data-val="5"></i>
+                </div>
+                <input type="text" id="f_name" class="feedback-input" placeholder="Your Name">
+                <textarea id="f_msg" class="feedback-input" rows="3" placeholder="Your comments..."></textarea>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-gold" style="flex:1; padding:12px; border:none; border-radius:12px; cursor:pointer;" onclick="submitFeedback()">Send</button>
+                    <button style="background:none; border:none; color:#aaa; cursor:pointer;" onclick="closeFeedback()">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
     <script>
         const fbCfg = {
             apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
@@ -36,57 +66,52 @@
             projectId: "tallow-ahbabna",
             databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
         };
-        if (!firebase.apps.length) firebase.initializeApp(fbCfg);
+        firebase.initializeApp(fbCfg);
         const db = firebase.database();
 
-        const REFS = {
-            menu: db.ref('menu_items'),
-            cats: db.ref('categories_meta'),
-            home: db.ref('settings/home')
-        };
-
+        const REFS = { menu: db.ref('menu_items'), cats: db.ref('categories_meta'), home: db.ref('settings/home'), feed: db.ref('feedback') };
         REFS.home.on('value', s => { if(s.val() && s.val().tagline) document.getElementById('site-tagline').textContent = s.val().taglineEn || s.val().tagline; });
-
         Promise.all([REFS.cats.once('value'), REFS.menu.once('value')]).then(([catSnap, menuSnap]) => {
             const cats = []; catSnap.forEach(c => cats.push({id: c.key, ...c.val()}));
             cats.sort((a,b) => (a.order||0) - (b.order||0));
             const menu = []; menuSnap.forEach(m => menu.push({key: m.key, ...m.val()}));
-
             const nav = document.getElementById('category-tabs');
             const container = document.getElementById('menu-sections');
-
             cats.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'cat-tab';
-                btn.innerHTML = `<i class="fa-solid ${cat.icon || 'fa-utensils'}"></i> ${cat.nameEn || cat.nameAr}`;
-                btn.onclick = () => document.getElementById(`sec-${cat.id}`).scrollIntoView({ behavior: 'smooth' });
+                if(cat.status==='hidden') return;
+                const btn = document.createElement('button'); btn.className='cat-tab';
+                btn.innerHTML=`<i class="fa-solid ${cat.icon||'fa-utensils'}"></i> ${cat.nameEn || cat.nameAr}`;
+                btn.onclick=()=>document.getElementById(`sec-${cat.id}`).scrollIntoView({behavior:'smooth'});
                 nav.appendChild(btn);
-
-                const sec = document.createElement('section');
-                sec.id = `sec-${cat.id}`;
-                sec.className = 'menu-section';
-                sec.innerHTML = `<h2 class="sec-title">${cat.nameEn || cat.nameAr}</h2><div class="items-grid"></div>`;
-                
+                const sec = document.createElement('section'); sec.id=`sec-${cat.id}`; sec.className='menu-section';
+                sec.innerHTML=`<h2 class="sec-title">${cat.nameEn || cat.nameAr}</h2><div class="items-grid"></div>`;
                 const grid = sec.querySelector('.items-grid');
-                const items = menu.filter(i => i.category === cat.id && i.status !== 'inactive');
-                
+                const items = menu.filter(i => i.category===cat.id && i.status!=='inactive');
                 items.forEach(item => {
-                    grid.innerHTML += `
-                        <div class="menu-item-card">
-                            <div class="item-img-wrapper">
-                                <img src="${item.image || 'images/tallo-logo.png'}" alt="${item.nameEn || item.name}" loading="lazy">
-                                ${item.price ? `<span class="item-price">${item.price} JD</span>` : ''}
-                            </div>
-                            <div class="item-info">
-                                <h3>${item.nameEn || item.name}</h3>
-                                <p>${item.descEn || item.desc || ''}</p>
-                            </div>
-                        </div>
-                    `;
+                    grid.innerHTML += `<div class="menu-item-card"><div class="item-img-wrapper"><img src="${item.image||'images/tallo-logo.png'}" loading="lazy">${item.price?`<span class="item-price">${item.price} JD</span>`:''}</div><div class="item-info"><h3>${item.nameEn || item.name}</h3><p>${item.descEn || item.desc || ''}</p></div></div>`;
                 });
                 if(items.length > 0) container.appendChild(sec);
             });
         });
+
+        let currentRating = 5;
+        document.querySelectorAll('#stars i').forEach(s => {
+            s.onclick = () => {
+                currentRating = s.dataset.val;
+                document.querySelectorAll('#stars i').forEach(st => st.classList.toggle('active', st.dataset.val <= currentRating));
+            };
+        });
+        function openFeedback() { document.getElementById('feedbackModal').classList.add('active'); }
+        function closeFeedback() { document.getElementById('feedbackModal').classList.remove('active'); }
+        function submitFeedback() {
+            const name = document.getElementById('f_name').value.trim() || 'Customer';
+            const message = document.getElementById('f_msg').value.trim();
+            if(!message) return alert('Please write your comments');
+            REFS.feed.push({ name, rating: currentRating, message, timestamp: Date.now() }).then(() => {
+                alert('Thank you! Your feedback is appreciated.');
+                closeFeedback();
+            });
+        }
     </script>
 </body>
 </html>
