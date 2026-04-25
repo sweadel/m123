@@ -1,348 +1,55 @@
 <!DOCTYPE html>
-<!-- 
-  ==========================================================================
-  المشروع: مطعم طلوا حبابنا - منيو ديجيتال وصفحة هبوط
-  الملف: index.html
-  الوصف: هذه هي الصفحة الرئيسية (بوابة الموقع) التي تحتوي على فيديو الخلفية،
-         شعار المطعم، وأزرار الدخول للمنيو.
-  ==========================================================================
--->
 <html lang="ar" dir="rtl">
-
 <head>
-    <!-- تعريف ترميز الحروف لدعم اللغة العربية -->
     <meta charset="UTF-8">
-    <!-- جعل الموقع متوافقاً مع شاشات الهواتف الذكية -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- لون شريط العنوان في المتصفح -->
-    <meta name="theme-color" content="#C5A022">
-    <!-- وصف الموقع لمحركات البحث (SEO) -->
-    <meta name="description" content="مطعم طلوا حبابنا - مادبا، الأردن. اكتشف قائمة طعامنا الكاملة وجرب أصنافنا المميزة.">
-
-    <!-- إعدادات الروابط عند مشاركة الموقع على فيسبوك وواتساب (Open Graph) -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="طلوا حبابنا | مادبا">
-    <meta property="og:description" content="تفضل وشوف قائمتنا الكاملة - تجربة طعام فريدة في قلب مادبا">
-    <meta property="og:image" content="images/tallo-logo.png">
-    <meta property="og:locale" content="ar_SA">
-
-    <!-- دعم تحويل الموقع إلى تطبيق (PWA) -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="images/tallo-logo.png">
-
-    <title>طلوا حبابنا | مادبا</title>
-
-    <!-- تحميل الخطوط من جوجل (خط IBM Plex Sans Arabic) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
-
+    <title>مطعم طلو أحبابنا | Tallo Ahbabna</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* تعريف المتغيرات (الألوان والخطوط) لتسهيل التغيير لاحقاً */
-        :root {
-            --gold: #C5A022; /* اللون الذهبي الأساسي */
-            --gold-glow: rgba(197, 160, 34, 0.4); /* توهج ذهبي شفاف */
-            --glass: rgba(255, 255, 255, 0.05); /* تأثير الزجاج الشفاف */
-            --glass-border: rgba(255, 255, 255, 0.12); /* حدود الزجاج */
-            --text-main: #FFFFFF; /* لون النص الأبيض */
-            --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
-        }
-
-        /* تصفير الإعدادات الافتراضية للمتصفح لضمان تناسق التصميم */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background-color: #000; /* خلفية سوداء */
-            color: var(--text-main);
-            font-family: var(--font-arabic);
-            overflow: hidden; /* منع التمرير في الصفحة الرئيسية */
-            height: 100dvh; /* طول الصفحة حسب ارتفاع الشاشة */
-            width: 100vw;
-            display: flex;
-            align-items: center; /* توسيط المحتوى عمودياً */
-            justify-content: center; /* توسيط المحتوى أفقياً */
-            text-align: center;
-            direction: rtl; /* الكتابة من اليمين لليسام */
-            transition: opacity 0.3s ease; /* تسريع حركة الاختفاء */
-        }
-
-        /* إعدادات فيديو الخلفية */
-        .vid-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; /* وضعه خلف كل العناصر */
-            background: #000;
-        }
-        .vid-bg video {
-            width: 100%; height: 100%; object-fit: cover; /* تغطية كامل الشاشة دون تشويه */
-            opacity: 0.65; /* تقليل السطوع لبروز النص */
-        }
-        /* طبقة تظليل فوق الفيديو لتحسين الرؤية */
-        .vid-bg::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.85) 100%);
-            z-index: -1;
-        }
-
-        /* الحاوية الرئيسية للمحتوى */
-        .container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* تأثيرات الشعار (اللوجو) */
-        .logo-wrap {
-            margin-bottom: 45px;
-            transition: all 0.5s ease;
-        }
-        .logo-wrap img {
-            width: 240px;
-            filter: drop-shadow(0 15px 45px rgba(0,0,0,0.9)); /* ظل تحت اللوجو للفخامة */
-            animation: logoEntrance 1.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* حركة دخول اللوجو */
-        }
-
-        /* تنسيق عمود الأزرار */
-        .btn-col {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px; /* المسافة بين الأزرار */
-        }
-
-        /* التصميم المشترك لجميع الأزرار (Glassmorphism) */
-        .main-btn {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 22px 35px;
-            border-radius: 100px;
-            text-decoration: none;
-            font-size: 1.35rem;
-            font-weight: 700;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            color: #fff;
-            animation: btnSlideIn 0.8s backwards;
-        }
-
-        /* تنسيق الزر الذهبي */
-        .main-btn.gold {
-            background: rgba(197, 160, 34, 0.18);
-            color: var(--gold);
-            border-color: rgba(197, 160, 34, 0.35);
-            font-weight: 700;
-        }
-        .main-btn.gold:active {
-            transform: scale(0.96); /* تصغير الزر قليلاً عند اللمس */
-            background: var(--gold);
-            color: #000;
-        }
-
-        /* تنسيق الزر الشفاف */
-        .main-btn.ghost {
-            background: var(--glass);
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.95rem;
-        }
-        .main-btn.ghost:active {
-            transform: scale(0.96);
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* النص السفلي */
-        .tagline {
-            margin-top: 35px;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.45);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: 400;
-        }
-
-        /* شريط الروابط الاجتماعية */
-        .social-bar {
-            margin-top: 25px;
-            display: flex;
-            gap: 25px;
-            justify-content: center;
-        }
-        .s-link {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.5rem;
-            transition: all 0.3s;
-        }
-        .s-link:active {
-            color: var(--gold);
-            transform: scale(1.2); /* تكبير الأيقونة عند اللمس */
-        }
-
-        /* تعريف حركات الدخول (Animations) */
-        @keyframes logoEntrance {
-            0% { opacity: 0; transform: scale(0.85) translateY(30px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes btnSlideIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* جعل الأزرار تظهر واحداً تلو الآخر بفوارق زمنية بسيطة */
-        .btn-col a:nth-child(1) { animation-delay: 0.4s; }
-        .btn-col a:nth-child(2) { animation-delay: 0.5s; }
-        .btn-col a:nth-child(3) { animation-delay: 0.6s; }
-        .btn-col a:nth-child(4) { animation-delay: 0.7s; }
-
-        /* تعديلات خاصة للشاشات الصغيرة جداً */
-        @media (max-height: 700px) {
-            .logo-wrap img { width: 190px; }
-            .logo-wrap { margin-bottom: 25px; }
-            .main-btn { padding: 12px 20px; font-size: 1rem; }
-            .tagline { margin-top: 20px; }
-        }
+        :root { --gold: #C5A022; --dark: #0a0a0a; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'IBM Plex Sans Arabic', sans-serif; }
+        body { background:var(--dark); color:#fff; overflow:hidden; }
+        .hero { position:relative; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; }
+        .bg-video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0.4; z-index:-1; }
+        .logo { width:180px; margin-bottom:30px; filter:drop-shadow(0 0 20px rgba(197,160,34,0.4)); }
+        h1 { font-size:2.5rem; margin-bottom:15px; color:var(--gold); }
+        p { font-size:1.2rem; margin-bottom:40px; color:#ccc; }
+        .btn-group { display:flex; gap:20px; }
+        .btn { padding:15px 40px; border-radius:50px; text-decoration:none; font-weight:700; transition:0.3s; font-size:1.1rem; }
+        .btn-gold { background:var(--gold); color:#000; }
+        .btn-gold:hover { transform:scale(1.05); box-shadow:0 0 30px rgba(197,160,34,0.5); }
     </style>
 </head>
-
 <body>
-
-    <!-- قسم فيديو الخلفية -->
-    <div class="vid-bg">
-        <video id="bgVideo" autoplay muted loop playsinline preload="metadata" poster="images/wide-bg.png">
-            <source id="home-video-source" src="images/tallo-video-final.mp4" type="video/mp4">
+    <div class="hero">
+        <video id="vbg" autoplay muted loop playsinline class="bg-video">
+            <source src="" type="video/mp4">
         </video>
-    </div>
-
-    <!-- الحاوية المركزية للمحتوى -->
-    <div class="container">
-        <!-- قسم الشعار -->
-        <div class="logo-wrap">
-            <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
-        </div>
-
-        <!-- قسم أزرار التفاعل -->
-        <div class="btn-col">
-            <a href="javascript:void(0)" onclick="navigateTo('menu.html#arabic')" id="btn_arabic" class="main-btn gold">
-                قائمة الطعام - عربي
-            </a>
-            <a href="javascript:void(0)" onclick="navigateTo('menu-en.html')" id="btn_english" class="main-btn gold">
-                Tallo Menu - English
-            </a>
-            <a href="javascript:void(0)" onclick="navigateTo('feedback.html')" id="btn_feedback_ar" class="main-btn ghost">
-                شاركنا تجربتك
-            </a>
-            <a href="javascript:void(0)" onclick="navigateTo('feedback-en.html')" id="btn_feedback_en" class="main-btn ghost">
-                Share Your Experience
-            </a>
-        </div>
-
-        <!-- معلومات الموقع وشريط التواصل -->
-        <p class="tagline">طلوا حبابنا - مادبا، الأردن</p>
-        <div class="social-bar">
-            <!-- رابط الموقع على الخريطة -->
-            <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link" title="الموقع">
-                <i class="fa-solid fa-location-dot"></i>
-            </a>
-            <!-- رابط الواتساب المباشر -->
-            <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link" title="واتساب">
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-            <!-- رابط الإنستغرام -->
-            <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link" title="إنستغرام">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-            <!-- رابط الفيسبوك -->
-            <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" id="link_facebook" target="_blank" rel="noopener" class="s-link" title="فيسبوك">
-                <i class="fa-brands fa-facebook-f"></i>
-            </a>
+        <img src="images/tallo-logo.png" alt="طلو أحبابنا" class="logo">
+        <h1 id="htitle">طلو أحبابنا</h1>
+        <p id="htag">أهلاً بكم في عالمنا الخاص</p>
+        <div class="btn-group">
+            <a href="menu.html" class="btn btn-gold">تصفح المنيو</a>
         </div>
     </div>
 
-    <!-- ملف الصوت المخفي الذي يعمل تلقائياً -->
-    <audio id="introAudio" preload="auto" autoplay>
-        <source src="intro-audio.m4a" type="audio/mp4">
-    </audio>
-
-    <!-- تحميل مكتبات Firebase للربط مع قاعدة البيانات -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
     <script>
-        /**
-         * 1. منطق التشغيل التلقائي للصوت (محاولات متكررة لتجاوز حظر المتصفحات)
-         */
-        const audioFile = 'intro-audio.m4a';
-        let audioContext;
-        let audioBuffer;
-
-        async function initExtremeAutoplay() {
-            const audio = document.getElementById('introAudio');
-            if (!audio) return;
-
-            // محاولة التشغيل المباشر
-            const play = () => {
-                audio.play().then(() => {
-                    console.log("Audio Playing!");
-                    cleanup();
-                }).catch(() => {});
-            };
-
-            const cleanup = () => {
-                window.removeEventListener('mousedown', play);
-                window.removeEventListener('touchstart', play);
-                window.removeEventListener('mousemove', play);
-                window.removeEventListener('scroll', play);
-                window.removeEventListener('keydown', play);
-            };
-
-            // تشغيل مع أي حركة بسيطة جداً
-            window.addEventListener('mousedown', play);
-            window.addEventListener('touchstart', play);
-            window.addEventListener('mousemove', play);
-            window.addEventListener('scroll', play);
-            window.addEventListener('keydown', play);
-
-            // محاولات متكررة تلقائية
-            play();
-            setTimeout(play, 300);
-            setTimeout(play, 1500);
-        }
-
-        // بدء محاولات الصوت فور تحميل محتوى الصفحة
-        window.addEventListener('DOMContentLoaded', initExtremeAutoplay);
-
-        /**
-         * 2. وظيفة الانتقال الناعم بين الصفحات
-         */
-        function navigateTo(url) {
-            document.body.style.opacity = '0';
-            setTimeout(() => { window.location.href = url; }, 300);
-        }
-
-        /**
-         * 3. منطق فيديو الخلفية
-         */
-        function initVideo() {
-            const video = document.getElementById('bgVideo');
-            if (!video) return;
-            video.muted = true; // يجب أن يكون صامتاً ليعمل تلقائياً
-            video.play().catch(() => {
-                // إذا حظر المتصفح الفيديو، سيشتغل مع أول لمسة
-                window.addEventListener('pointerdown', () => video.play(), {once: true});
-            });
-        }
-        // بدء تشغيل الفيديو فور اكتمال تحميل الموقع
-        window.addEventListener('load', initVideo);
+        const fbCfg = {
+            apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+            authDomain: "tallow-ahbabna.firebaseapp.com",
+            projectId: "tallow-ahbabna",
+            databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(fbCfg);
+        firebase.database().ref('settings/home').on('value', s => {
+            const d = s.val(); if(!d) return;
+            if(d.video) document.getElementById('vbg').querySelector('source').src = d.video;
+            if(d.video) document.getElementById('vbg').load();
+            if(d.tagline) document.getElementById('htag').textContent = d.tagline;
+        });
     </script>
 </body>
-
 </html>
