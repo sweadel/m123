@@ -7,17 +7,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .rate-us-btn { position: fixed; bottom: 20px; right: 20px; background: var(--gold); color: #000; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(197,160,34,0.4); z-index: 1000; cursor: pointer; transition: 0.3s; }
-        .feedback-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(5px); text-align: center; }
-        .feedback-modal.active { display: flex; }
-        .feedback-content { background: #1a1a1a; padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); }
-        .star-rating { display: flex; gap: 10px; margin: 20px 0; justify-content: center; font-size: 1.8rem; color: #555; }
-        .star-rating i.active { color: var(--gold); }
-        .feedback-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        .items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
-        .menu-item-card { backface-visibility: hidden; transform: translateZ(0); }
-    </style>
 </head>
 <body>
     <div id="app">
@@ -43,7 +32,7 @@
                 </div>
                 <input type="text" id="f_name" class="feedback-input" placeholder="Your Name">
                 <textarea id="f_msg" class="feedback-input" rows="3" placeholder="Your comments..."></textarea>
-                <div style="display:flex; gap:10px;"><button class="btn-gold" style="flex:1; padding:12px; border:none; border-radius:12px;" onclick="submitFeedback()">Send</button><button style="background:none; border:none; color:#aaa;" onclick="closeFeedback()">Cancel</button></div>
+                <div style="display:flex; gap:10px;"><button class="btn-gold" onclick="submitFeedback()" style="flex:1; padding:12px; border:none; border-radius:12px; cursor:pointer;">Send</button><button onclick="closeFeedback()" style="background:none; border:none; color:#aaa; cursor:pointer;">Cancel</button></div>
             </div>
         </div>
     </div>
@@ -64,73 +53,37 @@
         let categories = [], menuItems = [];
 
         function renderAll() {
-            let navHtml = '';
-            let sectionsHtml = '';
+            let navHtml = '', sectionsHtml = '';
             categories.forEach(cat => {
                 if(cat.status === 'hidden') return;
                 navHtml += `<button class="cat-tab" onclick="document.getElementById('sec-${cat.id}').scrollIntoView({behavior:'smooth'})">
                     <i class="fa-solid ${cat.icon || 'fa-utensils'}"></i> ${cat.nameEn || cat.nameAr}
                 </button>`;
-
                 const items = menuItems.filter(i => i.category === cat.id && i.status !== 'inactive');
                 if(items.length > 0) {
                     let itemsHtml = '';
                     items.forEach(item => {
-                        itemsHtml += `
-                            <div class="menu-item-card">
-                                <div class="item-img-wrapper">
-                                    <img src="${item.image || 'images/tallo-logo.png'}" loading="lazy" onerror="this.src='images/tallo-logo.png'">
-                                    ${item.price ? `<span class="item-price">${item.price} JD</span>` : ''}
-                                </div>
-                                <div class="item-info">
-                                    <h3>${item.nameEn || item.name}</h3>
-                                    <p>${item.descEn || item.desc || ''}</p>
-                                </div>
-                            </div>
-                        `;
+                        itemsHtml += `<div class="menu-item-card"><div class="item-img-wrapper"><img src="${item.image || 'images/tallo-logo.png'}" loading="lazy" onerror="this.src='images/tallo-logo.png'">${item.price ? `<span class="item-price">${item.price} JD</span>` : ''}</div><div class="item-info"><h3>${item.nameEn || item.name}</h3><p>${item.descEn || item.desc || ''}</p></div></div>`;
                     });
-                    sectionsHtml += `
-                        <section id="sec-${cat.id}" class="menu-section">
-                            <h2 class="sec-title">${cat.nameEn || cat.nameAr}</h2>
-                            <div class="items-grid">${itemsHtml}</div>
-                        </section>
-                    `;
+                    sectionsHtml += `<section id="sec-${cat.id}" class="menu-section"><h2 class="sec-title">${cat.nameEn || cat.nameAr}</h2><p class="sec-desc">${cat.descEn || cat.descAr || ''}</p><div class="items-grid">${itemsHtml}</div></section>`;
                 }
             });
             document.getElementById('category-tabs').innerHTML = navHtml;
             document.getElementById('menu-sections').innerHTML = sectionsHtml;
         }
 
-        REFS.cats.on('value', s => {
-            categories = []; s.forEach(c => categories.push({id: c.key, ...c.val()}));
-            categories.sort((a,b) => (a.order||0)-(b.order||0));
-            renderAll();
-        });
-
-        REFS.menu.on('value', s => {
-            menuItems = []; s.forEach(m => menuItems.push({key: m.key, ...m.val()}));
-            renderAll();
-        });
-
+        REFS.cats.on('value', s => { categories = []; s.forEach(c => categories.push({id: c.key, ...c.val()})); categories.sort((a,b) => (a.order||0)-(b.order||0)); renderAll(); });
+        REFS.menu.on('value', s => { menuItems = []; s.forEach(m => menuItems.push({key: m.key, ...m.val()})); renderAll(); });
         REFS.home.on('value', s => { if(s.val() && s.val().tagline) document.getElementById('site-tagline').textContent = s.val().taglineEn || s.val().tagline; });
 
         let currentRating = 5;
-        document.querySelectorAll('#stars i').forEach(s => {
-            s.onclick = () => {
-                currentRating = s.dataset.val;
-                document.querySelectorAll('#stars i').forEach(st => st.classList.toggle('active', st.dataset.val <= currentRating));
-            };
-        });
+        document.querySelectorAll('#stars i').forEach(s => { s.onclick = () => { currentRating = s.dataset.val; document.querySelectorAll('#stars i').forEach(st => st.classList.toggle('active', st.dataset.val <= currentRating)); }; });
         function openFeedback() { document.getElementById('feedbackModal').classList.add('active'); }
         function closeFeedback() { document.getElementById('feedbackModal').classList.remove('active'); }
         function submitFeedback() {
-            const name = document.getElementById('f_name').value.trim() || 'Customer';
-            const message = document.getElementById('f_msg').value.trim();
+            const name = document.getElementById('f_name').value.trim() || 'Customer', message = document.getElementById('f_msg').value.trim();
             if(!message) return alert('Please write your comments');
-            REFS.feed.push({ name, rating: currentRating, message, timestamp: Date.now() }).then(() => {
-                alert('Thank you!');
-                closeFeedback();
-            });
+            REFS.feed.push({ name, rating: currentRating, message, timestamp: Date.now() }).then(() => { alert('Thank you!'); closeFeedback(); });
         }
     </script>
 </body>
