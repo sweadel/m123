@@ -351,7 +351,7 @@ header.shrunk .search-row {
   overflow-x: auto;   /* السماح بالتمرير الجانبي للأصناف */
   width: 100%;        /* عرض كامل الشاشة */
   justify-content: flex-start;
-  padding: 12px 15px; /* مسافة داخلية (12 بكسل فوق وتحت، 15 بكسل يمين ويسار) */
+  padding: 18px 15px; /* تم تكبير ارتفاع الشريط بالكامل ليعطي مساحة أكبر للأزرار (كانت 12) */
   z-index: 15;
   position: relative;
   margin-bottom: 0;
