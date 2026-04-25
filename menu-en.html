@@ -15,6 +15,9 @@
         .star-rating { display: flex; gap: 10px; margin: 20px 0; justify-content: center; font-size: 1.8rem; color: #555; }
         .star-rating i.active { color: var(--gold); }
         .feedback-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 12px; margin-bottom: 15px; outline: none; }
+        
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
+        .menu-item-card { backface-visibility: hidden; transform: translateZ(0); }
     </style>
 </head>
 <body>
@@ -32,27 +35,16 @@
         <nav class="category-nav" id="category-tabs"></nav>
         <main class="menu-container" id="menu-sections"></main>
 
-        <!-- Rate Us Button -->
         <div class="rate-us-btn" onclick="openFeedback()"><i class="fa-solid fa-star"></i></div>
-
-        <!-- Feedback Modal -->
         <div class="feedback-modal" id="feedbackModal">
             <div class="feedback-content">
                 <h2 style="color:var(--gold); margin-bottom:10px;">Your Opinion Matters ✨</h2>
-                <p style="font-size:0.9rem; color:#aaa;">Help us improve</p>
                 <div class="star-rating" id="stars">
-                    <i class="fa-solid fa-star" data-val="1"></i>
-                    <i class="fa-solid fa-star" data-val="2"></i>
-                    <i class="fa-solid fa-star" data-val="3"></i>
-                    <i class="fa-solid fa-star" data-val="4"></i>
-                    <i class="fa-solid fa-star" data-val="5"></i>
+                    <i class="fa-solid fa-star" data-val="1"></i><i class="fa-solid fa-star" data-val="2"></i><i class="fa-solid fa-star" data-val="3"></i><i class="fa-solid fa-star" data-val="4"></i><i class="fa-solid fa-star" data-val="5"></i>
                 </div>
                 <input type="text" id="f_name" class="feedback-input" placeholder="Your Name">
                 <textarea id="f_msg" class="feedback-input" rows="3" placeholder="Your comments..."></textarea>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-gold" style="flex:1; padding:12px; border:none; border-radius:12px; cursor:pointer;" onclick="submitFeedback()">Send</button>
-                    <button style="background:none; border:none; color:#aaa; cursor:pointer;" onclick="closeFeedback()">Cancel</button>
-                </div>
+                <div style="display:flex; gap:10px;"><button class="btn-gold" style="flex:1; padding:12px; border:none; border-radius:12px;" onclick="submitFeedback()">Send</button><button style="background:none; border:none; color:#aaa;" onclick="closeFeedback()">Cancel</button></div>
             </div>
         </div>
     </div>
@@ -68,30 +60,52 @@
         };
         firebase.initializeApp(fbCfg);
         const db = firebase.database();
-
         const REFS = { menu: db.ref('menu_items'), cats: db.ref('categories_meta'), home: db.ref('settings/home'), feed: db.ref('feedback') };
+
         REFS.home.on('value', s => { if(s.val() && s.val().tagline) document.getElementById('site-tagline').textContent = s.val().taglineEn || s.val().tagline; });
+
         Promise.all([REFS.cats.once('value'), REFS.menu.once('value')]).then(([catSnap, menuSnap]) => {
             const cats = []; catSnap.forEach(c => cats.push({id: c.key, ...c.val()}));
             cats.sort((a,b) => (a.order||0) - (b.order||0));
             const menu = []; menuSnap.forEach(m => menu.push({key: m.key, ...m.val()}));
-            const nav = document.getElementById('category-tabs');
-            const container = document.getElementById('menu-sections');
+
+            let navHtml = '';
+            let sectionsHtml = '';
+
             cats.forEach(cat => {
-                if(cat.status==='hidden') return;
-                const btn = document.createElement('button'); btn.className='cat-tab';
-                btn.innerHTML=`<i class="fa-solid ${cat.icon||'fa-utensils'}"></i> ${cat.nameEn || cat.nameAr}`;
-                btn.onclick=()=>document.getElementById(`sec-${cat.id}`).scrollIntoView({behavior:'smooth'});
-                nav.appendChild(btn);
-                const sec = document.createElement('section'); sec.id=`sec-${cat.id}`; sec.className='menu-section';
-                sec.innerHTML=`<h2 class="sec-title">${cat.nameEn || cat.nameAr}</h2><div class="items-grid"></div>`;
-                const grid = sec.querySelector('.items-grid');
-                const items = menu.filter(i => i.category===cat.id && i.status!=='inactive');
-                items.forEach(item => {
-                    grid.innerHTML += `<div class="menu-item-card"><div class="item-img-wrapper"><img src="${item.image||'images/tallo-logo.png'}" loading="lazy">${item.price?`<span class="item-price">${item.price} JD</span>`:''}</div><div class="item-info"><h3>${item.nameEn || item.name}</h3><p>${item.descEn || item.desc || ''}</p></div></div>`;
-                });
-                if(items.length > 0) container.appendChild(sec);
+                if(cat.status === 'hidden') return;
+                navHtml += `<button class="cat-tab" onclick="document.getElementById('sec-${cat.id}').scrollIntoView({behavior:'smooth'})">
+                    <i class="fa-solid ${cat.icon || 'fa-utensils'}"></i> ${cat.nameEn || cat.nameAr}
+                </button>`;
+
+                const items = menu.filter(i => i.category === cat.id && i.status !== 'inactive');
+                if(items.length > 0) {
+                    let itemsHtml = '';
+                    items.forEach(item => {
+                        itemsHtml += `
+                            <div class="menu-item-card">
+                                <div class="item-img-wrapper">
+                                    <img src="${item.image || 'images/tallo-logo.png'}" loading="lazy">
+                                    ${item.price ? `<span class="item-price">${item.price} JD</span>` : ''}
+                                </div>
+                                <div class="item-info">
+                                    <h3>${item.nameEn || item.name}</h3>
+                                    <p>${item.descEn || item.desc || ''}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    sectionsHtml += `
+                        <section id="sec-${cat.id}" class="menu-section">
+                            <h2 class="sec-title">${cat.nameEn || cat.nameAr}</h2>
+                            <div class="items-grid">${itemsHtml}</div>
+                        </section>
+                    `;
+                }
             });
+
+            document.getElementById('category-tabs').innerHTML = navHtml;
+            document.getElementById('menu-sections').innerHTML = sectionsHtml;
         });
 
         let currentRating = 5;
@@ -108,7 +122,7 @@
             const message = document.getElementById('f_msg').value.trim();
             if(!message) return alert('Please write your comments');
             REFS.feed.push({ name, rating: currentRating, message, timestamp: Date.now() }).then(() => {
-                alert('Thank you! Your feedback is appreciated.');
+                alert('Thank you!');
                 closeFeedback();
             });
         }
