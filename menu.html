@@ -15,9 +15,7 @@
         .star-rating { display: flex; gap: 10px; margin: 20px 0; justify-content: center; font-size: 1.8rem; color: #555; }
         .star-rating i.active { color: var(--gold); }
         .feedback-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        
-        /* تحسينات لمنع التقطيع */
-        .items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; opacity: 1; transition: opacity 0.5s ease; }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; }
         .menu-item-card { backface-visibility: hidden; transform: translateZ(0); }
     </style>
 </head>
@@ -63,34 +61,26 @@
         const db = firebase.database();
         const REFS = { menu: db.ref('menu_items'), cats: db.ref('categories_meta'), home: db.ref('settings/home'), feed: db.ref('feedback') };
 
-        REFS.home.on('value', s => { if(s.val() && s.val().tagline) document.getElementById('site-tagline').textContent = s.val().tagline; });
+        // تحديث لحظي للبيانات - بمجرد الحفظ في اللوحة يظهر هنا فوراً
+        let categories = [], menuItems = [];
 
-        // جلب البيانات مرة واحدة وبناء الواجهة دفعة واحدة لمنع التقطيع
-        Promise.all([REFS.cats.once('value'), REFS.menu.once('value')]).then(([catSnap, menuSnap]) => {
-            const cats = []; catSnap.forEach(c => cats.push({id: c.key, ...c.val()}));
-            cats.sort((a,b) => (a.order||0) - (b.order||0));
-            const menu = []; menuSnap.forEach(m => menu.push({key: m.key, ...m.val()}));
-
+        function renderAll() {
             let navHtml = '';
             let sectionsHtml = '';
-
-            cats.forEach(cat => {
+            categories.forEach(cat => {
                 if(cat.status === 'hidden') return;
-                
-                // بناء التابات
                 navHtml += `<button class="cat-tab" onclick="document.getElementById('sec-${cat.id}').scrollIntoView({behavior:'smooth'})">
                     <i class="fa-solid ${cat.icon || 'fa-utensils'}"></i> ${cat.nameAr}
                 </button>`;
 
-                // بناء الأقسام والوجبات
-                const items = menu.filter(i => i.category === cat.id && i.status !== 'inactive');
+                const items = menuItems.filter(i => i.category === cat.id && i.status !== 'inactive');
                 if(items.length > 0) {
                     let itemsHtml = '';
                     items.forEach(item => {
                         itemsHtml += `
                             <div class="menu-item-card">
                                 <div class="item-img-wrapper">
-                                    <img src="${item.image || 'images/tallo-logo.png'}" loading="lazy">
+                                    <img src="${item.image || 'images/tallo-logo.png'}" loading="lazy" onerror="this.src='images/tallo-logo.png'">
                                     ${item.price ? `<span class="item-price">${item.price} JD</span>` : ''}
                                 </div>
                                 <div class="item-info">
@@ -108,11 +98,22 @@
                     `;
                 }
             });
-
-            // حقن البيانات دفعة واحدة لضمان السرعة
             document.getElementById('category-tabs').innerHTML = navHtml;
             document.getElementById('menu-sections').innerHTML = sectionsHtml;
+        }
+
+        REFS.cats.on('value', s => {
+            categories = []; s.forEach(c => categories.push({id: c.key, ...c.val()}));
+            categories.sort((a,b) => (a.order||0)-(b.order||0));
+            renderAll();
         });
+
+        REFS.menu.on('value', s => {
+            menuItems = []; s.forEach(m => menuItems.push({key: m.key, ...m.val()}));
+            renderAll();
+        });
+
+        REFS.home.on('value', s => { if(s.val() && s.val().tagline) document.getElementById('site-tagline').textContent = s.val().tagline; });
 
         // التقييم
         let currentRating = 5;
@@ -129,7 +130,7 @@
             const message = document.getElementById('f_msg').value.trim();
             if(!message) return alert('يرجى كتابة رأيك');
             REFS.feed.push({ name, rating: currentRating, message, timestamp: Date.now() }).then(() => {
-                alert('تم الإرسال بنجاح!');
+                alert('شكراً لك! تم الإرسال.');
                 closeFeedback();
             });
         }
