@@ -25,80 +25,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* إعدادات إضافية خاصة بشكل الهيدر واللوجو لضمان الثبات */
-        :root {
-            --header-h: 220px;
-            --header-h-shrunk: 130px;
-        }
-
+        /* إعدادات إضافية خاصة بشكل الهيدر واللوجو */
         .arch-overlay {
             background-image: url('images/header-arch-final.png') !important;
             display: block !important;
-            position: absolute;
-            inset: 0;
-            background-size: 100% 100%;
-            z-index: 1;
-            transition: 0.4s ease;
         }
-
-        header {
-            height: var(--header-h);
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: var(--dark);
-        }
-
-        header.shrunk {
-            height: var(--header-h-shrunk);
-        }
-
-        header.shrunk .logo-wrap img {
-            width: 80px;
-            margin-top: -10px;
-        }
-
-        header.shrunk .arch-overlay {
-            opacity: 0.9;
-            transform: scaleY(0.85);
-            transform-origin: top;
-        }
-
-        .logo-wrap {
-            position: relative;
-            z-index: 2;
-            transition: 0.4s ease;
-        }
-
         .logo-wrap img {
-            width: 130px;
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
-            transition: 0.4s ease;
         }
-
-        body { direction: rtl; font-weight: 700; background: #0a0a0a; }
+        body { direction: rtl; font-weight: 700; }
         .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
-        
-        /* تأثير الظهور الناعم لإلغاء التخبط */
-        .fade-in {
-            animation: fadeInItems 0.6s ease forwards;
-            opacity: 0;
-        }
-        @keyframes fadeInItems {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ثبات شريط التصنيفات الفرعية */
-        .hdr-bottom {
-            position: sticky;
-            top: var(--header-h-shrunk);
-            z-index: 999;
-            background: rgba(10,10,10,0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(197, 160, 34, 0.2);
-        }
     </style>
 </head>
 
@@ -384,6 +320,10 @@
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
 
+            // إخفاء الهياكل المؤقتة (Loading skeletons)
+            const skel = document.getElementById('skeletons-arabic');
+            if (skel) skel.style.display = 'none';
+
             // توزيع الوجبات على تصنيفاتهم
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {
@@ -393,13 +333,16 @@
                 itemsByCat[item.category].push(item);
             });
 
+            // بناء كل قسم (عربي، انترناشونال، إلخ)
             const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
+                // 1. بناء أزرار التنقل في ذاكرة المتصفح أولاً (Fragment)
                 const navFrag = document.createDocumentFragment();
+                // 2. بناء محتوى القسم في ذاكرة المتصفح أولاً (Fragment)
                 const secFrag = document.createDocumentFragment();
                 
                 const hero = secEl.querySelector('.section-hero');
@@ -411,6 +354,7 @@
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 cats.forEach(cat => {
+                    // بناء الأزرار
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
                     btn.className = 'cat-btn';
@@ -422,6 +366,7 @@
                     });
                     navFrag.appendChild(btn);
 
+                    // بناء الوجبات
                     const h2 = document.createElement('h2');
                     h2.id = cat.id;
                     h2.className = 'sec-title';
@@ -429,7 +374,7 @@
                     if(cat.icon) h2.innerHTML = `<i class="fa-solid ${cat.icon} sec-icon"></i> ` + h2.innerHTML;
                     
                     const grid = document.createElement('div');
-                    grid.className = 'menu-grid fade-in'; // إضافة تأثير ظهور ناعم
+                    grid.className = 'menu-grid';
                     const items = itemsByCat[cat.id] || [];
                     items.forEach(item => grid.appendChild(buildCard(item)));
 
@@ -437,31 +382,28 @@
                     secFrag.appendChild(grid);
                 });
 
-                // التحديث الفعلي: نمسح ونضيف في خطوة واحدة سريعة جداً
+                // 3. التحديث الفعلي للشاشة يحدث في لحظة واحدة فقط لمنع الاهتزاز
                 window.requestAnimationFrame(() => {
-                    // إخفاء الهياكل المؤقتة فقط عند أول ظهور حقيقي للبيانات
-                    const skel = document.getElementById('skeletons-arabic');
-                    if (skel) skel.style.opacity = '0'; 
-                    
                     navEl.innerHTML = '';
                     navEl.appendChild(navFrag);
-                    
-                    // استخدام تأثير انتقال بسيط لمنع "القفزة" البصرية
-                    secEl.style.opacity = '0.99'; 
                     secEl.innerHTML = '';
                     secEl.appendChild(secFrag);
-                    setTimeout(() => { if(skel) skel.remove(); secEl.style.opacity = '1'; }, 50);
                 });
             });
         }
 
         let _renderTimeout;
+        /**
+         * طلب رسم المنيو بطريقة ذكية تمنع الاهتزاز (Debounced Render)
+         */
         function requestRender() {
-            if (_renderTimeout) return; // منع تكرار الطلبات في نفس اللحظة
+            clearTimeout(_renderTimeout);
+            // ننتظر 50 ميكرو ثانية لضمان وصول كل البيانات معاً
             _renderTimeout = setTimeout(() => {
-                renderFullMenu();
-                _renderTimeout = null;
-            }, 150); // وقت انتظار بسيط لجمع كل التغييرات معاً
+                window.requestAnimationFrame(() => {
+                    renderFullMenu();
+                });
+            }, 50);
         }
 
         // بدء مراقبة التغييرات في قاعدة البيانات
