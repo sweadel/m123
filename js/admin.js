@@ -1,16 +1,13 @@
 /**
- * js/admin.js v6.5 — النسخة النهائية الكاملة والشاملة
+ * js/admin.js v7.0 — نظام التحكم الشامل والموثق
  * مطعم طلوا حبابنا | Tallo Ahbabna
- * شرح تفصيلي سطر بسطر لكل الوظائف (بما فيها المحذوفات والحسابات)
  */
 
-// ══════════════ 1. الأمان والربط (Auth & Config) ══════════════
+// 1. فحص الأمان (هل المدير مسجل دخول؟)
+if (localStorage.getItem('admin_auth') !== 'true') window.location.href = 'login.html';
 
-if (localStorage.getItem('admin_auth') !== 'true') {
-    window.location.href = 'login.html'; // حماية اللوحة
-}
-
-const firebaseConfig = {
+// 2. إعدادات Firebase
+const fbCfg = {
     apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
     authDomain: "tallow-ahbabna.firebaseapp.com",
     projectId: "tallow-ahbabna",
@@ -19,237 +16,186 @@ const firebaseConfig = {
     appId: "1:1025966646494:web:f89373fad63d988f298e4f",
     databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
 };
-
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) firebase.initializeApp(fbCfg);
 const db = firebase.database();
 
+// مراجع الجداول في قاعدة البيانات
 const REFS = {
-    menu:       db.ref('menu_items'),
-    categories: db.ref('categories_meta'),
-    design:     db.ref('settings/design'),
-    home:       db.ref('settings/home'),
-    feedback:   db.ref('feedback'),
-    logs:       db.ref('audit_logs'),
-    trash:      db.ref('deleted_items'),
-    users:      db.ref('users'),
+    menu: db.ref('menu_items'),
+    cats: db.ref('categories_meta'),
+    logs: db.ref('audit_logs'),
+    trash: db.ref('deleted_items')
 };
 
-let menuItems      = [];
-let categoryItems  = [];
-let editingKey     = null;
-let isSaving       = false;
+// متغيرات تخزين البيانات المؤقتة
+let menuItems = [], catItems = [], editKey = null, editCatKey = null;
 
-// ══════════════ 2. نظام التنقل (Navigation) ══════════════
-
-function navigateTo(viewId) {
-    document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.querySelector(`[data-view="${viewId}"]`);
-    if (activeBtn) activeBtn.classList.add('active');
-
-    document.querySelectorAll('.view').forEach(view => {
-        view.style.display = 'none';
-        view.classList.remove('active');
-    });
-
-    const targetView = document.getElementById(viewId);
-    if (targetView) {
-        targetView.style.display = 'block';
-        targetView.classList.add('active');
-    }
+// ══════════════ التنقل بين الأقسام ══════════════
+function navigateTo(id) {
+    document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-view="${id}"]`)?.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
+    const target = document.getElementById(id);
+    if(target) { target.style.display = 'block'; target.classList.add('active'); }
 }
 
-// ══════════════ 3. مراقبة البيانات اللحظية (Listeners) ══════════════
+// ══════════════ مراقبة البيانات لحظياً ══════════════
 
 // مراقبة الوجبات
-REFS.menu.on('value', snapshot => {
-    const data = snapshot.val();
+REFS.menu.on('value', snap => {
     menuItems = [];
-    if (data) {
-        Object.entries(data).forEach(([key, val]) => {
-            menuItems.push({ firebaseKey: key, ...val });
-        });
-    }
+    if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => menuItems.push({ key: k, ...v }));
     renderTable();
     updateStats();
 });
 
 // مراقبة الأقسام
-REFS.categories.on('value', snapshot => {
-    const data = snapshot.val();
-    categoryItems = [];
-    if (data) {
-        Object.entries(data).forEach(([key, val]) => {
-            categoryItems.push({ id: key, ...val });
-        });
-    }
-    rebuildCategorySelects();
-    renderCategories();
+REFS.cats.on('value', snap => {
+    catItems = [];
+    if(snap.val()) Object.entries(snap.val()).forEach(([k, v]) => catItems.push({ id: k, ...v }));
+    catItems.sort((a,b) => (a.order||0) - (b.order||0));
+    renderCatTable();
+    rebuildSelects();
+    updateStats();
 });
 
-// مراقبة سجل العمليات
-REFS.logs.limitToLast(50).on('value', snapshot => {
-    const tbody = document.getElementById('logs-table-body');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    const logs = [];
-    snapshot.forEach(c => { logs.push(c.val()); });
-    logs.reverse().forEach(log => {
-        const d = new Date(log.timestamp).toLocaleString('ar-EG');
-        tbody.innerHTML += `<tr><td>${d}</td><td>${log.user}</td><td>${log.action}</td><td>${log.details}</td></tr>`;
-    });
-});
-
-// مراقبة سلة المحذوفات
-REFS.trash.on('value', snapshot => {
-    const tbody = document.getElementById('trash-table-body');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    const data = snapshot.val();
-    if (data) {
-        Object.entries(data).forEach(([key, val]) => {
-            const d = new Date(val.deletedAt).toLocaleString('ar-EG');
-            tbody.innerHTML += `
-                <tr>
-                    <td>${val.name}</td>
-                    <td>${d}</td>
-                    <td>${val.deletedBy || '—'}</td>
-                    <td>
-                        <button class="btn-primary" style="background:#2ecc71; color:#fff;" onclick="restoreItem('${key}')">استعادة</button>
-                        <button class="btn-primary" style="background:#e74c3c; color:#fff;" onclick="permanentlyDelete('${key}')">حذف نهائي</button>
-                    </td>
-                </tr>`;
-        });
-    }
-});
-
-// مراقبة الحسابات
-REFS.users.on('value', snapshot => {
-    const grid = document.getElementById('users-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    const data = snapshot.val();
-    if (data) {
-        Object.entries(data).forEach(([key, val]) => {
-            grid.innerHTML += `
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-user-gear"></i></div>
-                    <div class="stat-info">
-                        <h3>${val.name}</h3>
-                        <p style="font-size:0.8rem; color:var(--text-dim);">${val.role || 'مدير'}</p>
-                    </div>
-                </div>`;
-        });
-    }
-});
-
-// ══════════════ 4. إدارة المنيو (Menu Management) ══════════════
+// ══════════════ إدارة الوجبات (Menu) ══════════════
 
 function renderTable() {
-    const tbody = document.getElementById('menu-table-body');
-    if (!tbody) return;
+    const b = document.getElementById('menu-table-body');
+    if(!b) return;
     const q = (document.getElementById('globalSearch')?.value || '').toLowerCase();
-    const catF = document.getElementById('filterCategory')?.value || 'all';
+    const f = document.getElementById('filterCategory')?.value || 'all';
     const filtered = menuItems.filter(i => {
         const mt = !q || (i.name||'').toLowerCase().includes(q) || (i.nameEn||'').toLowerCase().includes(q);
-        const mc = catF === 'all' || i.category === catF;
+        const mc = f === 'all' || i.category === f;
         return mt && mc;
     });
-    tbody.innerHTML = '';
+    b.innerHTML = '';
     filtered.forEach(i => {
         const active = i.status !== 'inactive';
-        tbody.innerHTML += `
-            <tr>
-                <td><img src="${i.image || 'images/tallo-logo.png'}" class="item-thumb"></td>
-                <td>
-                    <div class="item-name">${i.name}</div>
-                    <div class="item-en">${i.nameEn || ''}</div>
-                </td>
-                <td>${i.category || '—'}</td>
-                <td style="color:var(--gold); font-weight:bold;">${i.price} JD</td>
-                <td><button onclick="toggleStatus('${i.firebaseKey}','${i.status}')" class="status-pill ${active?'status-active':'status-hidden'}">${active?'نشط':'مخفي'}</button></td>
-                <td>
-                    <button class="btn-primary" style="padding:6px 10px;" onclick="editItem('${i.firebaseKey}')">تعديل</button>
-                    <button class="btn-primary" style="padding:6px 10px; background:#e74c3c;" onclick="moveToTrash('${i.firebaseKey}')">حذف</button>
-                </td>
-            </tr>`;
+        b.innerHTML += `<tr>
+            <td><img src="${i.image||'images/tallo-logo.png'}" class="item-thumb"></td>
+            <td><div class="item-name">${i.name}</div><div class="item-en">${i.nameEn||''}</div></td>
+            <td>${i.category||'—'}</td>
+            <td style="color:var(--gold); font-weight:bold;">${i.price} JD</td>
+            <td><button onclick="toggleItem('${i.key}','${i.status}')" class="status-pill ${active?'status-active':'status-hidden'}">${active?'نشط':'مخفي'}</button></td>
+            <td>
+                <button class="btn-primary" onclick="editItem('${i.key}')">تعديل</button>
+                <button class="btn-primary" style="background:#e74c3c;" onclick="deleteItem('${i.key}')">حذف</button>
+            </td>
+        </tr>`;
     });
 }
 
+function openItemModal() { editKey = null; document.getElementById('itemForm').reset(); document.getElementById('itemModal').classList.add('active'); }
+function closeItemModal() { document.getElementById('itemModal').classList.remove('active'); }
+
 function saveItem() {
-    if (isSaving) return;
     const name = document.getElementById('itemName').value.trim();
-    if (!name) return alert('أدخل الاسم');
+    if(!name) return alert('أدخل الاسم');
     const data = {
-        name,
-        nameEn: document.getElementById('itemNameEn').value,
+        name, nameEn: document.getElementById('itemNameEn').value,
         category: document.getElementById('itemCategory').value,
         price: document.getElementById('itemPrice').value,
         image: document.getElementById('itemImg').value,
         desc: document.getElementById('itemDesc').value,
         updatedAt: Date.now()
     };
-    isSaving = true;
-    const ref = editingKey ? REFS.menu.child(editingKey) : REFS.menu.push();
-    ref.set(data).then(() => {
-        closeItemModal();
-        logActivity(editingKey?'تعديل':'إضافة', name);
-    }).finally(() => isSaving = false);
+    const ref = editKey ? REFS.menu.child(editKey) : REFS.menu.push();
+    ref.set(data).then(() => { closeItemModal(); log('حفظ وجبة', name); });
 }
 
-// ══════════════ 5. إدارة المحذوفات (Trash Logic) ══════════════
+function editItem(k) {
+    const i = menuItems.find(x => x.key === k);
+    if(!i) return; editKey = k;
+    document.getElementById('itemName').value = i.name;
+    document.getElementById('itemNameEn').value = i.nameEn||'';
+    document.getElementById('itemCategory').value = i.category||'';
+    document.getElementById('itemPrice').value = i.price||'';
+    document.getElementById('itemImg').value = i.image||'';
+    document.getElementById('itemDesc').value = i.desc||'';
+    document.getElementById('itemModal').classList.add('active');
+}
 
-function moveToTrash(key) {
-    if (!confirm('هل أنت متأكد من حذف هذا الصنف؟')) return;
-    const item = menuItems.find(i => i.firebaseKey === key);
-    const trashData = { ...item, deletedAt: Date.now(), deletedBy: localStorage.getItem('admin_user') };
-    REFS.trash.push(trashData).then(() => {
-        REFS.menu.child(key).remove();
-        logActivity('حذف صنف', item.name);
+function toggleItem(k, s) { REFS.menu.child(k).update({ status: s === 'inactive' ? 'active' : 'inactive' }); }
+
+function deleteItem(k) {
+    if(!confirm('حذف الوجبة؟')) return;
+    const i = menuItems.find(x => x.key === k);
+    REFS.trash.push({...i, type:'item', deletedAt:Date.now()}).then(() => REFS.menu.child(k).remove());
+}
+
+// ══════════════ إدارة الأقسام (Categories) ══════════════
+
+function renderCatTable() {
+    const b = document.getElementById('cat-table-body');
+    if(!b) return; b.innerHTML = '';
+    catItems.forEach(c => {
+        const active = c.status !== 'hidden';
+        b.innerHTML += `<tr>
+            <td>${c.nameAr}</td>
+            <td>${c.nameEn||'—'}</td>
+            <td>${c.section||'—'}</td>
+            <td><button onclick="toggleCat('${c.id}','${c.status}')" class="status-pill ${active?'status-active':'status-hidden'}">${active?'ظاهر':'مخفي'}</button></td>
+            <td>
+                <button class="btn-primary" onclick="editCat('${c.id}')">تعديل</button>
+                <button class="btn-primary" style="background:#e74c3c;" onclick="deleteCat('${c.id}')">حذف</button>
+            </td>
+        </tr>`;
     });
 }
 
-function restoreItem(key) {
-    REFS.trash.child(key).once('value', snap => {
-        const data = snap.val();
-        const { deletedAt, deletedBy, ...itemData } = data;
-        REFS.menu.push(itemData).then(() => {
-            REFS.trash.child(key).remove();
-            logActivity('استعادة صنف', data.name);
-        });
-    });
+function openCatModal() { editCatKey = null; document.getElementById('catForm').reset(); document.getElementById('catModal').classList.add('active'); }
+function closeCatModal() { document.getElementById('catModal').classList.remove('active'); }
+
+function saveCategory() {
+    const name = document.getElementById('catNameAr').value.trim();
+    if(!name) return alert('أدخل اسم القسم');
+    const data = {
+        nameAr: name, nameEn: document.getElementById('catNameEn').value,
+        section: document.getElementById('catSection').value,
+        order: parseInt(document.getElementById('catOrder').value) || 0,
+        icon: document.getElementById('catIcon').value,
+        updatedAt: Date.now()
+    };
+    // إذا كان تعديلاً نستخدم المفتاح الحالي، إذا كان جديداً ننشئ كود فريد من الاسم
+    const id = editCatKey || name.toLowerCase().replace(/\s+/g, '-');
+    REFS.cats.child(id).update(data).then(() => { closeCatModal(); log('حفظ قسم', name); });
 }
 
-function permanentlyDelete(key) {
-    if (!confirm('سيتم الحذف نهائياً، لا يمكن التراجع!')) return;
-    REFS.trash.child(key).remove().then(() => logActivity('حذف نهائي', 'صنف من السلة'));
+function editCat(id) {
+    const c = catItems.find(x => x.id === id);
+    if(!c) return; editCatKey = id;
+    document.getElementById('catNameAr').value = c.nameAr;
+    document.getElementById('catNameEn').value = c.nameEn||'';
+    document.getElementById('catSection').value = c.section||'arabic';
+    document.getElementById('catOrder').value = c.order||0;
+    document.getElementById('catIcon').value = c.icon||'';
+    document.getElementById('catModal').classList.add('active');
 }
 
-// ══════════════ 6. وظائف مساعدة ══════════════
+function toggleCat(id, s) { REFS.cats.child(id).update({ status: s === 'hidden' ? 'active' : 'hidden' }); }
 
-function logActivity(action, details) {
-    REFS.logs.push({ action, details, user: localStorage.getItem('admin_user')||'المدير', timestamp: Date.now() });
+function deleteCat(id) {
+    if(!confirm('حذف القسم؟ سيختفي من المنيو تماماً!')) return;
+    REFS.cats.child(id).remove().then(() => log('حذف قسم', id));
+}
+
+// ══════════════ وظائف عامة ══════════════
+
+function rebuildSelects() {
+    const s = document.getElementById('itemCategory'), f = document.getElementById('filterCategory');
+    if(s) { s.innerHTML = '<option disabled selected>اختر...</option>'; catItems.forEach(c => s.innerHTML += `<option value="${c.id}">${c.nameAr}</option>`); }
+    if(f) { f.innerHTML = '<option value="all">الكل</option>'; catItems.forEach(c => f.innerHTML += `<option value="${c.id}">${c.nameAr}</option>`); }
 }
 
 function updateStats() {
     if(document.getElementById('stat-total')) document.getElementById('stat-total').textContent = menuItems.length;
-    if(document.getElementById('stat-cats')) document.getElementById('stat-cats').textContent = categoryItems.length;
+    if(document.getElementById('stat-cats')) document.getElementById('stat-cats').textContent = catItems.length;
 }
 
-function rebuildCategorySelects() {
-    const s = document.getElementById('itemCategory'), f = document.getElementById('filterCategory');
-    if(s) {
-        s.innerHTML = '<option disabled selected>اختر القسم...</option>';
-        categoryItems.forEach(c => s.innerHTML += `<option value="${c.id}">${c.nameAr}</option>`);
-    }
-    if(f) {
-        f.innerHTML = '<option value="all">الكل</option>';
-        categoryItems.forEach(c => f.innerHTML += `<option value="${c.id}">${c.nameAr}</option>`);
-    }
-}
-
+function log(a, d) { REFS.logs.push({ action: a, details: d, user: localStorage.getItem('admin_user')||'المدير', timestamp: Date.now() }); }
+function onGlobalSearch() { renderTable(); }
 function logout() { localStorage.clear(); window.location.href='login.html'; }
-
-// تشغيل النظام
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('current-user-display').textContent = localStorage.getItem('admin_user') || 'المدير';
-});
+document.addEventListener('DOMContentLoaded', () => { document.getElementById('current-user-display').textContent = localStorage.getItem('admin_user')||'المدير'; });
