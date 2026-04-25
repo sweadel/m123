@@ -294,17 +294,18 @@ header.shrunk .search-row {
 .search-box {
   width: 100%;        /* يأخذ العرض المتاح كاملاً */
   max-width: 450px;   /* لا يتجاوز عرضه 450 بكسل ليحافظ على أناقته */
-  background: rgba(10, 5, 5, 0.7); /* خلفية داكنة جداً وشفافة (70%) */
+  background: rgba(10, 5, 5, 0.85); /* زيادة كثافة اللون لتقليل عبء الشفافية */
   border: 1px solid rgba(229, 196, 103, 0.4); /* حدود ذهبية خافتة */
   border-radius: 16px; /* زوايا منحنية (16 بكسل) */
   display: flex;      /* ترتيب الأيقونة والمدخل بجانب بعضهما */
   align-items: center; /* توسيط عمودي */
   padding: 0 18px;    /* مسافة داخلية من اليمين واليسار */
   gap: 12px;          /* مسافة 12 بكسل بين الأيقونة ومكان الكتابة */
-  backdrop-filter: blur(20px); /* تعتيم زجاجي قوي جداً خلف مربع البحث */
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px); /* تقليل الغباش لزيادة السرعة (كان 20) */
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل عميق لإعطاء إحساس بالبروز */
   transition: all 0.3s ease;
+  will-change: transform, opacity; /* تسريع المعالجة عبر كارت الشاشة */
 }
 
 /* تأثير عند الضغط داخل مربع البحث للكتابة */
