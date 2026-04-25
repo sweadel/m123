@@ -1,67 +1,78 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم | طلو أحبابنا</title>
+<!DOCTYPE html> <!-- تعريف نوع المستند كـ HTML5 -->
+<html lang="ar" dir="rtl"> <!-- بداية ملف HTML باللغة العربية والاتجاه من اليمين لليسار -->
+<head> <!-- رأس الملف الذي يحتوي على الإعدادات والروابط الخارجية -->
+    <meta charset="UTF-8"> <!-- دعم ترميز اللغة العربية وكافة اللغات -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ضبط أبعاد الشاشة لتناسب الموبايل والكمبيوتر -->
+    <title>لوحة التحكم | طلو أحبابنا</title> <!-- عنوان الصفحة الذي يظهر في التبويب العلوي -->
     
-    <!-- الخطوط والأيقونات -->
+    <!-- استيراد خط IBM Plex Sans لدعم النصوص العربية بشكل احترافي -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
+    <!-- استيراد مكتبة FontAwesome لعرض الأيقونات (مثل أيقونة الوجبات، الإعدادات، إلخ) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- التنسيق الجديد -->
+    <!-- ربط ملف التنسيق الجديد (CSS) الذي يعطي اللوحة الشكل الفخم والمنظم -->
     <link rel="stylesheet" href="css/admin.css">
 </head>
-<body>
+<body> <!-- بداية جسم الصفحة الذي يحتوي على كل ما يراه المستخدم -->
 
-    <div class="admin-wrapper">
-        <!-- 1. الشريط الجانبي (Sidebar) -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <img src="images/tallo-logo.png" alt="طلو أحبابنا">
+    <div class="admin-wrapper"> <!-- الحاوية الرئيسية التي تضم القائمة الجانبية والمحتوى -->
+        <!-- 1. الشريط الجانبي (Sidebar) - يحتوي على قائمة التنقل -->
+        <aside class="sidebar" id="sidebar"> <!-- القائمة الجانبية الثابتة -->
+            <div class="sidebar-header"> <!-- رأس القائمة الجانبية -->
+                <img src="images/tallo-logo.png" alt="طلو أحبابنا"> <!-- شعار المطعم داخل القائمة -->
             </div>
             
-            <nav class="sidebar-menu">
+            <nav class="sidebar-menu"> <!-- قائمة أزرار التنقل بين الأقسام -->
+                <!-- زر لوحة التحكم (الرئيسية) -->
                 <a href="javascript:void(0)" class="menu-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')">
                     <i class="fa-solid fa-chart-pie"></i> لوحة التحكم
                 </a>
+                <!-- زر إدارة المنيو (قائمة الطعام) -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-menu" onclick="navigateTo('view-menu')">
                     <i class="fa-solid fa-bowl-food"></i> قائمة الطعام
                 </a>
+                <!-- زر إدارة الأقسام (التصنيفات) -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-categories" onclick="navigateTo('view-categories')">
                     <i class="fa-solid fa-layer-group"></i> الأقسام
                 </a>
+                <!-- زر إعدادات التصميم (الألوان والخطوط) -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-design" onclick="navigateTo('view-design')">
                     <i class="fa-solid fa-palette"></i> التصميم
                 </a>
+                <!-- زر إعدادات الصفحة الرئيسية (الفيديو والروابط) -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-home" onclick="navigateTo('view-home')">
                     <i class="fa-solid fa-house-chimney"></i> الرئيسية
                 </a>
+                <!-- زر عرض تقييمات الزبائن -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-feedback" onclick="navigateTo('view-feedback')">
                     <i class="fa-solid fa-comment-dots"></i> آراء الزبائن
                 </a>
+                <!-- زر سجل العمليات (مراقبة الحركات) -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-logs" onclick="navigateTo('view-logs')">
                     <i class="fa-solid fa-list-check"></i> السجل
                 </a>
+                <!-- زر سلة المحذوفات (استعادة ما تم حذفه) -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-trash" onclick="navigateTo('view-trash')">
                     <i class="fa-solid fa-trash-can"></i> المحذوفات
                 </a>
+                <!-- زر إدارة حسابات المدراء -->
                 <a href="javascript:void(0)" class="menu-item" data-view="view-accounts" onclick="navigateTo('view-accounts')">
                     <i class="fa-solid fa-user-shield"></i> الحسابات
                 </a>
             </nav>
 
-            <div class="sidebar-footer">
+            <div class="sidebar-footer"> <!-- تذييل القائمة الجانبية -->
+                <!-- زر تسجيل الخروج لمسح الجلسة والعودة لصفحة الدخول -->
                 <button class="btn-primary" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 100%;" onclick="logout()">
                     <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج
                 </button>
             </div>
         </aside>
 
-        <!-- 2. المحتوى الرئيسي (Main Content) -->
+        <!-- 2. المحتوى الرئيسي (Main Content) - المكان الذي تظهر فيه كل الصفحات -->
         <main class="main-content">
             
-            <!-- زر فتح القائمة للموبايل -->
+            <!-- زر فتح القائمة للموبايل - يظهر فقط في الشاشات الصغيرة -->
             <div class="mobile-header">
                 <button onclick="document.getElementById('sidebar').classList.toggle('open')" style="background:none; border:none; color:#fff; font-size:1.5rem;">
                     <i class="fa-solid fa-bars-staggered"></i>
@@ -69,38 +80,39 @@
                 <h2 style="font-size:1.1rem;">لوحة التحكم</h2>
             </div>
 
-            <!-- VIEW: DASHBOARD (لوحة الإحصائيات) -->
+            <!-- شاشة: لوحة الإحصائيات (Dashboard) -->
             <section class="view active" id="view-dashboard">
-                <div class="page-header">
+                <div class="page-header"> <!-- هيدر الصفحة -->
                     <div class="page-title">
-                        <h1>أهلاً بك، <span id="current-user-display">المدير</span> 👋</h1>
+                        <h1>أهلاً بك، <span id="current-user-display">المدير</span> 👋</h1> <!-- ترحيب باسم المستخدم -->
                         <p>إليك ملخص ما يحدث في مطعمك اليوم.</p>
                     </div>
                 </div>
 
+                <!-- شبكة بطاقات الإحصائيات الأربعة -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <div class="stat-card"> <!-- بطاقة إجمالي الوجبات -->
                         <div class="stat-icon"><i class="fa-solid fa-utensils"></i></div>
                         <div class="stat-info">
                             <h3>إجمالي الأصناف</h3>
                             <div class="stat-num" id="stat-total">0</div>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card"> <!-- بطاقة الوجبات المعروضة حالياً للزبائن -->
                         <div class="stat-icon" style="color:var(--green); background:rgba(46,204,113,0.1);"><i class="fa-solid fa-check-circle"></i></div>
                         <div class="stat-info">
                             <h3>أصناف نشطة</h3>
                             <div class="stat-num" id="stat-active">0</div>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card"> <!-- بطاقة الوجبات التي تم إخفاؤها مؤقتاً -->
                         <div class="stat-icon" style="color:var(--red); background:rgba(231,76,60,0.1);"><i class="fa-solid fa-eye-slash"></i></div>
                         <div class="stat-info">
                             <h3>أصناف مخفية</h3>
                             <div class="stat-num" id="stat-hidden">0</div>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card"> <!-- بطاقة عدد تصنيفات المنيو -->
                         <div class="stat-icon" style="color:var(--gold); background:rgba(197,160,34,0.1);"><i class="fa-solid fa-layer-group"></i></div>
                         <div class="stat-info">
                             <h3>الأقسام</h3>
@@ -110,28 +122,31 @@
                 </div>
             </section>
 
-            <!-- VIEW: MENU (إدارة المنيو) -->
+            <!-- شاشة: إدارة قائمة الطعام (Menu Management) -->
             <section class="view" id="view-menu" style="display:none;">
                 <div class="page-header">
                     <div class="page-title">
                         <h1>قائمة الطعام</h1>
                         <p>أضف، عدل، أو احذف أصناف المنيو.</p>
                     </div>
+                    <!-- زر فتح نافذة إضافة صنف جديد -->
                     <button class="btn-primary" onclick="openItemModal()">
                         <i class="fa-solid fa-plus"></i> إضافة صنف جديد
                     </button>
                 </div>
 
-                <div class="data-card">
-                    <div class="table-header">
+                <div class="data-card"> <!-- بطاقة عرض البيانات (الجدول) -->
+                    <div class="table-header"> <!-- شريط البحث والفلترة فوق الجدول -->
                         <div style="display:flex; gap:10px;">
+                            <!-- خانة البحث السريع بالاسم -->
                             <input type="text" id="globalSearch" class="form-control" placeholder="ابحث عن صنف..." style="width:250px;" oninput="onGlobalSearch()">
+                            <!-- قائمة اختيار القسم لفلترة النتائج -->
                             <select id="filterCategory" class="form-control" style="width:180px;" onchange="renderTable()">
                                 <option value="all">كل الأقسام</option>
                             </select>
                         </div>
                     </div>
-                    <table>
+                    <table> <!-- الجدول الرئيسي لعرض الوجبات -->
                         <thead>
                             <tr>
                                 <th>الصورة</th>
@@ -142,14 +157,12 @@
                                 <th>إجراءات</th>
                             </tr>
                         </thead>
-                        <tbody id="menu-table-body">
-                            <!-- يتم تعبئتها بواسطة JS -->
-                        </tbody>
+                        <tbody id="menu-table-body"></tbody> <!-- هنا يتم وضع الصفوف برمجياً من JS -->
                     </table>
                 </div>
             </section>
 
-            <!-- VIEW: CATEGORIES (إدارة الأقسام) -->
+            <!-- شاشة: إدارة الأقسام (Category Management) -->
             <section class="view" id="view-categories" style="display:none;">
                 <div class="page-header">
                     <div class="page-title">
@@ -160,64 +173,79 @@
                         <i class="fa-solid fa-folder-plus"></i> قسم جديد
                     </button>
                 </div>
-                <div id="categories-grid" class="stats-grid">
-                    <!-- يتم تعبئتها بواسطة JS -->
+                <div id="categories-grid" class="stats-grid"></div> <!-- عرض الأقسام على شكل بطاقات -->
+            </section>
+
+            <!-- شاشة: إعدادات الصفحة الرئيسية (Home Settings) -->
+            <section class="view" id="view-home" style="display:none;">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>إعدادات الصفحة الرئيسية</h1>
+                        <p>تحكم في الفيديو والروابط والجمل الترحيبية.</p>
+                    </div>
+                    <button class="btn-primary" onclick="saveHomeSettings()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ الإعدادات
+                    </button>
+                </div>
+                <div class="data-card" style="padding:30px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                        <div class="form-group">
+                            <label>رابط فيديو الخلفية (رابط مباشر)</label>
+                            <input type="text" id="h_video" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label>الجملة الترحيبية (Tagline)</label>
+                            <input type="text" id="h_tagline" class="form-control" placeholder="مثلاً: أهلاً بكم في مطعمنا">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط واتساب</label>
+                            <input type="text" id="h_whatsapp" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط انستقرام</label>
+                            <input type="text" id="h_instagram" class="form-control">
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- VIEW: DESIGN (إعدادات التصميم) -->
-            <section class="view" id="view-design" style="display:none;">
+            <!-- شاشة: تقييمات الزبائن (Feedback) -->
+            <section class="view" id="view-feedback" style="display:none;">
                 <div class="page-header">
                     <div class="page-title">
-                        <h1>هوية المنيو والتصميم</h1>
-                        <p>غير الألوان، الخطوط، والشعارات في لحظة.</p>
+                        <h1>آراء وتقييمات الزبائن</h1>
+                        <p>اطلع على ما يقوله الناس عن تجربتهم.</p>
                     </div>
-                    <button class="btn-primary" onclick="saveDesign()">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق
-                    </button>
                 </div>
-
-                <div class="stats-grid">
-                    <div class="data-card" style="padding:20px;">
-                        <h3 style="margin-bottom:15px; color:var(--gold);">🎨 الألوان الرئيسية</h3>
-                        <div class="form-group">
-                            <label>اللون الأساسي (الذهبي)</label>
-                            <input type="color" id="d_primaryColor" class="form-control" style="height:50px;">
-                        </div>
-                        <div class="form-group">
-                            <label>خلفية الصفحة</label>
-                            <input type="color" id="d_pageBg" class="form-control" style="height:50px;">
-                        </div>
-                    </div>
-                    <div class="data-card" style="padding:20px;">
-                        <h3 style="margin-bottom:15px; color:var(--gold);">✍️ الخطوط والنصوص</h3>
-                        <div class="form-group">
-                            <label>نوع الخط (Font Family)</label>
-                            <select id="d_fontFamily" class="form-control">
-                                <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic</option>
-                                <option value="Cairo">Cairo</option>
-                                <option value="Tajawal">Tajawal</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><input type="checkbox" id="d_fontBold"> خط عريض جداً (800)</label>
-                        </div>
-                    </div>
+                <div class="data-card">
+                    <table id="feedback-table">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>الاسم</th>
+                                <th>التقييم</th>
+                                <th>التعليق</th>
+                                <th>رقم الهاتف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedback-body"></tbody>
+                    </table>
                 </div>
             </section>
 
         </main>
     </div>
 
-    <!-- MODAL: ADD/EDIT ITEM -->
+    <!-- نافذة منبثقة (Modal): إضافة أو تعديل وجبة -->
     <div class="modal-overlay" id="itemModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">إضافة صنف جديد</h2>
+                <!-- زر إغلاق النافذة -->
                 <button onclick="closeItemModal()" style="background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="itemForm">
+                <form id="itemForm"> <!-- نموذج إدخال البيانات -->
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                         <div class="form-group">
                             <label>الاسم (عربي)</label>
@@ -234,13 +262,17 @@
                             <select id="itemCategory" class="form-control" required></select>
                         </div>
                         <div class="form-group">
-                            <label>السعر (دينار)</label>
+                            <label>السعر (بالدينار)</label>
                             <input type="text" id="itemPrice" class="form-control" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>رابط الصورة</label>
-                        <input type="text" id="itemImg" class="form-control" oninput="previewImage(this.value)">
+                        <label>رابط صورة الوجبة</label>
+                        <input type="text" id="itemImg" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>وصف الوجبة</label>
+                        <textarea id="itemDesc" class="form-control" rows="3"></textarea>
                     </div>
                 </form>
             </div>
@@ -251,9 +283,10 @@
         </div>
     </div>
 
-    <!-- Firebase & JS -->
+    <!-- ربط مكتبات Firebase الأساسية للتحكم بالبيانات -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <!-- ربط ملف البرمجة الخاص بلوحة التحكم -->
     <script src="js/admin.js"></script>
 
 </body>
