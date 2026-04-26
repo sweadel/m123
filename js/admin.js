@@ -1,4 +1,5 @@
 /**
+ * Added dark-mode support and bulk actions visibility handling */
  * js/admin.js v13.0 — النسخة الاحترافية الشاملة والمصححة
  * مطعم طلو احبابنا | Tallo Ahbabna
  * ملاحظة: تم التركيز على إدارة المنيو والأقسام كما طلب المستخدم.
@@ -124,6 +125,224 @@ REFS.feed.on('value', s => {
 // ══════════════════════════════════════════════
 
 function renderTable() {
+    // Update bulk panel visibility based on selections
+    const checkboxes = document.querySelectorAll('.bulk-item');
+    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+    const bulkPanel = document.getElementById('itemsBulkActions');
+    if (bulkPanel) bulkPanel.style.display = anyChecked ? 'block' : 'none';
+
+    const tableBody = document.getElementById('itemsBody');
+    if (!tableBody) return;
+
+    const searchQuery = (document.getElementById('globalSearch')?.value || '').toLowerCase();
+    const filtered = menuItems.filter(item => {
+        const matchesCat = (activeFilterCat === 'all' || item.category === activeFilterCat);
+        const matchesSearch = (!searchQuery || (item.name || '').toLowerCase().includes(searchQuery) || (item.nameEn || '').toLowerCase().includes(searchQuery));
+        return matchesCat && matchesSearch;
+    });
+    filtered.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    // ---------- Pagination ----------
+    const itemsPerPage = 20;
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const currentPage = parseInt(localStorage.getItem('itemsPage') || '1');
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const pageItems = filtered.slice(startIdx, startIdx + itemsPerPage);
+
+    // Render pagination UI
+    const paginationEl = document.getElementById('itemsPagination');
+    if (paginationEl) {
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="btn-primary-sm ${i===currentPage?'active':''}" onclick="goToPage(${i})">${i}</button>`;
+        }
+        paginationEl.innerHTML = html;
+    }
+    // ---------------------------------
+
+    tableBody.innerHTML = '';
+    pageItems.forEach(item => {
+        const isActive = item.status !== 'inactive';
+        const catOptions = catItems.map(c => `<option value="${c.id}" ${item.category === c.id ? 'selected' : ''}>${c.nameAr}</option>`).join('');
+        let badgeHtml = '';
+        if (item.badge === 'HOT') badgeHtml = `<span class="badge-tag bg-red">حار 🔥</span>`;
+        if (item.badge === 'NEW') badgeHtml = `<span class="badge-tag bg-green">جديد ✨</span>`;
+        if (item.badge === 'SPECIAL') badgeHtml = `<span class="badge-tag bg-gold">مميز ⭐</span>`;
+        // Checkbox for bulk selection (only for users with edit rights)
+        const canEdit = (localStorage.getItem('admin_role') || 'editor') !== 'viewer';
+        const checkbox = canEdit ? `<input type="checkbox" class="bulk-item" data-key="${item.key}" />` : '';
+        tableBody.innerHTML += `
+            <tr>
+                <td>${checkbox}</td>
+                <td><img src="${item.image || 'images/tallo-logo.png'}" class="item-thumb" onerror="this.src='images/tallo-logo.png'" /></td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        ${badgeHtml}
+                        <span class="item-name">${item.name}</span>
+                    </div>
+                    <small class="item-en">${item.nameEn || ''}</small>
+                </td>
+                <td>
+                    <select class="form-control-sm" onchange="quickMoveItem('${item.key}', this.value)">
+                        ${catOptions}
+                    </select>
+                </td>
+                <td style="color:var(--gold); font-weight:bold;">${item.price} JD</td>
+                <td>
+                    <button onclick="toggleItem('${item.key}','${item.status}')" class="status-pill ${isActive ? 'status-active' : 'status-hidden'}">
+                        ${isActive ? 'نشط' : 'مخفي'}
+                    </button>
+                </td>
+                <td>${item.badge || ''}</td>
+                <td>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-icon" onclick="moveItemOrder('${item.key}', -1)" title="للأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+                        <button class="btn-icon" onclick="moveItemOrder('${item.key}', 1)" title="للأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon edit" onclick="editItem('${item.key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteItem('${item.key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>`;
+    });
+    // show/hide bulk actions panel based on any checkbox selected
+    const bulkPanel = document.getElementById('itemsBulkActions');
+    if (bulkPanel) bulkPanel.style.display = canEdit ? 'block' : 'none';
+}
+
+function goToPage(page) {
+    localStorage.setItem('itemsPage', page);
+    renderTable();
+}
+
+// ---------- Bulk Action Handlers ----------
+function getSelectedItemKeys() {
+    return Array.from(document.querySelectorAll('.bulk-item:checked')).map(cb => cb.dataset.key);
+}
+
+function bulkActivateItems() {
+    const keys = getSelectedItemKeys();
+    keys.forEach(k => REFS.menu.child(k).update({status:'active'}));
+    showToast('تم تفعيل العناصر المختارة');
+}
+function bulkDeactivateItems() {
+    const keys = getSelectedItemKeys();
+    keys.forEach(k => REFS.menu.child(k).update({status:'inactive'}));
+    showToast('تم إلغاء تفعيل العناصر المختارة');
+}
+function bulkDeleteItems() {
+    const keys = getSelectedItemKeys();
+    if (!keys.length) return;
+    if (confirm('حذف العناصر المختارة نهائيًا؟')) {
+        keys.forEach(k => {
+            const item = menuItems.find(i=>i.key===k);
+            REFS.trash.push({...item, deletedAt: firebase.database.ServerValue.TIMESTAMP}).then(()=> REFS.menu.child(k).remove());
+        });
+        showToast('تم نقل العناصر إلى سلة المحذوفات');
+    }
+}
+function exportSelectedItems() {
+    const keys = getSelectedItemKeys();
+    const rows = menuItems.filter(i=>keys.includes(i.key)).map(i=>[
+        i.key,i.name,i.nameEn,i.category,i.price,i.status,i.badge,i.image,i.desc,i.descEn,i.order
+    ].join(','));
+    const csv = ['key,name,ename,category,price,status,badge,image,desc,descEn,order',...rows].join('\n');
+    const blob = new Blob([csv],{type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'selected_items.csv'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('تم تصدير العناصر المختارة');
+}
+
+// ---------- CSV Import ----------
+function importItemsFromFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        const text = e.target.result;
+        const lines = text.split(/\r?\n/).filter(l=>l.trim());
+        const header = lines.shift().split(',').map(h=>h.trim());
+        lines.forEach(line=>{
+            const cols = line.split(',');
+            const data = {};
+            header.forEach((h,i)=>{ data[h]=cols[i]; });
+            // map to Firebase fields (ignore key if exists)
+            const newItem = {
+                name: data.name,
+                nameEn: data.ename,
+                category: data.category,
+                price: data.price,
+                status: data.status || 'active',
+                badge: data.badge || '',
+                image: data.image || '',
+                desc: data.desc || '',
+                descEn: data.descEn || '',
+                order: parseInt(data.order)||0,
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            // push new record
+            REFS.menu.push(newItem);
+        });
+        showToast('تم استيراد العناصر من CSV');
+    };
+    reader.readAsText(file);
+}
+
+// ---------- Event Listeners (init) ----------
+function initAdminUI() {
+    document.getElementById('exportItemsBtn')?.addEventListener('click',()=>{
+        const rows = menuItems.map(i=>[
+            i.key,i.name,i.nameEn,i.category,i.price,i.status,i.badge,i.image,i.desc,i.descEn,i.order
+        ].join(','));
+        const csv = ['key,name,ename,category,price,status,badge,image,desc,descEn,order',...rows].join('\n');
+        const blob = new Blob([csv],{type:'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='menu_items.csv'; a.click();
+        URL.revokeObjectURL(url);
+    });
+    document.getElementById('importItemsBtn')?.addEventListener('click',()=>{
+        document.getElementById('importItemsInput')?.click();
+    });
+    document.getElementById('importItemsInput')?.addEventListener('change',e=>{
+        const file = e.target.files[0];
+        if (file) importItemsFromFile(file);
+    });
+    // Bulk action buttons
+    document.getElementById('bulkActivateItems')?.addEventListener('click',bulkActivateItems);
+    document.getElementById('bulkDeactivateItems')?.addEventListener('click',bulkDeactivateItems);
+    document.getElementById('bulkDeleteItems')?.addEventListener('click',bulkDeleteItems);
+    document.getElementById('exportSelectedItems')?.addEventListener('click',exportSelectedItems);
+    // Dark mode toggle (simple class switch)
+    const darkToggle = document.createElement('button');
+    darkToggle.className='btn-primary-sm';
+    darkToggle.innerHTML='<i class="fas fa-moon"></i>الوضع الليلي';
+    darkToggle.onclick=()=>{document.body.classList.toggle('dark-mode');};
+    document.querySelector('.header-actions')?.appendChild(darkToggle);
+    // Role based UI: hide bulk actions for viewer
+    const role = localStorage.getItem('admin_role') || 'editor';
+    if (role==='viewer') {
+        document.getElementById('itemsBulkActions').style.display='none';
+        // also hide edit/delete buttons later in renderTable (handled by canEdit variable)
+    }
+}
+
+// Call init after DOM ready (already done at bottom of script)
+// Select‑all handler
+    const selectAll = document.getElementById('selectAllItems');
+    if (selectAll) {
+        selectAll.addEventListener('change', e => {
+            const checked = e.target.checked;
+            document.querySelectorAll('.bulk-item').forEach(cb => cb.checked = checked);
+            // update bulk panel visibility after toggling
+            const bulkPanel = document.getElementById('itemsBulkActions');
+            if (bulkPanel) bulkPanel.style.display = checked ? 'block' : 'none';
+        });
+    }
+    initAdminUI();
+
     const tableBody = document.getElementById('menu-table-body');
     if (!tableBody) return;
 

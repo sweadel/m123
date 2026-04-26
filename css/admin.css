@@ -214,3 +214,27 @@ th:last-child, td:last-child { width: 100px; text-align: center; } /* إجراء
     .page-header { flex-direction: column; align-items: flex-start; gap: 15px; }
     .btn-primary { width: 100%; justify-content: center; }
 }
+
+/* Dark mode overrides */
+.dark-mode {
+    --bg-dark: #121212;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-dim: #a0a0a0;
+}
+.dark-mode body { background: var(--bg-dark); color: #e0e0e0; }
+.dark-mode .sidebar { background: #1a1a1a; }
+.dark-mode .form-control, .dark-mode .form-control-sm { background: rgba(255,255,255,0.05); }
+
+/* Toast Notifications Container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+

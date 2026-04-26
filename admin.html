@@ -33,11 +33,25 @@
                     <h1>إدارة قائمة الطعام</h1>
                     <p>أضف، حرر، رتب، أو احذف الأقسام والأطباق.</p>
                 </div>
-                <button class="btn-primary" id="addCategoryBtn"><i class="fas fa-plus"></i>قسم جديد</button>
+                <div class="header-actions">
+                    <button class="btn-primary" id="addCategoryBtn"><i class="fas fa-plus"></i>قسم جديد</button>
+                    <button class="btn-primary" id="exportItemsBtn"><i class="fas fa-file-export"></i>تصدير CSV</button>
+                    <input type="file" id="importItemsInput" accept=".csv" style="display:none;" />
+                    <button class="btn-primary" id="importItemsBtn"><i class="fas fa-file-import"></i>استيراد CSV</button>
+                </div>
             </header>
+
+            <div id="toast-container" class="toast-container"></div>
 
             <!-- Category Filter Tabs -->
             <div class="cat-filter-tabs" id="categoryTabs"></div>
+            <div class="bulk-actions" id="itemsBulkActions" style="display:none; margin-top:10px;">
+                <input type="checkbox" id="selectAllItems" /> <label for="selectAllItems">تحديد الكل</label>
+                <button class="btn-primary-sm" id="bulkActivateItems"><i class="fas fa-check"></i>تفعيل</button>
+                <button class="btn-primary-sm" id="bulkDeactivateItems"><i class="fas fa-ban"></i>إلغاء تفعيل</button>
+                <button class="btn-danger-sm" id="bulkDeleteItems"><i class="fas fa-trash"></i>حذف</button>
+                <button class="btn-primary-sm" id="exportSelectedItems"><i class="fas fa-file-export"></i>تصدير مختار</button>
+            </div>
 
             <!-- Data Card (Table) -->
             <section class="data-card">
@@ -45,17 +59,24 @@
                     <h2>الأطباق</h2>
                     <button class="btn-primary" id="addItemBtn"><i class="fas fa-plus"></i>طبق جديد</button>
                 </div>
+                <div class="table-header">
+                    <h2>الأطباق</h2>
+                    <button class="btn-primary" id="addItemBtn"><i class="fas fa-plus"></i>طبق جديد</button>
+                </div>
                 <div class="table-responsive">
+                    <div class="pagination" id="itemsPagination"></div>
                     <table id="itemsTable">
                         <thead>
                             <tr>
-                                <th>ترتيب</th>
+                                <th>اختيار</th>
                                 <th>صورة</th>
                                 <th>الاسم (AR)</th>
                                 <th>الاسم (EN)</th>
+                                <th>القسم</th>
                                 <th>السعر</th>
                                 <th>الحالة</th>
                                 <th>وسوم</th>
+                                <th>ترتيب</th>
                                 <th>إجراءات</th>
                             </tr>
                         </thead>
