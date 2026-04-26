@@ -598,6 +598,15 @@ function setFilterCat(id) {
     rebuildSelects(); // لتحديث حالة الأزرار (Active)
 }
 
+function clearLogs() {
+    if (confirm('هل أنت متأكد من مسح كافة سجلات العمليات؟ لا يمكن استعادتها.')) {
+        REFS.logs.remove().then(() => {
+            showToast('تم مسح السجلات بنجاح');
+            log('مسح السجلات', 'قام المدير بمسح كافة سجلات النظام');
+        });
+    }
+}
+
 function getSectionLabel(key) {
     const map = {
         'arabic': 'المنيو العربي',
