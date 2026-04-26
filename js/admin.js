@@ -1,10 +1,15 @@
 /**
- * js/admin.js v12.0 — النسخة الاحترافية الشاملة
+ * js/admin.js v13.0 — النسخة الاحترافية الشاملة والمصححة
  * مطعم طلو احبابنا | Tallo Ahbabna
+ * ملاحظة: تم التركيز على إدارة المنيو والأقسام كما طلب المستخدم.
  */
 
-if (localStorage.getItem('admin_auth') !== 'true') window.location.href = 'login.html';
+// التحقق من تسجيل الدخول
+if (localStorage.getItem('admin_auth') !== 'true') {
+    window.location.href = 'login.html';
+}
 
+// إعدادات Firebase
 const fbCfg = {
     apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
     authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -17,6 +22,7 @@ const fbCfg = {
 if (!firebase.apps.length) firebase.initializeApp(fbCfg);
 const db = firebase.database();
 
+// مراجع قاعدة البيانات
 const REFS = {
     menu: db.ref('menu_items'),
     cats: db.ref('categories_meta'),
@@ -27,360 +33,589 @@ const REFS = {
     feed: db.ref('feedback')
 };
 
-let menuItems=[], catItems=[], feedItems=[], editKey=null, editCatKey=null, isSaving=false, activeFilterCat='all';
+// المتغيرات العامة
+let menuItems = [], catItems = [], feedItems = [];
+let editKey = null, editCatKey = null, isSaving = false, activeFilterCat = 'all';
 
-// ══════════════ التنقل ══════════════
+// ══════════════════════════════════════════════
+// 1. نظام التنقل (Navigation)
+// ══════════════════════════════════════════════
 
 function navigateTo(id) {
+    // تحديث الأزرار في القائمة الجانبية
     document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
-    document.querySelector(`[data-view="${id}"]`)?.classList.add('active');
-    document.querySelectorAll('.view').forEach(v => { v.style.display='none'; v.classList.remove('active'); });
-    const t = document.getElementById(id);
-    if(t) { 
-        t.style.display='block'; 
-        setTimeout(()=>t.classList.add('active'),10); 
+    const activeBtn = document.querySelector(`[data-view="${id}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // إخفاء كافة الأقسام وإظهار القسم المطلوب
+    document.querySelectorAll('.view').forEach(v => {
+        v.style.display = 'none';
+        v.classList.remove('active');
+    });
+
+    const targetView = document.getElementById(id);
+    if (targetView) {
+        targetView.style.display = 'block';
+        // إضافة حركة دخول ناعمة
+        setTimeout(() => targetView.classList.add('active'), 10);
     }
-    document.getElementById('sidebar')?.classList.remove('open');
+
+    // إغلاق القائمة الجانبية في وضع الموبايل
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.classList.remove('open');
+
+    // حفظ آخر قسم تمت زيارته
     localStorage.setItem('last_admin_view', id);
-    
-    if(id === 'view-feedback') renderFeedTable();
-    if(id === 'view-logs') renderLogsTable();
-    if(id === 'view-trash') renderTrashTable();
+
+    // تحميل البيانات الخاصة بالأقسام التفاعلية
+    if (id === 'view-feedback') renderFeedTable();
+    if (id === 'view-logs') renderLogsTable();
+    if (id === 'view-trash') renderTrashTable();
 }
 
-// ══════════════ المراقبة والتحميل ══════════════
+// ══════════════════════════════════════════════
+// 2. مراقبة البيانات (Realtime Listeners)
+// ══════════════════════════════════════════════
 
+// مراقبة الوجبات
 REFS.menu.on('value', snap => {
     menuItems = [];
-    if(snap.exists()) Object.entries(snap.val()).forEach(([k,v]) => menuItems.push({key:k, ...v}));
+    if (snap.exists()) {
+        Object.entries(snap.val()).forEach(([k, v]) => {
+            menuItems.push({ key: k, ...v });
+        });
+    }
     renderTable();
     renderCatTable();
     updateStats();
 });
 
+// مراقبة الأقسام
 REFS.cats.on('value', snap => {
     catItems = [];
-    if(snap.exists()) Object.entries(snap.val()).forEach(([k,v]) => catItems.push({id:k, ...v}));
-    catItems.sort((a,b) => (a.order||0) - (b.order||0));
+    if (snap.exists()) {
+        Object.entries(snap.val()).forEach(([k, v]) => {
+            catItems.push({ id: k, ...v });
+        });
+    }
+    // الترتيب حسب الحقل order
+    catItems.sort((a, b) => (a.order || 0) - (b.order || 0));
+    
     rebuildSelects();
     renderCatTable();
     renderTable();
     updateStats();
 });
 
-REFS.feed.on('value', s => { 
-    feedItems=[]; if(s.exists()) Object.entries(s.val()).forEach(([k,v])=>feedItems.push({key:k, ...v})); 
-    renderFeedTable(); 
-    updateStats(); 
+// مراقبة الآراء
+REFS.feed.on('value', s => {
+    feedItems = [];
+    if (s.exists()) {
+        Object.entries(s.val()).forEach(([k, v]) => {
+            feedItems.push({ key: k, ...v });
+        });
+    }
+    renderFeedTable();
+    updateStats();
 });
 
-// ══════════════ إدارة المنيو ══════════════
+// ══════════════════════════════════════════════
+// 3. إدارة المنيو (Menu Items Management)
+// ══════════════════════════════════════════════
 
 function renderTable() {
-    const b = document.getElementById('menu-table-body');
-    if(!b) return;
-    const q = (document.getElementById('globalSearch')?.value || '').toLowerCase();
-    const filtered = menuItems.filter(i => (activeFilterCat==='all'||i.category===activeFilterCat) && (!q || (i.name||'').toLowerCase().includes(q) || (i.nameEn||'').toLowerCase().includes(q)));
-    
-    b.innerHTML = '';
-    filtered.forEach(i => {
-        const act = i.status!=='inactive';
-        let opts = catItems.map(c => `<option value="${c.id}" ${i.category===c.id?'selected':''}>${c.nameAr}</option>`).join('');
-        
-        let badgeHtml = '';
-        if(i.badge === 'HOT') badgeHtml = '<span style="background:#e74c3c; color:#fff; font-size:0.6rem; padding:2px 6px; border-radius:4px; margin-right:5px;">HOT 🔥</span>';
-        if(i.badge === 'NEW') badgeHtml = '<span style="background:#2ecc71; color:#fff; font-size:0.6rem; padding:2px 6px; border-radius:4px; margin-right:5px;">NEW ✨</span>';
-        if(i.badge === 'SPECIAL') badgeHtml = '<span style="background:#f1c40f; color:#000; font-size:0.6rem; padding:2px 6px; border-radius:4px; margin-right:5px;">STAR ⭐</span>';
+    const tableBody = document.getElementById('menu-table-body');
+    if (!tableBody) return;
 
-        b.innerHTML += `<tr>
-            <td><img src="${i.image||'images/tallo-logo.png'}" class="item-thumb" onerror="this.src='images/tallo-logo.png'"></td>
-            <td>
-                <div style="display:flex; align-items:center;">
-                    ${badgeHtml}
-                    <b>${i.name}</b>
-                </div>
-                <small>${i.nameEn||''}</small>
-            </td>
-            <td><select class="form-control" style="padding:5px 10px; font-size:0.8rem;" onchange="quickMoveItem('${i.key}', this.value)">${opts}</select></td>
-            <td style="color:var(--gold); font-weight:bold;">${i.price} JD</td>
-            <td><button onclick="toggleItem('${i.key}','${i.status}')" class="status-pill ${act?'status-active':'status-hidden'}">${act?'نشط':'مخفي'}</button></td>
-            <td><div style="display:flex; gap:5px;">
-                <button class="btn-primary" style="padding:6px 10px;" onclick="editItem('${i.key}')"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-primary" style="background:rgba(231,76,60,0.1); color:#e74c3c; padding:6px 10px;" onclick="deleteItem('${i.key}')"><i class="fa-solid fa-trash"></i></button>
-            </div></td></tr>`;
+    const searchQuery = (document.getElementById('globalSearch')?.value || '').toLowerCase();
+    
+    // الفلترة حسب القسم المختار وحسب نص البحث
+    const filtered = menuItems.filter(item => {
+        const matchesCat = (activeFilterCat === 'all' || item.category === activeFilterCat);
+        const matchesSearch = (!searchQuery || 
+                               (item.name || '').toLowerCase().includes(searchQuery) || 
+                               (item.nameEn || '').toLowerCase().includes(searchQuery));
+        return matchesCat && matchesSearch;
+    });
+
+    tableBody.innerHTML = '';
+    filtered.forEach(item => {
+        const isActive = item.status !== 'inactive';
+        const catOptions = catItems.map(c => `<option value="${c.id}" ${item.category === c.id ? 'selected' : ''}>${c.nameAr}</option>`).join('');
+        
+        // بناء الشارة
+        let badgeHtml = '';
+        if (item.badge === 'HOT') badgeHtml = '<span class="badge-tag bg-red">حار 🔥</span>';
+        if (item.badge === 'NEW') badgeHtml = '<span class="badge-tag bg-green">جديد ✨</span>';
+        if (item.badge === 'SPECIAL') badgeHtml = '<span class="badge-tag bg-gold">مميز ⭐</span>';
+
+        tableBody.innerHTML += `
+            <tr>
+                <td><img src="${item.image || 'images/tallo-logo.png'}" class="item-thumb" onerror="this.src='images/tallo-logo.png'"></td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        ${badgeHtml}
+                        <span class="item-name">${item.name}</span>
+                    </div>
+                    <small class="item-en">${item.nameEn || ''}</small>
+                </td>
+                <td>
+                    <select class="form-control-sm" onchange="quickMoveItem('${item.key}', this.value)">
+                        ${catOptions}
+                    </select>
+                </td>
+                <td style="color:var(--gold); font-weight:bold;">${item.price} JD</td>
+                <td>
+                    <button onclick="toggleItem('${item.key}','${item.status}')" class="status-pill ${isActive ? 'status-active' : 'status-hidden'}">
+                        ${isActive ? 'نشط' : 'مخفي'}
+                    </button>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon edit" onclick="editItem('${item.key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteItem('${item.key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>`;
     });
 }
 
 function saveItem() {
-    if(isSaving) return; 
+    if (isSaving) return;
+    
     const name = document.getElementById('itemName').value.trim();
     const category = document.getElementById('itemCategory').value;
-    if(!name || !category) return showToast('يرجى إدخال الاسم والقسم', 'error');
     
-    isSaving=true;
-    const data = { 
-        name, 
-        nameEn: document.getElementById('itemNameEn').value.trim(), 
-        category: category, 
-        price: document.getElementById('itemPrice').value.trim(), 
-        image: document.getElementById('itemImg').value.trim(), 
-        desc: document.getElementById('itemDesc').value.trim(), 
-        descEn: document.getElementById('itemDescEn').value.trim(), 
+    if (!name || !category) {
+        return showToast('يرجى إدخال اسم الوجبة والقسم', 'error');
+    }
+
+    isSaving = true;
+    const data = {
+        name: name,
+        nameEn: document.getElementById('itemNameEn').value.trim(),
+        category: category,
+        price: document.getElementById('itemPrice').value.trim(),
+        image: document.getElementById('itemImg').value.trim(),
+        desc: document.getElementById('itemDesc').value.trim(),
+        descEn: document.getElementById('itemDescEn').value.trim(),
         badge: document.getElementById('itemBadge').value || '',
         status: document.getElementById('itemStatus').value || 'active',
-        updatedAt: firebase.database.ServerValue.TIMESTAMP 
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
+
+    const targetRef = editKey ? REFS.menu.child(editKey) : REFS.menu.push();
     
-    const r = editKey ? REFS.menu.child(editKey) : REFS.menu.push();
-    r.set(data).then(() => { 
-        closeItemModal(); 
-        showToast('تم حفظ الوجبة بنجاح');
-        log(editKey?'تعديل وجبة':'إضافة وجبة', name); 
-    }).catch(err => showToast('حدث خطأ أثناء الحفظ', 'error'))
-    .finally(() => isSaving=false);
+    // نستخدم update بدلاً من set للحفاظ على أي حقول إضافية غير موجودة في النموذج
+    targetRef.update(data)
+        .then(() => {
+            closeItemModal();
+            showToast('تم حفظ بيانات الوجبة بنجاح');
+            log(editKey ? 'تعديل وجبة' : 'إضافة وجبة', name);
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('حدث خطأ أثناء الحفظ', 'error');
+        })
+        .finally(() => isSaving = false);
 }
 
-// ══════════════ إدارة الأقسام ══════════════
+// ══════════════════════════════════════════════
+// 4. إدارة الأقسام (Categories Management)
+// ══════════════════════════════════════════════
 
 function renderCatTable() {
-    const b = document.getElementById('cat-table-body');
-    if(!b) return; b.innerHTML = '';
-    catItems.forEach(c => {
-        const act = c.status !== 'hidden';
-        const itemCount = menuItems.filter(i => i.category === c.id).length;
-        b.innerHTML += `<tr>
-            <td style="font-size:1.2rem; color:var(--gold);"><i class="fa-solid ${c.icon || 'fa-folder'}"></i></td>
-            <td><b>${c.nameAr}</b><br><small>${c.nameEn || ''}</small></td>
-            <td><span class="status-pill" style="background:rgba(255,255,255,0.05); color:#ccc;">${c.section || '---'}</span></td>
-            <td><b>${itemCount}</b> وجبة</td>
-            <td>${c.order || 0}</td>
-            <td><button onclick="toggleCat('${c.id}','${c.status}')" class="status-pill ${act?'status-active':'status-hidden'}">${act?'ظاهر':'مخفي'}</button></td>
-            <td><div style="display:flex; gap:5px;">
-                <button class="btn-primary" style="padding:6px 10px;" onclick="editCat('${c.id}')"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-primary" style="background:rgba(231,76,60,0.1); color:#e74c3c; padding:6px 10px;" onclick="deleteCat('${c.id}')"><i class="fa-solid fa-trash"></i></button>
-            </div></td></tr>`;
+    const tableBody = document.getElementById('cat-table-body');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    catItems.forEach(cat => {
+        const isVisible = cat.status !== 'hidden';
+        const itemCount = menuItems.filter(i => i.category === cat.id).length;
+        
+        tableBody.innerHTML += `
+            <tr>
+                <td style="font-size:1.2rem; color:var(--gold);"><i class="fa-solid ${cat.icon || 'fa-folder'}"></i></td>
+                <td>
+                    <span class="item-name">${cat.nameAr}</span>
+                    <br><small class="item-en">${cat.nameEn || ''}</small>
+                </td>
+                <td><span class="section-tag">${getSectionLabel(cat.section)}</span></td>
+                <td><b>${itemCount}</b> وجبة</td>
+                <td><span class="order-badge">${cat.order || 0}</span></td>
+                <td>
+                    <button onclick="toggleCat('${cat.id}','${cat.status}')" class="status-pill ${isVisible ? 'status-active' : 'status-hidden'}">
+                        ${isVisible ? 'ظاهر' : 'مخفي'}
+                    </button>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon edit" onclick="editCat('${cat.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteCat('${cat.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>`;
     });
 }
 
 function saveCategory() {
-    const name = document.getElementById('catNameAr').value.trim();
-    if(!name) return showToast('يرجى إدخال اسم القسم', 'error');
-    
+    const nameAr = document.getElementById('catNameAr').value.trim();
+    if (!nameAr) return showToast('الاسم العربي مطلوب', 'error');
+
     const statusRadio = document.querySelector('input[name="catStatus"]:checked');
     const status = statusRadio ? statusRadio.value : 'active';
-    
+
     const data = {
-        nameAr: name, 
+        nameAr: nameAr,
         nameEn: document.getElementById('catNameEn').value.trim(),
         section: document.getElementById('catSection').value,
         order: parseInt(document.getElementById('catOrder').value) || 0,
-        icon: document.getElementById('catIcon').value.trim(),
+        icon: document.getElementById('catIcon').value.trim() || 'fa-folder',
         descAr: document.getElementById('catDescAr').value.trim(),
         descEn: document.getElementById('catDescEn').value.trim(),
         status: status,
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
-    
-    const id = editCatKey || name.toLowerCase().replace(/\s+/g, '-');
-    REFS.cats.child(id).update(data).then(() => { 
-        closeCatModal(); 
-        showToast('تم حفظ القسم بنجاح');
-        log('إدارة الأقسام', `حفظ القسم: ${name}`); 
-    }).catch(err => showToast('خطأ في الحفظ', 'error'));
+
+    // إذا كان تعديلاً نستخدم المفتاح القديم، وإذا كان جديداً ننشئ مفتاحاً من الاسم
+    const catId = editCatKey || nameAr.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u0621-\u064A-]/g, '');
+
+    REFS.cats.child(catId).update(data)
+        .then(() => {
+            closeCatModal();
+            showToast('تم حفظ القسم بنجاح');
+            log('إدارة الأقسام', `حفظ القسم: ${nameAr}`);
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('خطأ في حفظ القسم', 'error');
+        });
 }
 
-// ══════════════ وظائف مساعدة وإشعارات ══════════════
+// ══════════════════════════════════════════════
+// 5. الوظائف المساعدة والجمالية
+// ══════════════════════════════════════════════
 
-function showToast(msg, type='success') {
+function showToast(msg, type = 'success') {
     const container = document.getElementById('toast-container');
-    if(!container) return;
-    const t = document.createElement('div');
-    t.className = 'toast-notification';
-    t.style = `padding:15px 25px; background:#1a1a1a; border-right:4px solid ${type==='success'?'#2ecc71':'#e74c3c'}; color:#fff; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5); font-size:0.9rem; animation:slideIn 0.3s ease forwards; margin-bottom:10px;`;
-    t.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}" style="margin-left:10px; color:${type==='success'?'#2ecc71':'#e74c3c'}"></i> ${msg}`;
-    container.appendChild(t);
-    setTimeout(() => { 
-        t.style.opacity='0'; 
-        t.style.transform='translateX(-20px)'; 
-        setTimeout(()=>t.remove(),300); 
-    }, 3000);
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.style = `
+        padding: 14px 22px; 
+        background: #1a1a1a; 
+        border-right: 4px solid ${type === 'success' ? '#2ecc71' : '#e74c3c'}; 
+        color: #fff; 
+        border-radius: 12px; 
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+        font-size: 0.9rem; 
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        animation: toastSlideIn 0.4s ease forwards;
+        pointer-events: all;
+    `;
+
+    const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+    const color = type === 'success' ? '#2ecc71' : '#e74c3c';
+    
+    toast.innerHTML = `<i class="fa-solid ${icon}" style="color:${color}; font-size:1.1rem;"></i> <span>${msg}</span>`;
+    
+    container.appendChild(toast);
+
+    // إزالة الإشعار بعد 3 ثوانٍ
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideOut 0.4s ease forwards';
+        setTimeout(() => toast.remove(), 400);
+    }, 3500);
 }
 
+// معاينة الصورة في مودال الوجبات
 function previewItemImage(url) {
-    const p = document.getElementById('item-img-preview');
-    if(!p) return;
-    if(url && url.length > 10) p.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;">`;
-    else p.innerHTML = `<i class="fa-solid fa-image" style="font-size:3rem; color:rgba(255,255,255,0.1);"></i>`;
+    const previewContainer = document.getElementById('item-img-preview');
+    if (!previewContainer) return;
+    
+    if (url && url.length > 5) {
+        previewContainer.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;">`;
+    } else {
+        previewContainer.innerHTML = `<i class="fa-solid fa-image" style="font-size:3rem; color:rgba(255,255,255,0.05);"></i>`;
+    }
 }
 
+// الاستماع لكود الأيقونة في مودال الأقسام
 document.getElementById('catIcon')?.addEventListener('input', (e) => {
-    const icon = e.target.value.trim() || 'fa-circle-question';
-    const p = document.getElementById('icon-preview');
-    if(p) p.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+    const iconCode = e.target.value.trim() || 'fa-circle-question';
+    const preview = document.getElementById('icon-preview');
+    if (preview) preview.innerHTML = `<i class="fa-solid ${iconCode}"></i>`;
 });
 
-function quickMoveItem(k, c) { REFS.menu.child(k).update({ category: c }).then(() => { showToast('تم نقل الوجبة بنجاح'); log('نقل سريع', 'تغيير قسم الوجبة'); }); }
+function quickMoveItem(key, newCat) {
+    REFS.menu.child(key).update({ category: newCat })
+        .then(() => {
+            showToast('تم نقل الوجبة إلى القسم المختار');
+            log('نقل سريع', `تغيير قسم الوجبة`);
+        });
+}
 
 function rebuildSelects() {
-    const t = document.getElementById('catFilterTabs'), s = document.getElementById('itemCategory'); 
-    if(t) {
-        t.innerHTML = `<button class="cat-filter-tab ${activeFilterCat==='all'?'active':''}" onclick="setFilterCat('all')">الكل</button>`;
-        catItems.forEach(c => t.innerHTML += `<button class="cat-filter-tab ${activeFilterCat===c.id?'active':''}" onclick="setFilterCat('${c.id}')">${c.nameAr}</button>`);
+    const filterTabs = document.getElementById('catFilterTabs');
+    const itemSelect = document.getElementById('itemCategory');
+    
+    if (filterTabs) {
+        let html = `<button class="cat-filter-tab ${activeFilterCat === 'all' ? 'active' : ''}" onclick="setFilterCat('all')">الكل</button>`;
+        catItems.forEach(c => {
+            html += `<button class="cat-filter-tab ${activeFilterCat === c.id ? 'active' : ''}" onclick="setFilterCat('${c.id}')">${c.nameAr}</button>`;
+        });
+        filterTabs.innerHTML = html;
     }
-    if(s) s.innerHTML = '<option value="" disabled selected>اختر القسم...</option>' + catItems.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
+    
+    if (itemSelect) {
+        itemSelect.innerHTML = '<option value="" disabled selected>اختر القسم...</option>' + 
+                               catItems.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
+    }
 }
 
 function updateStats() {
-    if(document.getElementById('stat-total')) document.getElementById('stat-total').textContent = menuItems.length;
-    if(document.getElementById('stat-cats')) document.getElementById('stat-cats').textContent = catItems.length;
-    if(document.getElementById('stat-feed')) document.getElementById('stat-feed').textContent = feedItems.length;
+    const totalEl = document.getElementById('stat-total');
+    const catsEl = document.getElementById('stat-cats');
+    const feedEl = document.getElementById('stat-feed');
+    
+    if (totalEl) totalEl.textContent = menuItems.length;
+    if (catsEl) catsEl.textContent = catItems.length;
+    if (feedEl) feedEl.textContent = feedItems.length;
 }
 
-function log(a, d) { REFS.logs.push({ action: a, details: d, user: localStorage.getItem('admin_user')||'المدير', timestamp: firebase.database.ServerValue.TIMESTAMP }); }
-function logout() { localStorage.clear(); window.location.href='login.html'; }
-function setFilterCat(id) { activeFilterCat=id; renderTable(); }
+function log(action, details) {
+    REFS.logs.push({
+        action: action,
+        details: details,
+        user: localStorage.getItem('admin_user') || 'المدير',
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+}
 
-function openItemModal() { 
-    editKey=null; 
-    document.getElementById('itemForm').reset(); 
-    previewItemImage(''); 
+function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+function setFilterCat(id) {
+    activeFilterCat = id;
+    renderTable();
+    rebuildSelects(); // لتحديث حالة الأزرار (Active)
+}
+
+function getSectionLabel(key) {
+    const map = {
+        'arabic': 'المنيو العربي',
+        'intl': 'انترناشونال',
+        'desserts': 'الحلويات',
+        'drinks': 'المشروبات',
+        'argileh': 'الأراجيل'
+    };
+    return map[key] || 'غير محدد';
+}
+
+// ══════════════════════════════════════════════
+// 6. التعامل مع المودالات (Modals)
+// ══════════════════════════════════════════════
+
+function openItemModal() {
+    editKey = null;
+    document.getElementById('itemForm').reset();
+    previewItemImage('');
     document.getElementById('modalTitle').textContent = 'إضافة وجبة جديدة';
-    document.getElementById('itemModal').classList.add('active'); 
+    document.getElementById('itemModal').classList.add('active');
 }
 function closeItemModal() { document.getElementById('itemModal').classList.remove('active'); }
 
-function openCatModal() { 
-    editCatKey=null; 
-    document.getElementById('catForm').reset(); 
+function openCatModal() {
+    editCatKey = null;
+    document.getElementById('catForm').reset();
     document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
     document.getElementById('icon-preview').innerHTML = '<i class="fa-solid fa-circle-question"></i>';
-    document.getElementById('catModal').classList.add('active'); 
+    document.getElementById('catModal').classList.add('active');
 }
 function closeCatModal() { document.getElementById('catModal').classList.remove('active'); }
 
-function editItem(k) { 
-    const i=menuItems.find(x=>x.key===k); 
-    if(!i) return; 
-    editKey=k; 
-    document.getElementById('modalTitle').textContent = 'تعديل الوجبة';
-    document.getElementById('itemName').value=i.name; 
-    document.getElementById('itemNameEn').value=i.nameEn||''; 
-    document.getElementById('itemCategory').value=i.category; 
-    document.getElementById('itemPrice').value=i.price; 
-    document.getElementById('itemImg').value=i.image; 
-    document.getElementById('itemDesc').value=i.desc; 
-    document.getElementById('itemDescEn').value=i.descEn; 
-    document.getElementById('itemBadge').value=i.badge || '';
-    document.getElementById('itemStatus').value=i.status || 'active';
-    previewItemImage(i.image);
-    document.getElementById('itemModal').classList.add('active'); 
+function editItem(key) {
+    const item = menuItems.find(x => x.key === key);
+    if (!item) return;
+    
+    editKey = key;
+    document.getElementById('modalTitle').textContent = 'تعديل بيانات الوجبة';
+    
+    document.getElementById('itemName').value = item.name || '';
+    document.getElementById('itemNameEn').value = item.nameEn || '';
+    document.getElementById('itemCategory').value = item.category || '';
+    document.getElementById('itemPrice').value = item.price || '';
+    document.getElementById('itemImg').value = item.image || '';
+    document.getElementById('itemDesc').value = item.desc || '';
+    document.getElementById('itemDescEn').value = item.descEn || '';
+    document.getElementById('itemBadge').value = item.badge || '';
+    document.getElementById('itemStatus').value = item.status || 'active';
+    
+    previewItemImage(item.image);
+    document.getElementById('itemModal').classList.add('active');
 }
 
-function editCat(id) { 
-    const c=catItems.find(x=>x.id===id); 
-    if(!c) return; 
-    editCatKey=id; 
-    document.getElementById('catModalTitle').textContent = 'تعديل القسم';
-    document.getElementById('catNameAr').value=c.nameAr; 
-    document.getElementById('catNameEn').value=c.nameEn||''; 
-    document.getElementById('catSection').value=c.section; 
-    document.getElementById('catOrder').value=c.order; 
-    document.getElementById('catIcon').value=c.icon; 
-    document.getElementById('catDescAr').value=c.descAr||''; 
-    document.getElementById('catDescEn').value=c.descEn||''; 
-    const rad = document.querySelector(`input[name="catStatus"][value="${c.status || 'active'}"]`);
-    if(rad) rad.checked = true;
-    document.getElementById('icon-preview').innerHTML = `<i class="fa-solid ${c.icon || 'fa-circle-question'}"></i>`;
-    document.getElementById('catModal').classList.add('active'); 
+function editCat(id) {
+    const cat = catItems.find(x => x.id === id);
+    if (!cat) return;
+    
+    editCatKey = id;
+    document.getElementById('catModalTitle').textContent = 'تعديل بيانات القسم';
+    
+    document.getElementById('catNameAr').value = cat.nameAr || '';
+    document.getElementById('catNameEn').value = cat.nameEn || '';
+    document.getElementById('catSection').value = cat.section || 'arabic';
+    document.getElementById('catOrder').value = cat.order || 0;
+    document.getElementById('catIcon').value = cat.icon || '';
+    document.getElementById('catDescAr').value = cat.descAr || '';
+    document.getElementById('catDescEn').value = cat.descEn || '';
+    
+    const statusVal = cat.status || 'active';
+    const rad = document.querySelector(`input[name="catStatus"][value="${statusVal}"]`);
+    if (rad) rad.checked = true;
+    
+    document.getElementById('icon-preview').innerHTML = `<i class="fa-solid ${cat.icon || 'fa-folder'}"></i>`;
+    document.getElementById('catModal').classList.add('active');
 }
 
-function deleteItem(k) { 
-    if(confirm('هل أنت متأكد من حذف هذه الوجبة؟ ستنتقل إلى سلة المحذوفات.')) { 
-        const i=menuItems.find(x=>x.key===k); 
-        REFS.trash.push({...i, deletedAt: firebase.database.ServerValue.TIMESTAMP}).then(() => {
-            REFS.menu.child(k).remove().then(() => {
-                showToast('تم حذف الوجبة بنجاح');
-                log('حذف وجبة', i.name);
+// ══════════════════════════════════════════════
+// 7. العمليات السريعة (Delete, Toggle)
+// ══════════════════════════════════════════════
+
+function deleteItem(key) {
+    const item = menuItems.find(x => x.key === key);
+    if (!item) return;
+
+    if (confirm(`هل أنت متأكد من حذف الوجبة "${item.name}"؟`)) {
+        // النقل لسلة المحذوفات قبل الحذف
+        REFS.trash.push({ ...item, deletedAt: firebase.database.ServerValue.TIMESTAMP })
+            .then(() => {
+                REFS.menu.child(key).remove().then(() => {
+                    showToast('تم نقل الوجبة إلى سلة المحذوفات');
+                    log('حذف وجبة', item.name);
+                });
             });
-        });
-    } 
+    }
 }
 
-function deleteCat(id) { 
-    if(confirm('حذف القسم سيؤدي لإخفاء وجباته. هل أنت متأكد؟')) {
+function deleteCat(id) {
+    const cat = catItems.find(x => x.id === id);
+    if (!cat) return;
+
+    if (confirm(`هل أنت متأكد من حذف قسم "${cat.nameAr}"؟`)) {
         REFS.cats.child(id).remove().then(() => {
             showToast('تم حذف القسم بنجاح');
-            log('حذف قسم', id);
+            log('حذف قسم', cat.nameAr);
         });
     }
 }
 
-function toggleItem(k, s) { 
-    const next = s==='inactive'?'active':'inactive';
-    REFS.menu.child(k).update({ status: next }).then(() => {
-        showToast(`الوجبة الآن ${next==='active'?'نشطة':'مخفية'}`);
-    });
-}
-function toggleCat(id, s) { 
-    const next = s==='hidden'?'active':'hidden';
-    REFS.cats.child(id).update({ status: next }).then(() => {
-        showToast(`القسم الآن ${next==='active'?'ظاهر':'مخفي'}`);
-    });
+function toggleItem(key, currentStatus) {
+    const nextStatus = currentStatus === 'inactive' ? 'active' : 'inactive';
+    REFS.menu.child(key).update({ status: nextStatus })
+        .then(() => {
+            showToast(`الوجبة الآن ${nextStatus === 'active' ? 'نشطة وظاهرة' : 'مخفية'}`);
+        });
 }
 
-function onGlobalSearch() { renderTable(); }
+function toggleCat(id, currentStatus) {
+    const nextStatus = currentStatus === 'hidden' ? 'active' : 'hidden';
+    REFS.cats.child(id).update({ status: nextStatus })
+        .then(() => {
+            showToast(`القسم الآن ${nextStatus === 'active' ? 'ظاهر' : 'مخفي عن الزبائن'}`);
+        });
+}
 
-function renderFeedTable() { 
-    const b = document.getElementById('feed-table-body'); 
-    if(!b) return; b.innerHTML = ''; 
-    [...feedItems].reverse().forEach(f => { 
-        b.innerHTML += `<tr><td>${new Date(f.timestamp).toLocaleString('ar-EG')}</td><td>${f.name}</td><td>${f.rating}⭐</td><td>${f.message}</td></tr>`; 
-    }); 
+// ══════════════════════════════════════════════
+// 8. الجداول الإضافية (Feedback, Logs, Trash)
+// ══════════════════════════════════════════════
+
+function renderFeedTable() {
+    const body = document.getElementById('feed-table-body');
+    if (!body) return;
+    
+    body.innerHTML = '';
+    const sorted = [...feedItems].reverse();
+    
+    if (sorted.length === 0) {
+        body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; opacity:0.5;">لا توجد آراء حالياً</td></tr>';
+        return;
+    }
+
+    sorted.forEach(f => {
+        body.innerHTML += `
+            <tr>
+                <td>${new Date(f.timestamp).toLocaleString('ar-EG')}</td>
+                <td><b>${f.name || 'مجهول'}</b></td>
+                <td style="color:#f1c40f;">${'⭐'.repeat(f.rating || 0)}</td>
+                <td>${f.message || ''}</td>
+            </tr>`;
+    });
 }
 
 function renderLogsTable() {
-    const b = document.getElementById('logs-table-body');
-    if(!b) return;
+    const body = document.getElementById('logs-table-body');
+    if (!body) return;
+    
     REFS.logs.limitToLast(50).once('value', s => {
-        b.innerHTML = '';
-        if(!s.exists()) return;
+        body.innerHTML = '';
+        if (!s.exists()) {
+            body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:30px; opacity:0.5;">السجل فارغ</td></tr>';
+            return;
+        }
+        
         Object.values(s.val()).reverse().forEach(l => {
-            b.innerHTML += `<tr>
-                <td>${new Date(l.timestamp).toLocaleString('ar-EG')}</td>
-                <td><span class="status-pill" style="background:rgba(197,160,34,0.1); color:var(--gold);">${l.action}</span></td>
-                <td>${l.details} <br><small style="color:var(--text-dim)">بواسطة: ${l.user}</small></td>
-            </tr>`;
+            body.innerHTML += `
+                <tr>
+                    <td style="white-space:nowrap;">${new Date(l.timestamp).toLocaleString('ar-EG')}</td>
+                    <td><span class="action-tag">${l.action}</span></td>
+                    <td>${l.details} <br><small style="color:var(--text-dim)">بواسطة: ${l.user}</small></td>
+                </tr>`;
         });
     });
 }
 
 function renderTrashTable() {
-    const b = document.getElementById('trash-table-body');
-    if(!b) return;
+    const body = document.getElementById('trash-table-body');
+    if (!body) return;
+
     REFS.trash.once('value', s => {
-        b.innerHTML = '';
-        if(!s.exists()) return b.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:40px; opacity:0.5;">سلة المحذوفات فارغة</td></tr>';
+        body.innerHTML = '';
+        if (!s.exists()) {
+            body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:40px; opacity:0.5;">سلة المحذوفات فارغة</td></tr>';
+            return;
+        }
+
         Object.entries(s.val()).reverse().forEach(([k, v]) => {
-            b.innerHTML += `<tr>
-                <td><b>${v.name}</b></td>
-                <td>${new Date(v.deletedAt).toLocaleString('ar-EG')}</td>
-                <td>
-                    <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem;" onclick="restoreItem('${k}')">استعادة</button>
-                    <button class="btn-primary" style="background:rgba(231,76,60,0.1); color:#e74c3c; padding:6px 12px; font-size:0.8rem;" onclick="hardDeleteItem('${k}')">حذف نهائي</button>
-                </td>
-            </tr>`;
+            body.innerHTML += `
+                <tr>
+                    <td><b>${v.name}</b></td>
+                    <td>${new Date(v.deletedAt).toLocaleString('ar-EG')}</td>
+                    <td>
+                        <button class="btn-primary-sm" onclick="restoreItem('${k}')">استعادة</button>
+                        <button class="btn-danger-sm" onclick="hardDeleteItem('${k}')">حذف نهائي</button>
+                    </td>
+                </tr>`;
         });
     });
 }
 
-function restoreItem(k) {
-    REFS.trash.child(k).once('value', s => {
-        if(!s.exists()) return;
+function restoreItem(trashKey) {
+    REFS.trash.child(trashKey).once('value', s => {
+        if (!s.exists()) return;
         const data = s.val();
-        const restoreData = {...data};
-        delete restoreData.deletedAt;
+        const restoreData = { ...data };
+        delete restoreData.deletedAt; // إزالة تاريخ الحذف قبل الاستعادة
+        
         REFS.menu.push(restoreData).then(() => {
-            REFS.trash.child(k).remove().then(() => {
+            REFS.trash.child(trashKey).remove().then(() => {
                 showToast('تمت استعادة الوجبة بنجاح');
                 renderTrashTable();
             });
@@ -388,18 +623,32 @@ function restoreItem(k) {
     });
 }
 
-function hardDeleteItem(k) {
-    if(confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذه الخطوة.')) {
-        REFS.trash.child(k).remove().then(() => {
-            showToast('تم الحذف النهائي بنجاح');
+function hardDeleteItem(trashKey) {
+    if (confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذه العملية.')) {
+        REFS.trash.child(trashKey).remove().then(() => {
+            showToast('تم الحذف النهائي للوجبة');
             renderTrashTable();
         });
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => { 
-    const currentView = localStorage.getItem('last_admin_view') || 'view-dashboard';
-    navigateTo(currentView);
-    if(document.getElementById('current-user-display')) 
-        document.getElementById('current-user-display').textContent = localStorage.getItem('admin_user')||'المدير';
+// ══════════════════════════════════════════════
+// 9. تهيئة الصفحة (Initialization)
+// ══════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    // استعادة آخر عرض أو البدء بلوحة التحكم
+    const lastView = localStorage.getItem('last_admin_view') || 'view-dashboard';
+    navigateTo(lastView);
+
+    // عرض اسم المستخدم
+    const userDisplay = document.getElementById('current-user-display');
+    if (userDisplay) {
+        userDisplay.textContent = localStorage.getItem('admin_user') || 'المدير العام';
+    }
 });
+
+// وظيفة البحث العالمي
+function onGlobalSearch() {
+    renderTable();
+}
