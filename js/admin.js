@@ -372,6 +372,7 @@ function initAdminUI() {
 
         tableBody.innerHTML += `
             <tr>
+                <td><input type="checkbox" class="bulk-item" data-key="${item.key}"></td>
                 <td><img src="${item.image || 'images/tallo-logo.png'}" class="item-thumb" onerror="this.src='images/tallo-logo.png'"></td>
                 <td>
                     <div style="display:flex; align-items:center; gap:8px;">
