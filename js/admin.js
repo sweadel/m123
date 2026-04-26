@@ -841,17 +841,7 @@ function hardDeleteItem(trashKey) {
 // 9. تهيئة الصفحة (Initialization)
 // ══════════════════════════════════════════════
 
-document.addEventListener('DOMContentLoaded', () => {
-    // استعادة آخر عرض أو البدء بلوحة التحكم
-    const lastView = localStorage.getItem('last_admin_view') || 'view-dashboard';
-    navigateTo(lastView);
-
-    // عرض اسم المستخدم
-    const userDisplay = document.getElementById('current-user-display');
-    if (userDisplay) {
-        userDisplay.textContent = localStorage.getItem('admin_user') || 'المدير العام';
-    }
-});
+// Removed redundant DOMContentLoaded listener (merged into later listener).
 
 // وظيفة البحث العالمي
 function onGlobalSearch() { renderTable(); }
@@ -903,16 +893,26 @@ function moveItemOrder(key, direction) {
 document.addEventListener('DOMContentLoaded', () => {
     // تشغيل المستمعات الأساسية
     initAdminUI();
-    
-    // التوجه لآخر قسم كان مفتوحاً أو اللوحة الرئيسية
+
+    // التوجه لآخر عرض أو اللوحة الرئيسية
     const lastView = localStorage.getItem('last_admin_view') || 'view-dashboard';
     navigateTo(lastView);
-    
-    // عرض اسم المستخدم
+
+    // عرض اسم المستخدم في لوحة التحكم وإعدادات النظام
+    const username = localStorage.getItem('admin_user') || 'المدير';
     const userDisplay = document.getElementById('current-user-display');
     const userDisplaySettings = document.getElementById('current-user-display-settings');
-    const username = localStorage.getItem('admin_user') || 'المدير';
-    
     if (userDisplay) userDisplay.textContent = `مرحباً، ${username}`;
     if (userDisplaySettings) userDisplaySettings.textContent = username;
+
+    // إضافة زر تبديل الوضع الليلي إذا لم يكن موجوداً بالفعل
+    const headerActions = document.querySelector('.header-actions');
+    if (headerActions && !document.getElementById('darkToggleBtn')) {
+        const darkToggle = document.createElement('button');
+        darkToggle.id = 'darkToggleBtn';
+        darkToggle.className = 'btn-primary-sm';
+        darkToggle.innerHTML = '<i class="fas fa-moon"></i> الوضع الليلي';
+        darkToggle.onclick = () => document.body.classList.toggle('dark-mode');
+        headerActions.appendChild(darkToggle);
+    }
 });
