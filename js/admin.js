@@ -125,11 +125,13 @@ REFS.feed.on('value', s => {
 // ══════════════════════════════════════════════
 
 function renderTable() {
+    const canEdit = (localStorage.getItem('admin_role') || 'editor') !== 'viewer';
+    
     // Update bulk panel visibility based on selections
     const checkboxes = document.querySelectorAll('.bulk-item');
     const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
     const bulkPanel = document.getElementById('itemsBulkActions');
-    if (bulkPanel) bulkPanel.style.display = anyChecked ? 'block' : 'none';
+    if (bulkPanel) bulkPanel.style.display = (canEdit && anyChecked) ? 'block' : 'none';
 
     const tableBody = document.getElementById('menu-table-body');
     if (!tableBody) return;
@@ -169,7 +171,6 @@ function renderTable() {
         if (item.badge === 'NEW') badgeHtml = `<span class="badge-tag bg-green">جديد ✨</span>`;
         if (item.badge === 'SPECIAL') badgeHtml = `<span class="badge-tag bg-gold">مميز ⭐</span>`;
         // Checkbox for bulk selection (only for users with edit rights)
-        const canEdit = (localStorage.getItem('admin_role') || 'editor') !== 'viewer';
         const checkbox = canEdit ? `<input type="checkbox" class="bulk-item" data-key="${item.key}" />` : '';
         tableBody.innerHTML += `
             <tr>
@@ -209,15 +210,13 @@ function renderTable() {
                 </td>
             </tr>`;
     });
-    // show/hide bulk actions panel based on any checkbox selected
+    // show/hide bulk actions panel based on role
+    const canEdit = (localStorage.getItem('admin_role') || 'editor') !== 'viewer';
     const bulkPanel = document.getElementById('itemsBulkActions');
     if (bulkPanel) bulkPanel.style.display = canEdit ? 'block' : 'none';
 }
 
-function goToPage(page) {
-    localStorage.setItem('itemsPage', page);
-    renderTable();
-}
+function editItem(key) { openItemModal(key); }
 
 // ---------- Bulk Action Handlers ----------
 function getSelectedItemKeys() {
@@ -337,6 +336,146 @@ function initAdminUI() {
 }
 
 
+
+// --- Item Modals & Management ---
+function openItemModal(key = null) {
+    editKey = key;
+    const modal = document.getElementById('itemModal');
+    const form = document.getElementById('itemForm');
+    const title = document.getElementById('itemModalTitle');
+    
+    form.reset();
+    document.getElementById('itemKey').value = key || '';
+    previewItemImage('');
+
+    if (key) {
+        const item = menuItems.find(i => i.key === key);
+        if (item) {
+            title.textContent = 'تعديل طبق';
+            document.getElementById('itemName').value = item.name || '';
+            document.getElementById('itemNameEn').value = item.nameEn || '';
+            document.getElementById('itemPrice').value = item.price || '';
+            document.getElementById('itemCategory').value = item.category || '';
+            document.getElementById('itemImage').value = item.image || '';
+            document.getElementById('itemBadge').value = item.badge || '';
+            document.getElementById('itemStatus').value = item.status || 'active';
+            document.getElementById('itemDesc').value = item.desc || '';
+            document.getElementById('itemDescEn').value = item.descEn || '';
+            previewItemImage(item.image);
+        }
+    } else {
+        title.textContent = 'إضافة طبق جديد';
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeItemModal() {
+    document.getElementById('itemModal').style.display = 'none';
+}
+
+function deleteItem(key) {
+    const item = menuItems.find(i => i.key === key);
+    if (!item) return;
+    
+    if (confirm(`هل أنت متأكد من نقل "${item.name}" إلى سلة المحذوفات؟`)) {
+        REFS.trash.push({ ...item, deletedAt: firebase.database.ServerValue.TIMESTAMP });
+        REFS.menu.child(key).remove()
+            .then(() => {
+                showToast('تم نقل العنصر إلى سلة المحذوفات');
+                log('حذف وجبة', item.name);
+            });
+    }
+}
+
+function toggleItem(key, currentStatus) {
+    const newStatus = currentStatus === 'inactive' ? 'active' : 'inactive';
+    REFS.menu.child(key).update({ status: newStatus })
+        .then(() => {
+            showToast(newStatus === 'active' ? 'تم تفعيل الطبق' : 'تم إخفاء الطبق');
+        });
+}
+
+// --- Category Modals & Management ---
+function openCatModal(key = null) {
+    editCatKey = key;
+    const modal = document.getElementById('catModal');
+    const form = document.getElementById('catForm');
+    const title = document.getElementById('catModalTitle');
+    
+    form.reset();
+    document.getElementById('catKey').value = key || '';
+    document.getElementById('icon-preview').innerHTML = '<i class="fa-solid fa-folder"></i>';
+
+    if (key) {
+        const cat = catItems.find(c => c.id === key);
+        if (cat) {
+            title.textContent = 'تعديل قسم';
+            document.getElementById('catNameAr').value = cat.nameAr || '';
+            document.getElementById('catNameEn').value = cat.nameEn || '';
+            document.getElementById('catSection').value = cat.section || 'food';
+            document.getElementById('catIcon').value = cat.icon || '';
+            document.getElementById('catOrder').value = cat.order || 0;
+            document.getElementById('catDescAr').value = cat.descAr || '';
+            document.getElementById('catDescEn').value = cat.descEn || '';
+            document.querySelector(`input[name="catStatus"][value="${cat.status || 'active'}"]`).checked = true;
+            document.getElementById('icon-preview').innerHTML = `<i class="fa-solid ${cat.icon || 'fa-folder'}"></i>`;
+        }
+    } else {
+        title.textContent = 'إضافة قسم جديد';
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeCatModal() {
+    document.getElementById('catModal').style.display = 'none';
+}
+
+function editCat(id) { openCatModal(id); }
+
+function deleteCat(id) {
+    const cat = catItems.find(c => c.id === id);
+    if (!cat) return;
+    
+    const itemsInCat = menuItems.filter(i => i.category === id).length;
+    if (itemsInCat > 0) {
+        return alert(`لا يمكن حذف القسم لأنه يحتوي على ${itemsInCat} أطباق. يرجى نقلها أو حذفها أولاً.`);
+    }
+
+    if (confirm(`هل أنت متأكد من حذف قسم "${cat.nameAr}"؟`)) {
+        REFS.cats.child(id).remove()
+            .then(() => {
+                showToast('تم حذف القسم بنجاح');
+                log('إدارة الأقسام', `حذف قسم: ${cat.nameAr}`);
+            });
+    }
+}
+
+function toggleCat(id, currentStatus) {
+    const newStatus = currentStatus === 'hidden' ? 'active' : 'hidden';
+    REFS.cats.child(id).update({ status: newStatus })
+        .then(() => {
+            showToast(newStatus === 'active' ? 'القسم الآن ظاهر' : 'القسم الآن مخفي');
+        });
+}
+
+function setFilterCat(catId) {
+    activeFilterCat = catId;
+    localStorage.setItem('itemsPage', '1');
+    renderTable();
+    rebuildSelects();
+}
+
+function goToPage(page) {
+    localStorage.setItem('itemsPage', page);
+    renderTable();
+}
+
+function getSectionLabel(s) {
+    const map = { food: 'مأكولات', drinks: 'مشروبات', hookah: 'أراجيل' };
+    return map[s] || s;
+}
 
 function saveItem() {
     if (isSaving) return;
