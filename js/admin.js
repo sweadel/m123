@@ -92,6 +92,7 @@ function loadDesign() {
 function saveDesign() {
     if (isSaving) return;
     isSaving = true;
+    showLoading(true);
     
     const dData = {
         gold: document.getElementById('design-gold').value,
@@ -114,7 +115,10 @@ function saveDesign() {
     }).catch(err => {
         showToast('خطأ أثناء الحفظ', 'error');
         console.error(err);
-    }).finally(() => isSaving = false);
+    }).finally(() => {
+        isSaving = false;
+        showLoading(false);
+    });
 }
 
 function toggleSidebar() {
@@ -271,12 +275,18 @@ function updateBulkPanel() {
 
 function bulkDeleteItems() {
     const checked = document.querySelectorAll('.bulk-item:checked');
+    if (checked.length === 0) return showToast('لم تحدد أي طبق لحذفه', 'error');
     if (confirm(`هل أنت متأكد من حذف ${checked.length} طبق؟`)) {
+        showLoading(true);
+        const promises = [];
         checked.forEach(el => {
             const key = el.getAttribute('data-key');
-            REFS.menu.child(key).remove();
+            promises.push(REFS.menu.child(key).remove());
         });
-        showToast(`تم حذف ${checked.length} طبق بنجاح`);
+        Promise.all(promises).then(() => {
+            showToast(`تم حذف ${checked.length} طبق بنجاح`);
+            updateBulkPanel();
+        }).finally(() => showLoading(false));
     }
 }
 
@@ -348,6 +358,7 @@ function saveItem() {
     if (!name || !category) return showToast('يرجى ملء الاسم والقسم', 'error');
 
     isSaving = true;
+    showLoading(true);
     const data = {
         name,
         nameEn: document.getElementById('itemNameEn').value.trim(),
@@ -376,7 +387,10 @@ function saveItem() {
     ref.update(data).then(() => {
         showToast('تم الحفظ بنجاح ✨');
         closeItemModal();
-    }).finally(() => isSaving = false);
+    }).finally(() => {
+        isSaving = false;
+        showLoading(false);
+    });
 }
 
 function renderCatTable() {
@@ -449,6 +463,7 @@ function saveCategory() {
     if (!nameAr) return showToast('يرجى إدخال اسم القسم', 'error');
 
     isSaving = true;
+    showLoading(true);
     const id = editCatKey || `cat_${Date.now()}`;
     const data = {
         nameAr,
@@ -462,7 +477,10 @@ function saveCategory() {
     REFS.cats.child(id).update(data).then(() => {
         showToast('تم حفظ القسم بنجاح');
         closeCatModal();
-    }).finally(() => isSaving = false);
+    }).finally(() => {
+        isSaving = false;
+        showLoading(false);
+    });
 }
 
 function updateIconPreview(val) {
@@ -497,13 +515,15 @@ function toggleCat(id, cur) {
 
 function deleteItem(key) {
     if (confirm('هل أنت متأكد من حذف هذا الطبق؟')) {
-        REFS.menu.child(key).remove().then(() => showToast('تم الحذف بنجاح'));
+        showLoading(true);
+        REFS.menu.child(key).remove().then(() => showToast('تم الحذف بنجاح')).finally(() => showLoading(false));
     }
 }
 
 function deleteCat(id) {
     if (confirm('هل أنت متأكد من حذف هذا القسم بالكامل؟')) {
-        REFS.cats.child(id).remove().then(() => showToast('تم حذف القسم'));
+        showLoading(true);
+        REFS.cats.child(id).remove().then(() => showToast('تم حذف القسم')).finally(() => showLoading(false));
     }
 }
 
@@ -513,6 +533,27 @@ function deleteCat(id) {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('catIcon')?.addEventListener('input', e => updateIconPreview(e.target.value));
+    // Initialize loading overlay element
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loading-overlay';
+    loadingOverlay.style.position = 'fixed';
+    loadingOverlay.style.inset = '0';
+    loadingOverlay.style.background = 'rgba(0,0,0,0.6)';
+    loadingOverlay.style.display = 'flex';
+    loadingOverlay.style.alignItems = 'center';
+    loadingOverlay.style.justifyContent = 'center';
+    loadingOverlay.style.zIndex = '3000';
+    loadingOverlay.style.opacity = '0';
+    loadingOverlay.style.transition = 'opacity 0.3s';
+    loadingOverlay.innerHTML = `<div style="color:#fff; font-size:1.5rem;">⏳ جاري التحميل…</div>`;
+    document.body.appendChild(loadingOverlay);
+    function showLoading(show) {
+        loadingOverlay.style.opacity = show ? '1' : '0';
+        loadingOverlay.style.pointerEvents = show ? 'auto' : 'none';
+    }
+    // Expose globally for async ops
+    window.showLoading = showLoading;
+
     
     const lastView = localStorage.getItem('last_admin_view') || 'view-dashboard';
     navigateTo(lastView);
@@ -521,6 +562,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (userDisplay) userDisplay.textContent = `مرحباً، ${localStorage.getItem('admin_user') || 'المدير العام'}`;
 
     // Select All logic
+    document.getElementById('selectAllItems')?.addEventListener('change', (e) => {
+        document.querySelectorAll('.bulk-item').forEach(cb => {
+            cb.checked = e.target.checked;
+        });
+        updateBulkPanel();
+    });
+    // Logout handler
+    window.logout = function() {
+        // Clear auth and redirect to login page
+        localStorage.clear();
+        window.location.href = 'login.html';
+    };
+
     document.getElementById('selectAllItems')?.addEventListener('change', (e) => {
         document.querySelectorAll('.bulk-item').forEach(cb => {
             cb.checked = e.target.checked;
