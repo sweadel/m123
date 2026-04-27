@@ -224,6 +224,7 @@
 
         // وظيفة التبديل بين الأقسام الرئيسية
         function setTab(tabId, btn) {
+            if (currentTab === tabId && btn.classList.contains('active')) return;
             currentTab = tabId;
             document.querySelectorAll('#mainTabRow .pill').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
@@ -243,11 +244,7 @@
             var sn = document.getElementById(tabId + 'Nav');
             if (sn) sn.style.display = 'flex';
             
-            document.querySelectorAll('.sec-title, .menu-card').forEach(el => el.style.display = '');
-            
-            // طلب تحديث البيانات في القسم الجديد
             requestRender();
-            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -285,7 +282,8 @@
             var name = card.dataset.t || '';
             var price = card.querySelector('.card-price') ? card.querySelector('.card-price').textContent : '';
             var desc = card.dataset.desc || '';
-            var bgUrl = card.querySelector('.card-img').style.backgroundImage.slice(4, -1).replace(/"/g, "");
+            const modalImgEl = card.querySelector('.card-img img');
+            const bgUrl = modalImgEl ? modalImgEl.src : 'images/tallo-logo.png';
             const pricesData = card.dataset.prices ? JSON.parse(card.dataset.prices) : null;
 
             document.getElementById('modalTitle').textContent = name;
@@ -307,7 +305,7 @@
             document.getElementById('modalDesc').textContent = desc;
 
             var modalImg = document.getElementById('modalImg');
-            modalImg.innerHTML = bgUrl ? `<img src="${bgUrl}" class="modal-actual-img">` : `<img src="images/tallo-logo.png" style="width:180px;margin:auto;">`;
+            modalImg.innerHTML = `<img src="${bgUrl}" class="modal-actual-img" onerror="this.src='images/tallo-logo.png'">`;
 
             document.getElementById('dishModal').classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -346,14 +344,29 @@
             card.setAttribute('data-desc', item.descEn || item.desc || '');
             if (item.prices) card.setAttribute('data-prices', JSON.stringify(item.prices));
             
-            const imgStyle = item.image ? `background-image:url('${item.image}'); background-size: cover; background-position: center;` : '';
+            const imgSrc = item.image || 'images/tallo-logo.png';
             const price = (item.price || '').toString().trim();
             
+            // Badges
+            let badgeHtml = '';
+            if (item.badge === 'HOT') badgeHtml = `<span class="card-badge bg-red">HOT 🔥</span>`;
+            else if (item.badge === 'NEW') badgeHtml = `<span class="card-badge bg-green">NEW ✨</span>`;
+            else if (item.badge === 'SPECIAL') badgeHtml = `<span class="card-badge bg-gold">SPECIAL ⭐</span>`;
+
+            // Prep Time
+            const prepHtml = item.prepTime ? `<span class="card-prep"><i class="fa-regular fa-clock"></i> ${item.prepTime}</span>` : '';
+
             card.innerHTML = `
-                <div class="card-img" style="${imgStyle}"></div>
+                ${badgeHtml}
+                <div class="card-img">
+                    <img src="${imgSrc}" loading="lazy" alt="${item.nameEn || item.name}" onerror="this.src='images/tallo-logo.png'">
+                </div>
                 <div class="card-body">
                     <h3 class="card-name">${item.nameEn || item.name || ''}</h3>
-                    <span class="card-price">${price ? price + ' JD' : ''}</span>
+                    <div class="card-meta">
+                        <span class="card-price">${price ? price + ' JD' : ''}</span>
+                        ${prepHtml}
+                    </div>
                 </div>
             `;
             card.addEventListener('click', (e) => { e.preventDefault(); openDishModal(card); });
@@ -366,32 +379,26 @@
             if (!_menuItems || !_categoriesMeta || _isRendering) return;
             _isRendering = true;
 
-            const skel = document.getElementById('skeletons-en');
-            if (skel) skel.style.display = 'none';
-
-            const itemsByCat = {};
-            Object.values(_menuItems).forEach(item => {
-                if (item.status === 'inactive') return;
-                if (!item.category) return;
-                const catId = item.category.toString().trim();
-                if (!itemsByCat[catId]) itemsByCat[catId] = [];
-                itemsByCat[catId].push(item);
-            });
-
-            // بناء كل قسم (عربي، انترناشونال، إلخ)
             const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             sectionKeys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
                 if (!navEl || !secEl) return;
 
-                // 1. بناء أزرار التنقل في الذاكرة (Fragment)
                 const navFrag = document.createDocumentFragment();
-                // 2. بناء محتوى القسم في الذاكرة (Fragment)
                 const secFrag = document.createDocumentFragment();
 
                 const hero = secEl.querySelector('.section-hero');
                 if (hero) secFrag.appendChild(hero.cloneNode(true));
+
+                const itemsByCat = {};
+                Object.values(_menuItems).forEach(item => {
+                    if (item.status === 'inactive') return;
+                    if (!item.category) return;
+                    const catId = item.category.toString().trim();
+                    if (!itemsByCat[catId]) itemsByCat[catId] = [];
+                    itemsByCat[catId].push(item);
+                });
 
                 const cats = Object.entries(_categoriesMeta)
                     .map(([id, val]) => ({ id: id.toString().trim(), ...val }))
@@ -415,14 +422,17 @@
                     const grid = document.createElement('div');
                     grid.className = 'menu-grid';
                     const items = itemsByCat[cat.id] || [];
+                    items.sort((a, b) => (a.order || 0) - (b.order || 0));
                     items.forEach(item => grid.appendChild(buildCard(item)));
 
                     secFrag.appendChild(h2);
                     secFrag.appendChild(grid);
                 });
 
-                // 3. التحديث اللحظي للشاشة
                 window.requestAnimationFrame(() => {
+                    const skel = document.getElementById('skeletons-en');
+                    if (skel) skel.remove();
+
                     navEl.innerHTML = '';
                     navEl.appendChild(navFrag);
                     secEl.innerHTML = '';

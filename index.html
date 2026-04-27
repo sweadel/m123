@@ -310,7 +310,8 @@
             if (video) video.pause(); // إيقاف الفيديو فوراً لتوفير المعالج
             
             document.body.style.opacity = '0';
-            window.location.href = url; // انتقال مباشر دون انتظار طويل
+            // استخدام التنقل المباشر لسرعة الاستجابة
+            setTimeout(() => { window.location.href = url; }, 50);
         }
 
         /**

@@ -594,39 +594,54 @@ section.active {
 
 /* ضغطة بصرية */
 
-/* ── الشارة (Badge) — تظهر فقط إذا هناك data-badge ──
- أمثلة:
- data-badge="" ← مميز
- data-badge="" ← الأكثر طلباً
- data-badge="" ← جديد
-*/
-.menu-card::before {
-  content: attr(data-badge);
+/* ── الشارات الجديدة (Card Badges) ── */
+.card-badge {
   position: absolute;
-  top: 7px;
-  right: 7px;
-  font-size: .66rem;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.7rem;
   font-weight: 800;
-  background: var(--badge-hot);
   color: #fff;
-  padding: 2px 9px;
-  border-radius: 20px;
-  z-index: 2;
-  line-height: 1.7;
-  display: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: badgePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
 }
 
-/* تظهر الشارة فقط إذا موجود الـ attribute */
-.menu-card[data-badge]::before {
-  display: block;
+@keyframes badgePop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.menu-card[data-badge=""]::before {
-  background: var(--badge-star);
+.bg-red { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+.bg-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.bg-gold { background: linear-gradient(135deg, #f8ae1b, #c5a022); border: 1px solid rgba(255,255,255,0.2); }
+
+/* ── معلومات إضافية (Card Meta) ── */
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 4px;
+  width: 100%;
 }
 
-.menu-card[data-badge=""]::before {
-  background: var(--badge-new);
+.card-prep {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-prep i {
+  font-size: 0.7rem;
+  color: var(--gold);
 }
 
 /* ── منطقة الصورة ──

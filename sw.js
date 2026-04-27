@@ -1,17 +1,19 @@
 // اسم "خزان الذاكرة" (Cache Name) - تغيير هذا الاسم يجبر المتصفح على تحميل ملفات جديدة
-const CACHE = 'tallo-v102-fix-404'; 
+const CACHE = 'tallo-v103-stable'; 
 
 // قائمة الملفات الأساسية التي سيتم حفظها في ذاكرة الهاتف ليعمل الموقع بسرعة أو بدون إنترنت
 const ASSETS = [
   'index.html',
   'menu.html',
   'menu-en.html',
+  'feedback.html',
+  'feedback-en.html',
   'css/menu-final-v1.css',
   'js/design-sync.js',
   'images/tallo-logo.png',
   'images/header-sadu-final.png',
   'images/header-arch-final.png',
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap',
+  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
 ];
 

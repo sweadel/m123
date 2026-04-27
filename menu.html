@@ -251,7 +251,7 @@
         var currentTab = 'arabic';
 
         /**
-         * بناء بطاقة الوجبة
+         * بناء بطاقة الوجبة - نسخة محسنة بالأداء والميزات
          */
         function buildCard(item) {
             const card = document.createElement('a');
@@ -260,14 +260,29 @@
             card.setAttribute('data-desc', item.desc || '');
             if (item.prices) card.setAttribute('data-prices', JSON.stringify(item.prices));
             
-            const imgStyle = item.image ? `background-image:url('${item.image}');` : '';
+            const imgSrc = item.image || 'images/tallo-logo.png';
             const price = (item.price || '').toString().trim();
             
+            // معالجة الشارات (Badge)
+            let badgeHtml = '';
+            if (item.badge === 'HOT') badgeHtml = `<span class="card-badge bg-red">حار 🔥</span>`;
+            else if (item.badge === 'NEW') badgeHtml = `<span class="card-badge bg-green">جديد ✨</span>`;
+            else if (item.badge === 'SPECIAL') badgeHtml = `<span class="card-badge bg-gold">مميز ⭐</span>`;
+
+            // وقت التحضير
+            const prepHtml = item.prepTime ? `<span class="card-prep"><i class="fa-regular fa-clock"></i> ${item.prepTime}</span>` : '';
+            
             card.innerHTML = `
-                <div class="card-img" style="${imgStyle}"></div>
+                ${badgeHtml}
+                <div class="card-img">
+                    <img src="${imgSrc}" loading="lazy" alt="${item.name}" onerror="this.src='images/tallo-logo.png'">
+                </div>
                 <div class="card-body">
                     <h3 class="card-name">${item.name || ''}</h3>
-                    <span class="card-price">${price ? price + ' د.أ' : ''}</span>
+                    <div class="card-meta">
+                        <span class="card-price">${price ? price + ' د.أ' : ''}</span>
+                        ${prepHtml}
+                    </div>
                 </div>
             `;
             card.onclick = (e) => { 
@@ -281,6 +296,7 @@
          * التنقل بين الأقسام
          */
         function setTab(tabId, btn) {
+            if (currentTab === tabId && btn.classList.contains('active')) return;
             currentTab = tabId;
             
             // تحديث الأزرار
@@ -305,11 +321,11 @@
             
             // طلب رندر للتأكد
             requestRender();
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         /**
-         * عرض المنيو بالكامل
+         * عرض المنيو بالكامل - نسخة جراحية وسريعة
          */
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta || _isRendering) return;
@@ -361,6 +377,7 @@
                         const grid = document.createElement('div');
                         grid.className = 'menu-grid';
                         const items = itemsByCat[cat.id] || [];
+                        items.sort((a, b) => (a.order || 0) - (b.order || 0));
                         items.forEach(item => grid.appendChild(buildCard(item)));
 
                         secFrag.appendChild(h2);
