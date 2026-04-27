@@ -103,6 +103,21 @@ REFS.menu.on('value', snap => {
     updateStats();
 });
 
+REFS.logs.limitToLast(5).on('value', snap => {
+    const tableBody = document.getElementById('logs-table-body');
+    if (!tableBody) return;
+    const logs = [];
+    if (snap.exists()) Object.entries(snap.val()).forEach(([k, v]) => logs.push({ key: k, ...v }));
+    logs.reverse();
+    tableBody.innerHTML = logs.map(l => `
+        <tr>
+            <td><small>${new Date(l.timestamp).toLocaleTimeString('ar-EG')}</small></td>
+            <td><span class="badge-tag">${l.action}</span></td>
+            <td>${l.details}</td>
+        </tr>
+    `).join('');
+});
+
 REFS.cats.on('value', snap => {
     catItems = [];
     if (snap.exists()) Object.entries(snap.val()).forEach(([k, v]) => catItems.push({ id: k, ...v }));
@@ -214,6 +229,7 @@ function openItemModal(key = null) {
             document.getElementById('itemImage').value = item.image || '';
             document.getElementById('itemBadge').value = item.badge || '';
             document.getElementById('itemStatus').value = item.status || 'active';
+            document.getElementById('itemPrepTime').value = item.prepTime || '';
             document.getElementById('itemDesc').value = item.desc || '';
             document.getElementById('itemDescEn').value = item.descEn || '';
             previewItemImage(item.image);
@@ -269,6 +285,7 @@ function saveItem() {
         descEn: document.getElementById('itemDescEn').value.trim(),
         badge: document.getElementById('itemBadge').value || '',
         status: document.getElementById('itemStatus').value || 'active',
+        prepTime: document.getElementById('itemPrepTime')?.value.trim() || '',
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
@@ -448,8 +465,93 @@ function updateStats() {
     if (f) { REFS.feed.once('value', s => f.textContent = s.numChildren()); }
 }
 
-function log(action, details) {
-    REFS.logs.push({ action, details, user: localStorage.getItem('admin_user') || 'المدير', timestamp: firebase.database.ServerValue.TIMESTAMP });
+function renderLogsTable() {
+    const tableBody = document.getElementById('logs-table-body-full');
+    if (!tableBody) return;
+
+    REFS.logs.limitToLast(100).once('value', snap => {
+        const logs = [];
+        if (snap.exists()) Object.entries(snap.val()).forEach(([k, v]) => logs.push({ key: k, ...v }));
+        logs.reverse();
+
+        tableBody.innerHTML = logs.map(l => {
+            const date = new Date(l.timestamp).toLocaleString('ar-EG');
+            return `
+                <tr>
+                    <td><small>${date}</small></td>
+                    <td><span class="badge-tag">${l.action}</span></td>
+                    <td><b>${l.user}:</b> ${l.details}</td>
+                </tr>`;
+        }).join('');
+    });
+}
+
+function renderTrashTable() {
+    const tableBody = document.getElementById('trash-table-body');
+    if (!tableBody) return;
+
+    REFS.trash.on('value', snap => {
+        const items = [];
+        if (snap.exists()) Object.entries(snap.val()).forEach(([k, v]) => items.push({ key: k, ...v }));
+        items.reverse();
+
+        tableBody.innerHTML = items.map(item => {
+            const date = new Date(item.deletedAt).toLocaleString('ar-EG');
+            return `
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img src="${item.image || 'images/tallo-logo.png'}" style="width:40px; height:40px; border-radius:6px; object-fit:cover;" />
+                            <div>
+                                <div style="font-weight:bold;">${item.name}</div>
+                                <small style="opacity:0.6;">${item.category}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><small>${date}</small></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-primary-sm" onclick="restoreItem('${item.key}')" title="استعادة"><i class="fa-solid fa-trash-arrow-up"></i> استعادة</button>
+                            <button class="btn-danger-sm" onclick="permanentDelete('${item.key}')" title="حذف نهائي"><i class="fa-solid fa-circle-xmark"></i> حذف نهائي</button>
+                        </div>
+                    </td>
+                </tr>`;
+        }).join('');
+    });
+}
+
+function restoreItem(key) {
+    REFS.trash.child(key).once('value', snap => {
+        if (!snap.exists()) return;
+        const item = snap.val();
+        const { deletedAt, ...cleanItem } = item;
+        REFS.menu.push(cleanItem).then(() => {
+            REFS.trash.child(key).remove();
+            showToast('تم استعادة الطبق بنجاح');
+            log('استعادة طبق', item.name);
+        });
+    });
+}
+
+function permanentDelete(key) {
+    if (confirm('هل أنت متأكد من حذف هذا الطبق نهائياً؟ لا يمكن التراجع عن هذه العملية.')) {
+        REFS.trash.child(key).once('value', snap => {
+            const name = snap.val()?.name || 'طبق';
+            REFS.trash.child(key).remove().then(() => {
+                showToast('تم الحذف النهائي بنجاح');
+                log('حذف نهائي', name);
+            });
+        });
+    }
+}
+
+function clearLogs() {
+    if (confirm('هل أنت متأكد من مسح كافة السجلات؟')) {
+        REFS.logs.remove().then(() => {
+            showToast('تم مسح السجلات بنجاح');
+            renderLogsTable();
+        });
+    }
 }
 
 function logout() { localStorage.clear(); window.location.href = 'login.html'; }

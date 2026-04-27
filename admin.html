@@ -250,245 +250,154 @@
 
     <!-- Modals -->
     <!-- Item Modal -->
-    <div class="modal-overlay" id="itemModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">بيانات الوجبة</h3>
-                <button class="btn-icon" onclick="closeItemModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="itemForm" onsubmit="event.preventDefault(); saveItem();">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                        <div class="form-group"><label>الاسم (عربي)</label><input type="text" id="itemName" class="form-control" required /></div>
-                        <div class="form-group"><label>الاسم (EN)</label><input type="text" id="itemNameEn" class="form-control" /></div>
-                    </div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
-                        <div class="form-group"><label>القسم</label><select id="itemCategory" class="form-control" required></select></div>
-                        <div class="form-group"><label>السعر (JD)</label><input type="text" id="itemPrice" class="form-control" required /></div>
-                    </div>
-                    <div class="form-group" style="margin-top:15px;">
-                        <label>رابط الصورة</label>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="itemImg" class="form-control" oninput="document.getElementById('img-prev').src=this.value" />
-                            <img id="img-prev" src="images/tallo-logo.png" style="width:50px; height:50px; border-radius:8px; object-fit:cover;" />
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-top:15px;"><label>الوصف (عربي)</label><textarea id="itemDesc" class="form-control" style="height:80px"></textarea></div>
-                    <div class="form-group" style="margin-top:15px;"><label>الوصف (EN)</label><textarea id="itemDescEn" class="form-control" style="height:80px"></textarea></div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
-                        <div class="form-group">
-                            <label>شارة التميز</label>
-                            <select id="itemBadge" class="form-control">
-                                <option value="">لا يوجد</option>
-                                <option value="HOT">حار 🔥</option>
-                                <option value="NEW">جديد ✨</option>
-                                <option value="SPECIAL">مميز ⭐</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>الحالة</label>
-                            <select id="itemStatus" class="form-control">
-                                <option value="active">نشط</option>
-                                <option value="inactive">مخفي</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" onclick="saveItem()">حفظ البيانات</button>
-                <button class="btn-icon" onclick="closeItemModal()">إلغاء</button>
-            </div>
+    <div id="itemModal" class="modal-overlay" style="display:none;">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="itemModalTitle">إضافة طبق جديد</h2>
+            <button class="btn-icon" onclick="closeItemModal()"><i class="fas fa-times"></i></button>
         </div>
+        <form id="itemForm" onsubmit="event.preventDefault(); saveItem();">
+          <input type="hidden" id="itemKey" />
+          <div class="form-grid">
+              <div class="form-group">
+                <label>الاسم (عربي)</label>
+                <input type="text" id="itemName" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label>Name (English)</label>
+                <input type="text" id="itemNameEn" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>السعر الأساسي (JD)</label>
+                <input type="text" id="itemPrice" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label>القسم</label>
+                <select id="itemCategory" class="form-control" onchange="onCategoryChange(this.value)" required></select>
+              </div>
+
+              <!-- حقول أوزان المشاوي -->
+              <div id="weightPricesFields" style="display:none; grid-column: span 2; border:1px dashed var(--gold); padding:15px; border-radius:12px; background: rgba(197,160,34,0.05);">
+                  <label style="color:var(--gold); display:block; margin-bottom:10px; font-weight:800;"><i class="fas fa-balance-scale"></i> أسعار الأوزان (لقسم المشاوي)</label>
+                  <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px;">
+                      <div class="form-group" style="margin:0;">
+                          <label><small>ربع كيلو</small></label>
+                          <input type="text" id="priceQuarter" class="form-control" placeholder="مثلاً: 6.00" />
+                      </div>
+                      <div class="form-group" style="margin:0;">
+                          <label><small>نصف كيلو</small></label>
+                          <input type="text" id="priceHalf" class="form-control" placeholder="مثلاً: 12.00" />
+                      </div>
+                      <div class="form-group" style="margin:0;">
+                          <label><small>واحد كيلو</small></label>
+                          <input type="text" id="priceKilo" class="form-control" placeholder="مثلاً: 22.00" />
+                      </div>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                <label>رابط الصورة (URL)</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="url" id="itemImage" class="form-control" oninput="previewItemImage(this.value)" />
+                    <img id="img-prev" src="images/tallo-logo.png" style="width:45px; height:45px; border-radius:8px; object-fit:cover; border:1px solid var(--glass-border);" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>شارة التميز</label>
+                <select id="itemBadge" class="form-control">
+                  <option value="">بدون شارة</option>
+                  <option value="HOT">حار 🔥</option>
+                  <option value="NEW">جديد ✨</option>
+                  <option value="SPECIAL">مميز ⭐</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>الحالة</label>
+                <select id="itemStatus" class="form-control">
+                  <option value="active">نشط (ظاهر)</option>
+                  <option value="inactive">مخفي</option>
+                </select>
+              </div>
+              <div class="form-group">
+                  <label>وقت التحضير (اختياري)</label>
+                  <input type="text" id="itemPrepTime" class="form-control" placeholder="مثلاً: 15-20 دقيقة" />
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>الوصف (عربي)</label>
+                <textarea id="itemDesc" class="form-control" rows="2" placeholder="وصف المكونات بالعربي..."></textarea>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>Description (English)</label>
+                <textarea id="itemDescEn" class="form-control" rows="2" placeholder="Ingredients description in English..."></textarea>
+              </div>
+          </div>
+          <div class="modal-footer" style="padding:20px 0 0 0; border-top:1px solid var(--glass-border); margin-top:20px;">
+              <button type="submit" class="btn-primary" style="width:100%; padding:14px;"><i class="fas fa-save"></i> حفظ بيانات الطبق</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Category Modal -->
-    <div class="modal-overlay" id="catModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="catModalTitle">بيانات القسم</h3>
-                <button class="btn-icon" onclick="closeCatModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="catForm" onsubmit="event.preventDefault(); saveCategory();">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                        <div class="form-group"><label>الاسم (عربي)</label><input type="text" id="catNameAr" class="form-control" required /></div>
-                        <div class="form-group"><label>الاسم (EN)</label><input type="text" id="catNameEn" class="form-control" /></div>
-                    </div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
-                        <div class="form-group">
-                            <label>الفرع الرئيسي</label>
-                            <select id="catSection" class="form-control">
-                                <option value="arabic">المنيو العربي</option>
-                                <option value="intl">انترناشونال</option>
-                                <option value="desserts">الحلويات</option>
-                                <option value="drinks">المشروبات</option>
-                                <option value="argileh">الأراجيل</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>الترتيب</label><input type="number" id="catOrder" class="form-control" /></div>
-                    </div>
-                    <div class="form-group" style="margin-top:15px;">
-                        <label>أيقونة (FontAwesome)</label>
-                        <div style="display:flex; gap:15px; align-items:center;">
-                            <input type="text" id="catIcon" class="form-control" placeholder="fa-pizza-slice" />
-                            <div id="icon-preview" style="font-size:1.8rem; color:var(--gold);"><i class="fas fa-folder"></i></div>
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-top:15px;"><label>الوصف (عربي)</label><textarea id="catDescAr" class="form-control" style="height:60px"></textarea></div>
-                    <div class="form-group" style="margin-top:15px;"><label>الوصف (EN)</label><textarea id="catDescEn" class="form-control" style="height:60px"></textarea></div>
-                    <div class="form-group" style="margin-top:15px;">
-                        <label>الحالة</label>
-                        <div style="display:flex; gap:15px; margin-top:8px;">
-                            <label><input type="radio" name="catStatus" value="active" checked /> نشط (ظاهر)</label>
-                            <label><input type="radio" name="catStatus" value="hidden" /> مخفي</label>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" onclick="saveCategory()">حفظ القسم</button>
-                <button class="btn-icon" onclick="closeCatModal()">إلغاء</button>
-            </div>
+    <div id="catModal" class="modal-overlay" style="display:none;">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="catModalTitle">إضافة قسم جديد</h2>
+            <button class="btn-icon" onclick="closeCatModal()"><i class="fas fa-times"></i></button>
         </div>
-    </div>
-<!-- Item Modal -->
-<div id="itemModal" class="modal-overlay" style="display:none;">
-  <div class="modal-content">
-    <div class="modal-header">
-        <h2 id="itemModalTitle">إضافة طبق جديد</h2>
-        <span class="close" onclick="closeItemModal()">&times;</span>
-    </div>
-    <form id="itemForm" onsubmit="event.preventDefault(); saveItem();">
-      <input type="hidden" id="itemKey" />
-      <div class="form-grid">
-          <div class="form-group">
-            <label>الاسم (عربي)</label>
-            <input type="text" id="itemName" class="form-control" required />
-          </div>
-          <div class="form-group">
-            <label>Name (English)</label>
-            <input type="text" id="itemNameEn" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label>السعر (للأصناف العادية)</label>
-            <input type="number" id="itemPrice" class="form-control" step="0.01" required />
-          </div>
-          <!-- حقول أوزان المشاوي -->
-          <div id="weightPricesFields" style="display:none; grid-column: span 2; border:1px dashed var(--gold); padding:10px; border-radius:8px; margin-bottom:15px;">
-              <label style="color:var(--gold); display:block; margin-bottom:10px;"><i class="fas fa-balance-scale"></i> أسعار الأوزان (للمشاوي)</label>
-              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                  <div class="form-group" style="margin:0;">
-                      <label><small>1/4 كيلو</small></label>
-                      <input type="text" id="priceQuarter" class="form-control" placeholder="6.00" />
-                  </div>
-                  <div class="form-group" style="margin:0;">
-                      <label><small>1/2 كيلو</small></label>
-                      <input type="text" id="priceHalf" class="form-control" placeholder="12.00" />
-                  </div>
-                  <div class="form-group" style="margin:0;">
-                      <label><small>1 كيلو</small></label>
-                      <input type="text" id="priceKilo" class="form-control" placeholder="22.00" />
+        <form id="catForm" onsubmit="event.preventDefault(); saveCategory();">
+          <input type="hidden" id="catKey" />
+          <div class="form-grid">
+              <div class="form-group">
+                <label>اسم القسم (عربي)</label>
+                <input type="text" id="catNameAr" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label>Category Name (English)</label>
+                <input type="text" id="catNameEn" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>القسم الرئيسي</label>
+                <select id="catSection" class="form-control">
+                    <option value="arabic">المنيو العربي</option>
+                    <option value="intl">انترناشونال</option>
+                    <option value="desserts">الحلويات</option>
+                    <option value="drinks">المشروبات</option>
+                    <option value="argileh">الأراجيل</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>الترتيب</label>
+                <input type="number" id="catOrder" class="form-control" value="0" />
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>الأيقونة (FontAwesome)</label>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <input type="text" id="catIcon" class="form-control" placeholder="مثلاً: fa-pizza-slice" />
+                    <div id="icon-preview" style="font-size:2rem; color:var(--gold);"><i class="fa-solid fa-folder"></i></div>
+                </div>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                  <label>الحالة</label>
+                  <div style="display:flex; gap:30px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                      <label style="cursor:pointer;"><input type="radio" name="catStatus" value="active" checked> ظاهر للزبائن</label>
+                      <label style="cursor:pointer;"><input type="radio" name="catStatus" value="hidden"> مخفي حالياً</label>
                   </div>
               </div>
+              <div class="form-group" style="grid-column: span 2;">
+                  <label>وصف القسم (عربي)</label>
+                  <textarea id="catDescAr" class="form-control" rows="2"></textarea>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                  <label>Description (English)</label>
+                  <textarea id="catDescEn" class="form-control" rows="2"></textarea>
+              </div>
           </div>
-          <div class="form-group">
-            <label>القسم</label>
-            <select id="itemCategory" class="form-control" onchange="onCategoryChange(this.value)" required></select>
+          <div class="modal-footer" style="padding:20px 0 0 0; border-top:1px solid var(--glass-border); margin-top:20px;">
+              <button type="submit" class="btn-primary" style="width:100%; padding:14px;"><i class="fas fa-save"></i> حفظ القسم</button>
           </div>
-          <div class="form-group">
-            <label>الصورة (URL)</label>
-            <input type="url" id="itemImage" class="form-control" oninput="previewItemImage(this.value)" />
-            <img id="img-prev" src="images/tallo-logo.png" style="width:50px; height:50px; margin-top:5px; border-radius:5px; object-fit:cover;" />
-          </div>
-          <div class="form-group">
-            <label>الشارة</label>
-            <select id="itemBadge" class="form-control">
-              <option value="">بدون</option>
-              <option value="HOT">حار 🔥</option>
-              <option value="NEW">جديد ✨</option>
-              <option value="SPECIAL">مميز ⭐</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>الحالة</label>
-            <select id="itemStatus" class="form-control">
-              <option value="active">نشط</option>
-              <option value="inactive">مخفي</option>
-            </select>
-          </div>
-          <div class="form-group" style="grid-column: span 2;">
-            <label>الوصف (عربي)</label>
-            <textarea id="itemDesc" class="form-control" rows="2"></textarea>
-          </div>
-          <div class="form-group" style="grid-column: span 2;">
-            <label>Description (English)</label>
-            <textarea id="itemDescEn" class="form-control" rows="2"></textarea>
-          </div>
+        </form>
       </div>
-      <div class="modal-footer">
-          <button type="submit" class="btn-primary">حفظ البيانات</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Category Modal -->
-<div id="catModal" class="modal-overlay" style="display:none;">
-  <div class="modal-content">
-    <div class="modal-header">
-        <h2 id="catModalTitle">إضافة قسم جديد</h2>
-        <span class="close" onclick="closeCatModal()">&times;</span>
     </div>
-    <form id="catForm" onsubmit="event.preventDefault(); saveCategory();">
-      <input type="hidden" id="catKey" />
-      <div class="form-group">
-        <label>اسم القسم (عربي)</label>
-        <input type="text" id="catNameAr" class="form-control" required />
-      </div>
-      <div class="form-group">
-        <label>Category Name (English)</label>
-        <input type="text" id="catNameEn" class="form-control" />
-      </div>
-      <div class="form-group">
-        <label>القسم الرئيسي</label>
-        <select id="catSection" class="form-control">
-            <option value="food">مأكولات</option>
-            <option value="drinks">مشروبات</option>
-            <option value="hookah">أراجيل</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>الأيقونة (FontAwesome)</label>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="catIcon" class="form-control" placeholder="fa-utensils" />
-            <div id="icon-preview" style="font-size:1.5rem; color:var(--gold);"><i class="fa-solid fa-folder"></i></div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>الترتيب</label>
-        <input type="number" id="catOrder" class="form-control" value="0" />
-      </div>
-      <div class="form-group">
-          <label>الحالة</label>
-          <div style="display:flex; gap:20px;">
-              <label><input type="radio" name="catStatus" value="active" checked> ظاهر</label>
-              <label><input type="radio" name="catStatus" value="hidden"> مخفي</label>
-          </div>
-      </div>
-      <div class="form-group">
-          <label>وصف القسم (عربي)</label>
-          <textarea id="catDescAr" class="form-control"></textarea>
-      </div>
-      <div class="form-group">
-          <label>Description (English)</label>
-          <textarea id="catDescEn" class="form-control"></textarea>
-      </div>
-      <div class="modal-footer">
-          <button type="submit" class="btn-primary">حفظ القسم</button>
-      </div>
-    </form>
-  </div>
-</div>
 </body>
 </html>
