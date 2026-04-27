@@ -445,7 +445,8 @@
             const name = card.dataset.t;
             const price = card.querySelector('.card-price')?.textContent || '';
             const desc = card.dataset.desc;
-            const bg = card.querySelector('.card-img').style.backgroundImage.slice(4, -1).replace(/"/g, "");
+            const modalImgEl = card.querySelector('.card-img img');
+            const bg = modalImgEl ? modalImgEl.src : 'images/tallo-logo.png';
             const pricesData = card.dataset.prices ? JSON.parse(card.dataset.prices) : null;
 
             document.getElementById('modalTitle').textContent = name;
@@ -466,7 +467,7 @@
             }
             
             document.getElementById('modalDesc').textContent = desc;
-            document.getElementById('modalImg').innerHTML = bg ? `<img src="${bg}" class="modal-actual-img">` : `<img src="images/tallo-logo.png" style="width:120px; opacity:0.5;">`;
+            document.getElementById('modalImg').innerHTML = `<img src="${bg}" class="modal-actual-img" onerror="this.src='images/tallo-logo.png'">`;
             
             document.getElementById('dishModal').classList.add('open');
             document.body.style.overflow = 'hidden';
