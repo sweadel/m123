@@ -398,15 +398,26 @@
          */
         function filterMenu() {
             const q = document.getElementById('srch').value.toLowerCase();
+            const activeSection = document.getElementById(currentTab);
+            
             if (q.length > 0) {
+                // إخفاء العناوين الفرعية وأشرطة التنقل أثناء البحث
                 document.querySelectorAll('.sub-nav').forEach(s => s.style.display = 'none');
-                document.querySelectorAll('section').forEach(s => s.style.display = 'block');
                 document.querySelectorAll('.sec-title').forEach(t => t.style.display = 'none');
-                document.querySelectorAll('.menu-card').forEach(c => {
-                    const match = c.dataset.t.includes(q);
-                    c.style.display = match ? 'flex' : 'none';
-                });
+                
+                // إخفاء جميع الوجبات أولاً
+                document.querySelectorAll('.menu-card').forEach(c => c.style.display = 'none');
+                
+                // البحث فقط داخل القسم النشط حالياً
+                if (activeSection) {
+                    activeSection.style.display = 'block';
+                    activeSection.querySelectorAll('.menu-card').forEach(c => {
+                        const match = c.dataset.t.includes(q) || (c.dataset.desc || '').toLowerCase().includes(q);
+                        c.style.display = match ? 'flex' : 'none';
+                    });
+                }
             } else {
+                // العودة للوضع الطبيعي عند مسح البحث
                 setTab(currentTab, document.querySelector('#mainTabRow .pill.active'));
             }
         }

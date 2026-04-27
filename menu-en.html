@@ -233,15 +233,26 @@
             var srchEl = document.getElementById('srch');
             if (!srchEl) return;
             var q = srchEl.value.toLowerCase();
+            const activeSection = document.getElementById(currentTab);
             
             if (q.length > 0) {
+                // Hide sub-nav and section titles during search
                 document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
-                document.querySelectorAll('section').forEach(s => s.style.display = 'block');
                 document.querySelectorAll('.sec-title').forEach(st => st.style.display = 'none');
-                document.querySelectorAll('.menu-card').forEach(c => {
-                    c.style.display = c.dataset.t.toLowerCase().includes(q) ? 'flex' : 'none';
-                });
+                
+                // Hide all menu cards first
+                document.querySelectorAll('.menu-card').forEach(c => c.style.display = 'none');
+                
+                // Search only within the currently active section
+                if (activeSection) {
+                    activeSection.style.display = 'block';
+                    activeSection.querySelectorAll('.menu-card').forEach(c => {
+                        const match = c.dataset.t.toLowerCase().includes(q) || (c.dataset.desc || '').toLowerCase().includes(q);
+                        c.style.display = match ? 'flex' : 'none';
+                    });
+                }
             } else {
+                // Reset to normal view when search is cleared
                 setTab(currentTab, document.querySelector('#mainTabRow .pill.active'));
             }
         }
