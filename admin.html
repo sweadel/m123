@@ -619,29 +619,37 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
+    <!-- Toast Container -->
+    <div id="toast-container" style="position:fixed; bottom:2rem; left:2rem; z-index:9999; display:flex; flex-direction:column; gap:0.5rem;"></div>
+
     <!-- App Logic -->
     <script>
-        // ── Global Helper for admin.js ──
+        // ── Global Helpers ──
         window.showLoading = function(show) {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.style.display = show ? 'flex' : 'none';
         };
 
+        window.showToast = function(msg, type) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const isErr = type === 'error';
+            toast.style.cssText = 'background:' + (isErr ? 'rgba(220,53,69,0.9)' : 'rgba(40,167,69,0.9)') + '; color:#fff; padding:1rem 1.5rem; border-radius:12px; font-family:inherit; font-size:0.95rem; backdrop-filter:blur(10px); box-shadow:0 5px 20px rgba(0,0,0,0.3); display:flex; align-items:center; gap:0.5rem; animation:fadeIn 0.3s;';
+            toast.innerHTML = '<i class="fas ' + (isErr ? 'fa-exclamation-circle' : 'fa-check-circle') + '"></i> ' + msg;
+            container.appendChild(toast);
+            setTimeout(function(){ toast.style.opacity='0'; toast.style.transition='opacity 0.3s'; setTimeout(function(){ toast.remove(); }, 300); }, 3000);
+        };
+
         window.navigateTo = function(id) {
-            console.log('Navigating to:', id);
-            
-            // Update Sidebar
             document.querySelectorAll('.menu-item').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.getAttribute('data-view') === id) btn.classList.add('active');
             });
-
-            // Update Views
             document.querySelectorAll('.view').forEach(view => {
                 view.classList.remove('active');
                 if (view.id === id) view.classList.add('active');
             });
-
             localStorage.setItem('last_admin_view', id);
         };
         
@@ -650,7 +658,6 @@
             window.location.href = 'login.html';
         }
         
-        // Initial Check
         if (!localStorage.getItem('admin_auth')) {
             window.location.href = 'login.html';
         }

@@ -25,7 +25,7 @@ const db = firebase.database();
 
 const REFS = {
     menu: db.ref('menu_items'),
-    cats: db.ref('categories'), // التغيير هنا ليتوافق مع المنيو العام
+    cats: db.ref('categories_meta'),
     design: db.ref('settings/design'),
     reviews: db.ref('feedback')
 };
@@ -184,7 +184,7 @@ function saveItem() {
     const cat = document.getElementById('item-cat').value;
     const price = document.getElementById('item-price').value;
     
-    if (!name || !cat || !price) return alert('يرجى تعبئة الحقول الأساسية');
+    if (!name || !cat || !price) return showToast('يرجى تعبئة الحقول الأساسية', 'error');
 
     isSaving = true;
     showLoading(true);
@@ -207,6 +207,7 @@ function saveItem() {
         const ref = editKey ? REFS.menu.child(editKey) : REFS.menu.push();
         ref.update(data).then(() => {
             closeModal('item-modal');
+            showToast('تم حفظ الطبق بنجاح ✨');
             showLoading(false);
             isSaving = false;
         }).catch(err => {
@@ -226,7 +227,7 @@ function saveItem() {
 
 function deleteItem(key) {
     if (confirm('هل أنت متأكد من حذف هذا الطبق؟')) {
-        REFS.menu.child(key).remove();
+        REFS.menu.child(key).remove().then(() => showToast('تم حذف الطبق'));
     }
 }
 
@@ -274,7 +275,7 @@ function saveCategory() {
     if (isSaving) return;
     const nameAr = document.getElementById('cat-name-ar').value.trim();
     const nameEn = document.getElementById('cat-name-en').value.trim();
-    if (!nameAr || !nameEn) return alert('يرجى تعبئة الأسماء');
+    if (!nameAr || !nameEn) return showToast('يرجى تعبئة الأسماء', 'error');
 
     isSaving = true;
     showLoading(true);
@@ -291,6 +292,7 @@ function saveCategory() {
     const id = editCatKey || `cat_${Date.now()}`;
     REFS.cats.child(id).update(data).then(() => {
         closeModal('cat-modal');
+        showToast('تم حفظ القسم بنجاح ✅');
         showLoading(false);
         isSaving = false;
     });
@@ -298,7 +300,7 @@ function saveCategory() {
 
 function deleteCat(id) {
     if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
-        REFS.cats.child(id).remove();
+        REFS.cats.child(id).remove().then(() => showToast('تم حذف القسم'));
     }
 }
 
@@ -330,7 +332,7 @@ function saveDesign() {
 
     REFS.design.update(data).then(() => {
         showLoading(false);
-        alert('تم حفظ إعدادات التصميم');
+        showToast('تم حفظ إعدادات التصميم ✨');
     });
 }
 
