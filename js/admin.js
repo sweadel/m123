@@ -427,7 +427,13 @@ function renderCatTable() {
 
 function previewItemImage(url) {
     const img = document.getElementById('img-prev');
-    if (img) img.src = url || 'images/tallo-logo.png';
+    if (!img) return;
+    if (url && url.trim()) {
+        img.src = url;
+        img.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+    }
 }
 
 function openCatModal(id = null) {
@@ -547,12 +553,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingOverlay.style.transition = 'opacity 0.3s';
     loadingOverlay.innerHTML = `<div style="color:#fff; font-size:1.5rem;">⏳ جاري التحميل…</div>`;
     document.body.appendChild(loadingOverlay);
-    function showLoading(show) {
+    window.showLoading = function(show) {
         loadingOverlay.style.opacity = show ? '1' : '0';
         loadingOverlay.style.pointerEvents = show ? 'auto' : 'none';
-    }
-    // Expose globally for async ops
-    window.showLoading = showLoading;
+    };
 
     
     const lastView = localStorage.getItem('last_admin_view') || 'view-dashboard';
@@ -570,15 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Logout handler
     window.logout = function() {
-        // Clear auth and redirect to login page
         localStorage.clear();
         window.location.href = 'login.html';
     };
-
-    document.getElementById('selectAllItems')?.addEventListener('change', (e) => {
-        document.querySelectorAll('.bulk-item').forEach(cb => {
-            cb.checked = e.target.checked;
-        });
-        updateBulkPanel();
-    });
 });

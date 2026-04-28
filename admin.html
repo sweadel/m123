@@ -10,36 +10,36 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="css/admin.css">
 <style>
-  .action-btns{display:flex;gap:8px;align-items:center}
-  .img-upload-area{border:2px dashed var(--glass-border);border-radius:20px;padding:20px;text-align:center;cursor:pointer;transition:.3s;margin-top:8px}
-  .img-upload-area:hover{border-color:var(--gold);background:rgba(197,160,34,.05)}
-  .img-upload-area input{display:none}
-  #img-prev{width:100%;max-height:180px;object-fit:contain;border-radius:14px;margin-top:10px;display:none}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .form-label{display:block;color:var(--text-dim);font-size:.85rem;margin-bottom:8px;font-weight:600}
-  .modal-body .form-control{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);color:#fff;padding:14px 18px;border-radius:16px;width:100%;outline:none;font-family:inherit;font-size:.95rem}
-  .modal-body .form-control:focus{border-color:var(--gold)}
-  .modal-body select.form-control option{background:#1a1a1a}
-  .weight-fields{background:rgba(197,160,34,.05);border:1px solid rgba(197,160,34,.2);border-radius:20px;padding:20px;margin-top:5px}
-  .upload-progress{height:6px;background:var(--glass-border);border-radius:3px;overflow:hidden;display:none;margin-top:8px}
-  .upload-progress-bar{height:100%;background:var(--gold);transition:width .3s;width:0%}
-  .color-row{display:flex;gap:12px;align-items:center}
-  .color-row input[type=color]{width:50px;height:44px;border-radius:12px;border:1px solid var(--glass-border);padding:3px;cursor:pointer;background:none}
-  .bulk-bar{display:none;align-items:center;gap:15px;background:rgba(255,94,87,.08);border:1px solid rgba(255,94,87,.2);padding:12px 25px;border-radius:18px;margin-bottom:15px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-label{display:block;color:var(--text-dim);font-size:.85rem;margin-bottom:8px;font-weight:600}
+.modal-body .form-control{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);color:#fff;padding:14px 18px;border-radius:16px;width:100%;outline:none;font-family:inherit;font-size:.95rem;transition:.3s}
+.modal-body .form-control:focus{border-color:var(--gold)}
+.modal-body select.form-control option{background:#1a1a1a;color:#fff}
+.weight-fields{background:rgba(197,160,34,.05);border:1px solid rgba(197,160,34,.2);border-radius:20px;padding:20px;margin-top:15px}
+.img-upload-area{border:2px dashed var(--glass-border);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.3s;margin-top:10px}
+.img-upload-area:hover{border-color:var(--gold);background:rgba(197,160,34,.05)}
+#imgFileInput{display:none}
+#img-prev{width:100%;max-height:160px;object-fit:contain;border-radius:12px;margin-top:10px;display:none}
+.upload-progress{height:5px;background:var(--glass-border);border-radius:3px;overflow:hidden;display:none;margin-top:8px}
+.upload-bar{height:100%;background:var(--gold);width:0;transition:width .3s}
+.bulk-bar{display:none;align-items:center;gap:15px;background:rgba(255,94,87,.08);border:1px solid rgba(255,94,87,.2);padding:12px 25px;border-radius:18px;margin-bottom:15px}
+.color-row{display:flex;gap:12px;align-items:center;margin-top:8px}
+.color-row input[type=color]{width:50px;height:44px;border-radius:12px;border:1px solid var(--glass-border);padding:3px;cursor:pointer;background:none}
+.color-row .form-control{width:150px;font-family:monospace}
 </style>
 </head>
 <body>
+
 <div class="mobile-header">
   <div style="font-size:1.1rem;font-weight:800;color:var(--gold)">طلو احبابنا</div>
   <button class="btn-icon" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
 </div>
 
 <div class="admin-wrapper">
-<!-- ════ SIDEBAR ════ -->
+
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <img src="images/tallo-logo.png" alt="Logo">
-  </div>
+  <div class="sidebar-header"><img src="images/tallo-logo.png" alt="Logo"></div>
   <nav class="sidebar-menu">
     <a class="menu-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')"><i class="fas fa-chart-pie"></i><span>لوحة المعلومات</span></a>
     <a class="menu-item" data-view="view-menu" onclick="navigateTo('view-menu')"><i class="fas fa-utensils"></i><span>إدارة الأطباق</span></a>
@@ -54,13 +54,13 @@
   </div>
 </aside>
 
-<!-- ════ MAIN ════ -->
+<!-- MAIN CONTENT -->
 <main class="main-content">
 
-<!-- ── DASHBOARD ── -->
+<!-- VIEW: DASHBOARD -->
 <section id="view-dashboard" class="view active">
   <div class="page-header">
-    <div class="page-title"><h1>لوحة المعلومات</h1><p>مرحباً بعودتك — كل شيء تمام 🔥</p></div>
+    <div class="page-title"><h1>لوحة المعلومات</h1><p>مرحباً بعودتك 🔥</p></div>
     <a href="menu.html" target="_blank" class="btn-primary"><i class="fas fa-eye"></i> معاينة المنيو</a>
   </div>
   <div class="stats-grid">
@@ -68,44 +68,46 @@
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-folder-open"></i></div><div class="stat-info"><h3>إجمالي الأقسام</h3><div class="stat-num" id="stat-cats">—</div></div></div>
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-comments"></i></div><div class="stat-info"><h3>آراء الزبائن</h3><div class="stat-num" id="stat-feed">—</div></div></div>
   </div>
-  <div class="data-card" style="padding:35px;margin-top:30px">
-    <h3 style="color:var(--gold);margin-bottom:25px;font-size:1.2rem"><i class="fas fa-bolt"></i> إجراءات سريعة</h3>
+  <div class="data-card" style="padding:35px">
+    <h3 style="color:var(--gold);margin-bottom:25px"><i class="fas fa-bolt"></i> إجراءات سريعة</h3>
     <div style="display:flex;gap:15px;flex-wrap:wrap">
-      <button class="btn-primary" onclick="navigateTo('view-menu');setTimeout(()=>openItemModal(),300)"><i class="fas fa-plus"></i> إضافة طبق</button>
-      <button class="btn-primary" onclick="navigateTo('view-categories');setTimeout(()=>openCatModal(),300)"><i class="fas fa-folder-plus"></i> إضافة قسم</button>
+      <button class="btn-primary" onclick="navigateTo('view-menu');setTimeout(()=>openItemModal(),400)"><i class="fas fa-plus"></i> إضافة طبق</button>
+      <button class="btn-primary" onclick="navigateTo('view-categories');setTimeout(()=>openCatModal(),400)"><i class="fas fa-folder-plus"></i> إضافة قسم</button>
       <button class="btn-primary" onclick="navigateTo('view-design')" style="background:linear-gradient(135deg,#54a0ff,#2e86de)"><i class="fas fa-palette"></i> تعديل التصميم</button>
     </div>
   </div>
 </section>
 
-<!-- ── MENU ITEMS ── -->
+<!-- VIEW: MENU ITEMS -->
 <section id="view-menu" class="view">
   <div class="page-header">
-    <div class="page-title"><h1>إدارة الأطباق</h1><p>تحكم كامل — إضافة، تعديل، حذف</p></div>
+    <div class="page-title"><h1>إدارة الأطباق</h1><p>إضافة، تعديل، حذف</p></div>
     <button class="btn-primary" onclick="openItemModal()"><i class="fas fa-plus"></i> طبق جديد</button>
   </div>
-  <div class="cat-filter-tabs" id="categoryTabs"><button class="cat-filter-tab active" onclick="setFilterCat('all')">الكل</button></div>
+  <div class="cat-filter-tabs" id="categoryTabs">
+    <button class="cat-filter-tab active" onclick="setFilterCat('all')">الكل</button>
+  </div>
   <div class="data-card">
-    <div class="table-header" style="flex-wrap:wrap;gap:15px">
-      <input class="form-control" id="globalSearch" placeholder="🔍 ابحث عن طبق..." oninput="renderTable()" style="max-width:380px">
+    <div class="table-header">
+      <input class="form-control" id="globalSearch" placeholder="🔍 ابحث..." oninput="renderTable()" style="max-width:350px">
     </div>
     <div id="itemsBulkActions" class="bulk-bar">
       <span style="color:var(--text-dim)"><b style="color:#fff" id="bulkCount">0</b> محدد</span>
-      <button class="btn-primary" style="background:linear-gradient(135deg,var(--red),#c0392b);padding:10px 20px" onclick="bulkDeleteItems()"><i class="fas fa-trash"></i> حذف المحدد</button>
+      <button class="btn-primary" style="background:linear-gradient(135deg,var(--red),#c0392b)" onclick="bulkDeleteItems()"><i class="fas fa-trash"></i> حذف المحدد</button>
     </div>
     <div class="table-responsive">
       <table>
         <thead><tr>
           <th><input type="checkbox" id="selectAllItems" style="width:18px;height:18px;accent-color:var(--gold)"></th>
-          <th>الطبق</th><th>القسم</th><th>السعر</th><th>الحالة</th><th>الإجراءات</th>
+          <th>الطبق</th><th>القسم</th><th>السعر</th><th>الحالة</th><th>إجراءات</th>
         </tr></thead>
-        <tbody id="menu-table-body"><tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text-dim)">جاري التحميل...</td></tr></tbody>
+        <tbody id="menu-table-body"><tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text-dim)">جاري تحميل الأطباق...</td></tr></tbody>
       </table>
     </div>
   </div>
 </section>
 
-<!-- ── CATEGORIES ── -->
+<!-- VIEW: CATEGORIES -->
 <section id="view-categories" class="view">
   <div class="page-header">
     <div class="page-title"><h1>إدارة الأقسام</h1><p>تنظيم وتخصيص أقسام المنيو</p></div>
@@ -114,47 +116,46 @@
   <div class="data-card">
     <div class="table-responsive">
       <table>
-        <thead><tr><th>الأيقونة</th><th>اسم القسم</th><th>الوجهة</th><th>الأطباق</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
-        <tbody id="cat-table-body"><tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text-dim)">جاري التحميل...</td></tr></tbody>
+        <thead><tr><th>الأيقونة</th><th>اسم القسم</th><th>الوجهة</th><th>الأطباق</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <tbody id="cat-table-body"><tr><td colspan="6" style="text-align:center;padding:50px;color:var(--text-dim)">جاري تحميل الأقسام...</td></tr></tbody>
       </table>
     </div>
   </div>
 </section>
 
-<!-- ── DESIGN ── -->
+<!-- VIEW: DESIGN -->
 <section id="view-design" class="view">
   <div class="page-header">
-    <div class="page-title"><h1>التصميم والهوية</h1><p>تخصيص ألوان وخطوط المنيو لحظياً</p></div>
+    <div class="page-title"><h1>التصميم والهوية</h1><p>تخصيص الألوان والخطوط لحظياً</p></div>
   </div>
-  <div class="data-card" style="padding:40px;max-width:750px">
-    <h3 style="color:var(--gold);margin-bottom:30px;font-size:1.3rem"><i class="fas fa-paint-brush"></i> الهوية البصرية</h3>
+  <div class="data-card" style="padding:40px;max-width:720px">
+    <h3 style="color:var(--gold);margin-bottom:30px"><i class="fas fa-paint-brush"></i> الهوية البصرية</h3>
     <div style="display:grid;gap:25px">
       <div>
         <label class="form-label">اللون الذهبي الرئيسي</label>
         <div class="color-row">
-          <input type="color" id="design-gold" value="#C5A022" oninput="document.getElementById('design-gold-txt').value=this.value">
-          <input class="form-control" id="design-gold-txt" value="#C5A022" oninput="document.getElementById('design-gold').value=this.value" style="width:160px;font-family:monospace">
+          <input type="color" id="design-gold" value="#C5A022">
+          <input class="form-control" id="design-gold-hex" value="#C5A022" style="width:150px;font-family:monospace">
         </div>
       </div>
       <div>
         <label class="form-label">لون خلفية المنيو</label>
         <div class="color-row">
-          <input type="color" id="design-bg" value="#0a0a0a" oninput="document.getElementById('design-bg-txt').value=this.value">
-          <input class="form-control" id="design-bg-txt" value="#0a0a0a" oninput="document.getElementById('design-bg').value=this.value" style="width:160px;font-family:monospace">
+          <input type="color" id="design-bg" value="#0a0a0a">
+          <input class="form-control" id="design-bg-hex" value="#0a0a0a" style="width:150px;font-family:monospace">
         </div>
       </div>
       <div>
         <label class="form-label">نوع الخط</label>
         <select class="form-control" id="design-font">
-          <option value="'IBM Plex Sans Arabic', sans-serif" selected>IBM Plex Sans Arabic</option>
+          <option value="'IBM Plex Sans Arabic', sans-serif">IBM Plex Sans Arabic</option>
           <option value="'Cairo', sans-serif">Cairo</option>
           <option value="'Tajawal', sans-serif">Tajawal</option>
-          <option value="'Amiri', serif">Amiri</option>
         </select>
       </div>
     </div>
     <hr style="border-color:var(--glass-border);margin:35px 0">
-    <h3 style="color:var(--gold);margin-bottom:25px;font-size:1.3rem"><i class="fas fa-bullhorn"></i> شريط الإعلانات</h3>
+    <h3 style="color:var(--gold);margin-bottom:25px"><i class="fas fa-bullhorn"></i> شريط الإعلانات</h3>
     <div style="display:grid;gap:20px">
       <div>
         <label class="form-label">حالة الشريط</label>
@@ -174,10 +175,10 @@
   </div>
 </section>
 
-<!-- ── FEEDBACK ── -->
+<!-- VIEW: FEEDBACK -->
 <section id="view-feedback" class="view">
   <div class="page-header">
-    <div class="page-title"><h1>آراء الزبائن</h1><p>تقييمات وملاحظات العملاء</p></div>
+    <div class="page-title"><h1>آراء الزبائن</h1><p>التقييمات والملاحظات</p></div>
   </div>
   <div class="data-card">
     <div class="table-responsive">
@@ -189,13 +190,13 @@
   </div>
 </section>
 
-<!-- ── SETTINGS ── -->
+<!-- VIEW: SETTINGS -->
 <section id="view-settings" class="view">
   <div class="page-header">
-    <div class="page-title"><h1>الإعدادات</h1><p>إدارة الحساب والصلاحيات</p></div>
+    <div class="page-title"><h1>الإعدادات</h1><p>إدارة الحساب</p></div>
   </div>
-  <div class="data-card" style="padding:40px;max-width:550px">
-    <p style="color:var(--text-dim);margin-bottom:25px">المستخدم الحالي: <b id="current-user-display-settings" style="color:var(--gold)">—</b></p>
+  <div class="data-card" style="padding:40px;max-width:500px">
+    <p style="color:var(--text-dim);margin-bottom:25px">الحساب الحالي: <b id="current-user-display-settings" style="color:var(--gold)">—</b></p>
     <div style="display:flex;flex-direction:column;gap:15px">
       <a href="menu.html" target="_blank" class="btn-primary"><i class="fas fa-utensils"></i> معاينة المنيو العربي</a>
       <a href="menu-en.html" target="_blank" class="btn-primary" style="background:linear-gradient(135deg,#54a0ff,#2e86de)"><i class="fas fa-language"></i> معاينة المنيو الإنجليزي</a>
@@ -207,153 +208,141 @@
 </main>
 </div>
 
-<!-- ════ MODAL: ITEM ════ -->
+<!-- MODAL: ITEM -->
 <div class="modal-overlay" id="itemModal">
-<div class="modal-content" style="max-width:800px">
-  <div class="modal-header">
-    <h2 id="itemModalTitle">إضافة طبق جديد</h2>
-    <button class="btn-icon" onclick="closeItemModal()"><i class="fas fa-times"></i></button>
-  </div>
-  <div class="modal-body">
-    <form id="itemForm" onsubmit="return false">
-    <input type="hidden" id="itemKey">
-    <div class="form-grid">
-      <div>
-        <label class="form-label">الاسم بالعربية *</label>
-        <input class="form-control" id="itemName" placeholder="مثال: منسف ملكي" required>
-      </div>
-      <div>
-        <label class="form-label">الاسم بالإنجليزية</label>
-        <input class="form-control" id="itemNameEn" placeholder="e.g. Royal Mansaf">
-      </div>
-      <div>
-        <label class="form-label">القسم *</label>
-        <select class="form-control" id="itemCategory" onchange="onCategoryChange(this.value)" required>
-          <option value="" disabled selected>اختر القسم...</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">السعر (دينار)</label>
-        <input class="form-control" id="itemPrice" placeholder="0.00" type="number" step="0.01" min="0">
-      </div>
-      <div>
-        <label class="form-label">الشارة</label>
-        <select class="form-control" id="itemBadge">
-          <option value="">بدون شارة</option>
-          <option value="HOT">🔥 حار</option>
-          <option value="NEW">✨ جديد</option>
-          <option value="SPECIAL">⭐ مميز</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">وقت التحضير</label>
-        <input class="form-control" id="itemPrepTime" placeholder="مثال: 15 دقيقة">
-      </div>
+  <div class="modal-content" style="max-width:800px">
+    <div class="modal-header">
+      <h2 id="itemModalTitle">إضافة طبق جديد</h2>
+      <button class="btn-icon" onclick="closeItemModal()"><i class="fas fa-times"></i></button>
     </div>
+    <div class="modal-body">
+      <form id="itemForm" onsubmit="return false">
+        <input type="hidden" id="itemKey">
+        <div class="form-grid">
+          <div><label class="form-label">الاسم بالعربية *</label><input class="form-control" id="itemName" placeholder="مثال: منسف ملكي" required></div>
+          <div><label class="form-label">الاسم بالإنجليزية</label><input class="form-control" id="itemNameEn" placeholder="e.g. Royal Mansaf"></div>
+          <div>
+            <label class="form-label">القسم *</label>
+            <select class="form-control" id="itemCategory" onchange="onCategoryChange(this.value)" required>
+              <option value="" disabled selected>اختر القسم...</option>
+            </select>
+          </div>
+          <div><label class="form-label">السعر (دينار)</label><input class="form-control" id="itemPrice" placeholder="0.00" type="number" step="0.01" min="0"></div>
+          <div>
+            <label class="form-label">الشارة</label>
+            <select class="form-control" id="itemBadge">
+              <option value="">بدون</option>
+              <option value="HOT">🔥 حار</option>
+              <option value="NEW">✨ جديد</option>
+              <option value="SPECIAL">⭐ مميز</option>
+            </select>
+          </div>
+          <div><label class="form-label">وقت التحضير</label><input class="form-control" id="itemPrepTime" placeholder="مثال: 15 دقيقة"></div>
+        </div>
 
-    <div id="weightPricesFields" class="weight-fields" style="display:none;margin-top:20px">
-      <label class="form-label" style="color:var(--gold);margin-bottom:15px">⚖️ أسعار المشاوي</label>
-      <div class="form-grid">
-        <div><label class="form-label">ربع كيلو</label><input class="form-control" id="priceQuarter" placeholder="0.00" type="number" step="0.01"></div>
-        <div><label class="form-label">نصف كيلو</label><input class="form-control" id="priceHalf" placeholder="0.00" type="number" step="0.01"></div>
-        <div><label class="form-label">كيلو كامل</label><input class="form-control" id="priceKilo" placeholder="0.00" type="number" step="0.01"></div>
-      </div>
-    </div>
+        <div id="weightPricesFields" class="weight-fields" style="display:none">
+          <label class="form-label" style="color:var(--gold);margin-bottom:15px">⚖️ أسعار المشاوي</label>
+          <div class="form-grid">
+            <div><label class="form-label">ربع كيلو</label><input class="form-control" id="priceQuarter" type="number" step="0.01" placeholder="0.00"></div>
+            <div><label class="form-label">نصف كيلو</label><input class="form-control" id="priceHalf" type="number" step="0.01" placeholder="0.00"></div>
+            <div><label class="form-label">كيلو كامل</label><input class="form-control" id="priceKilo" type="number" step="0.01" placeholder="0.00"></div>
+          </div>
+        </div>
 
-    <div style="margin-top:20px">
-      <label class="form-label">الوصف بالعربية</label>
-      <textarea class="form-control" id="itemDesc" rows="3" placeholder="وصف مختصر للطبق..."></textarea>
-    </div>
-    <div style="margin-top:15px">
-      <label class="form-label">الوصف بالإنجليزية</label>
-      <textarea class="form-control" id="itemDescEn" rows="3" placeholder="Brief description..."></textarea>
-    </div>
+        <div style="margin-top:20px"><label class="form-label">الوصف (عربي)</label><textarea class="form-control" id="itemDesc" rows="2" placeholder="وصف مختصر..."></textarea></div>
+        <div style="margin-top:15px"><label class="form-label">الوصف (إنجليزي)</label><textarea class="form-control" id="itemDescEn" rows="2" placeholder="Brief description..."></textarea></div>
 
-    <div style="margin-top:20px">
-      <label class="form-label">رابط الصورة</label>
-      <input class="form-control" id="itemImage" placeholder="images/اسم-الصورة.jpg" oninput="previewItemImage(this.value)">
-      <div class="img-upload-area" onclick="document.getElementById('imgFileInput').click()" style="margin-top:12px">
-        <input type="file" id="imgFileInput" accept="image/*" onchange="handleImageUpload(this)">
-        <i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--gold);margin-bottom:8px"></i>
-        <p style="color:var(--text-dim);font-size:.9rem">انقر لرفع صورة من جهازك</p>
-        <div class="upload-progress" id="uploadProgress"><div class="upload-progress-bar" id="uploadBar"></div></div>
-      </div>
-      <img id="img-prev" src="" alt="معاينة">
-    </div>
+        <div style="margin-top:20px">
+          <label class="form-label">رابط الصورة</label>
+          <input class="form-control" id="itemImage" placeholder="images/اسم-الصورة.jpg" oninput="previewItemImage(this.value)">
+          <div class="img-upload-area" onclick="document.getElementById('imgFileInput').click()">
+            <input type="file" id="imgFileInput" accept="image/*" onchange="handleImageUpload(this)">
+            <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:var(--gold)"></i>
+            <p style="color:var(--text-dim);font-size:.9rem;margin-top:8px">انقر لرفع صورة من جهازك</p>
+            <div class="upload-progress" id="uploadProgress"><div class="upload-bar" id="uploadBar"></div></div>
+          </div>
+          <img id="img-prev" src="" alt="معاينة">
+        </div>
 
-    <div style="margin-top:30px;display:flex;gap:15px;justify-content:flex-end">
-      <button type="button" class="btn-icon" onclick="closeItemModal()" style="width:auto;padding:0 25px;border-radius:16px;color:#fff">إلغاء</button>
-      <button type="button" class="btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> حفظ الطبق</button>
+        <div style="margin-top:30px;display:flex;gap:15px;justify-content:flex-end;flex-wrap:wrap">
+          <button type="button" class="btn-icon" onclick="closeItemModal()" style="width:auto;padding:0 25px;color:#fff">إلغاء</button>
+          <button type="button" class="btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> حفظ الطبق</button>
+        </div>
+      </form>
     </div>
-    </form>
   </div>
 </div>
-</div>
 
-<!-- ════ MODAL: CATEGORY ════ -->
+<!-- MODAL: CATEGORY -->
 <div class="modal-overlay" id="catModal">
-<div class="modal-content" style="max-width:600px">
-  <div class="modal-header">
-    <h2 id="catModalTitle">إضافة قسم جديد</h2>
-    <button class="btn-icon" onclick="closeCatModal()"><i class="fas fa-times"></i></button>
+  <div class="modal-content" style="max-width:600px">
+    <div class="modal-header">
+      <h2 id="catModalTitle">إضافة قسم جديد</h2>
+      <button class="btn-icon" onclick="closeCatModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="catForm" onsubmit="return false">
+        <input type="hidden" id="catKey">
+        <div class="form-grid">
+          <div><label class="form-label">الاسم (عربي) *</label><input class="form-control" id="catNameAr" placeholder="مثال: مشاوي على الجمر" required></div>
+          <div><label class="form-label">الاسم (إنجليزي)</label><input class="form-control" id="catNameEn" placeholder="e.g. Charcoal Grill"></div>
+          <div>
+            <label class="form-label">القسم الرئيسي</label>
+            <select class="form-control" id="catSection">
+              <option value="arabic">المنيو العربي</option>
+              <option value="intl">انترناشونال</option>
+              <option value="desserts">الحلويات</option>
+              <option value="drinks">المشروبات</option>
+              <option value="argileh">الأراجيل</option>
+            </select>
+          </div>
+          <div><label class="form-label">الترتيب</label><input class="form-control" id="catOrder" type="number" value="0" min="0"></div>
+        </div>
+        <div style="margin-top:20px">
+          <label class="form-label">أيقونة FontAwesome</label>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <input class="form-control" id="catIcon" placeholder="fa-utensils" style="flex:1">
+            <div id="icon-preview" style="width:50px;height:50px;background:rgba(197,160,34,.1);border:1px solid rgba(197,160,34,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--gold)"><i class="fa-solid fa-folder"></i></div>
+          </div>
+          <p style="color:var(--text-dim);font-size:.8rem;margin-top:6px">أمثلة: fa-fire, fa-mug-hot, fa-leaf, fa-pizza-slice</p>
+        </div>
+        <div style="margin-top:30px;display:flex;gap:15px;justify-content:flex-end">
+          <button type="button" class="btn-icon" onclick="closeCatModal()" style="width:auto;padding:0 25px;color:#fff">إلغاء</button>
+          <button type="button" class="btn-primary" onclick="saveCategory()"><i class="fas fa-save"></i> حفظ القسم</button>
+        </div>
+      </form>
+    </div>
   </div>
-  <div class="modal-body">
-    <form id="catForm" onsubmit="return false">
-    <input type="hidden" id="catKey">
-    <div class="form-grid">
-      <div>
-        <label class="form-label">الاسم بالعربية *</label>
-        <input class="form-control" id="catNameAr" placeholder="مثال: مشاوي على الجمر" required>
-      </div>
-      <div>
-        <label class="form-label">الاسم بالإنجليزية</label>
-        <input class="form-control" id="catNameEn" placeholder="e.g. Charcoal Grill">
-      </div>
-      <div>
-        <label class="form-label">القسم الرئيسي</label>
-        <select class="form-control" id="catSection">
-          <option value="arabic">المنيو العربي</option>
-          <option value="intl">انترناشونال</option>
-          <option value="desserts">الحلويات</option>
-          <option value="drinks">المشروبات</option>
-          <option value="argileh">الأراجيل</option>
-        </select>
-      </div>
-      <div>
-        <label class="form-label">الترتيب</label>
-        <input class="form-control" id="catOrder" type="number" value="0" min="0">
-      </div>
-    </div>
-    <div style="margin-top:20px">
-      <label class="form-label">أيقونة FontAwesome</label>
-      <div style="display:flex;gap:12px;align-items:center">
-        <input class="form-control" id="catIcon" placeholder="fa-utensils" oninput="updateIconPreview(this.value)" style="flex:1">
-        <div id="icon-preview" style="width:50px;height:50px;background:rgba(197,160,34,.1);border:1px solid rgba(197,160,34,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--gold)"><i class="fa-solid fa-folder"></i></div>
-      </div>
-      <p style="color:var(--text-dim);font-size:.8rem;margin-top:8px">أمثلة: fa-fire, fa-leaf, fa-mug-hot, fa-pizza-slice, fa-bowl-food</p>
-    </div>
-    <div style="margin-top:30px;display:flex;gap:15px;justify-content:flex-end">
-      <button type="button" class="btn-icon" onclick="closeCatModal()" style="width:auto;padding:0 25px;border-radius:16px;color:#fff">إلغاء</button>
-      <button type="button" class="btn-primary" onclick="saveCategory()"><i class="fas fa-save"></i> حفظ القسم</button>
-    </div>
-    </form>
-  </div>
-</div>
 </div>
 
 <!-- Toast Container -->
 <div id="toast-container" style="position:fixed;bottom:30px;right:30px;z-index:9999;display:flex;flex-direction:column;gap:12px"></div>
 
-<!-- Firebase compat -->
+<!-- Firebase (compat mode - same as rest of site) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-<!-- Image Upload Handler -->
 <script>
+// ── Color picker sync ──
+function syncColor(pickerId, hexId) {
+  const picker = document.getElementById(pickerId);
+  const hex = document.getElementById(hexId);
+  if (!picker || !hex) return;
+  picker.addEventListener('input', () => hex.value = picker.value);
+  hex.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value; });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  syncColor('design-gold', 'design-gold-hex');
+  syncColor('design-bg', 'design-bg-hex');
+});
+
+// ── Image upload to Firebase Storage ──
 function handleImageUpload(input) {
   const file = input.files[0];
   if (!file) return;
+
+  // Show local preview immediately
   const reader = new FileReader();
   reader.onload = e => {
     const prev = document.getElementById('img-prev');
@@ -362,33 +351,51 @@ function handleImageUpload(input) {
   };
   reader.readAsDataURL(file);
 
-  const storage = firebase.storage();
-  const ref = storage.ref('menu_images/' + Date.now() + '_' + file.name);
-  const task = ref.put(file);
-  const bar = document.getElementById('uploadBar');
-  const prog = document.getElementById('uploadProgress');
-  prog.style.display = 'block';
-  task.on('state_changed',
-    snap => { bar.style.width = (snap.bytesTransferred / snap.totalBytes * 100) + '%'; },
-    err => { console.error(err); showToast('فشل رفع الصورة', 'error'); prog.style.display = 'none'; },
-    () => {
-      task.snapshot.ref.getDownloadURL().then(url => {
-        document.getElementById('itemImage').value = url;
+  // Upload to Firebase Storage
+  try {
+    const storage = firebase.storage();
+    const ref = storage.ref('menu_images/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_'));
+    const task = ref.put(file);
+    const prog = document.getElementById('uploadProgress');
+    const bar = document.getElementById('uploadBar');
+    prog.style.display = 'block';
+    task.on('state_changed',
+      s => { bar.style.width = (s.bytesTransferred / s.totalBytes * 100) + '%'; },
+      err => {
+        console.warn('Storage upload failed, using local preview:', err);
         prog.style.display = 'none';
-        showToast('تم رفع الصورة بنجاح ✅');
-      });
-    }
-  );
+        // Fallback: keep base64 as preview but warn user
+        if (typeof showToast === 'function') showToast('الصورة معروضة لكن رابط الرفع فشل - ستختفي عند الإغلاق', 'error');
+      },
+      () => {
+        task.snapshot.ref.getDownloadURL().then(url => {
+          document.getElementById('itemImage').value = url;
+          prog.style.display = 'none';
+          if (typeof showToast === 'function') showToast('تم رفع الصورة بنجاح ✅');
+        });
+      }
+    );
+  } catch(e) {
+    console.warn('Firebase Storage not available:', e);
+  }
 }
 
-// Sync color text fields
-document.addEventListener('DOMContentLoaded', () => {
-  const goldEl = document.getElementById('design-gold');
-  const bgEl = document.getElementById('design-bg');
-  if (goldEl) goldEl.addEventListener('input', () => { const t = document.getElementById('design-gold-txt'); if(t) t.value = goldEl.value; });
-  if (bgEl) bgEl.addEventListener('input', () => { const t = document.getElementById('design-bg-txt'); if(t) t.value = bgEl.value; });
-});
+// ── previewItemImage fix (show/hide the img element) ──
+function previewItemImage(url) {
+  const img = document.getElementById('img-prev');
+  if (!img) return;
+  if (url && url.trim()) {
+    img.src = url;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+}
+
+// ── Global showLoading fallback so admin.js won't crash before DOMContentLoaded ──
+window.showLoading = function() {};
 </script>
+
 <script src="js/admin.js"></script>
 </body>
 </html>
