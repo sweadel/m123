@@ -348,6 +348,10 @@
                 <i class="fas fa-paint-brush"></i>
                 <span>التصميم والهوية</span>
             </button>
+            <button class="menu-item" data-view="view-bulk" onclick="navigateTo('view-bulk')">
+                <i class="fas fa-tags"></i>
+                <span>تعديل الأسعار بالجملة</span>
+            </button>
             <button class="menu-item" data-view="view-reviews" onclick="navigateTo('view-reviews')">
                 <i class="fas fa-star"></i>
                 <span>آراء الزبائن</span>
@@ -518,6 +522,41 @@
             </div>
             <div id="reviews-list" class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
                 <!-- JS Render -->
+            </div>
+        </div>
+
+        <!-- 6. Bulk Price Edit View -->
+        <div id="view-bulk" class="view">
+            <div class="section-header">
+                <h1>تعديل الأسعار بالجملة</h1>
+                <button class="btn btn-gold" onclick="saveBulkPrices()">
+                    <i class="fas fa-save"></i> حفظ جميع الأسعار
+                </button>
+            </div>
+            
+            <div style="background: rgba(197, 160, 34, 0.1); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; color: var(--gold); font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> يمكنك تعديل أسعار جميع الأطباق في القسم المختار دفعة واحدة ثم الضغط على "حفظ جميع الأسعار".
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <select id="bulk-cat-filter" onchange="renderBulkTable()" style="width: 100%;">
+                    <!-- JS Render -->
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الطبق</th>
+                            <th>الاسم بالإنجليزي</th>
+                            <th style="width: 200px;">السعر الحالي (JD)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulk-table-body">
+                        <!-- JS Render -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>

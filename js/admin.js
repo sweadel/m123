@@ -60,6 +60,7 @@ window.navigateTo = function(id) {
     if (id === 'view-categories') renderCatTable();
     if (id === 'view-design') loadDesign();
     if (id === 'view-reviews') renderReviews();
+    if (id === 'view-bulk') renderBulkTable();
 };
 
 // ══════════════════════════════════════════════
@@ -370,6 +371,63 @@ function deleteReview(key) {
     if (confirm('حذف التقييم؟')) REFS.reviews.child(key).remove();
 }
 
+// ── تعديل الأسعار بالجملة ──
+function renderBulkTable() {
+    const body = document.getElementById('bulk-table-body');
+    const filter = document.getElementById('bulk-cat-filter');
+    if (!body || !filter) return;
+
+    const catId = filter.value;
+    const filtered = menuItems.filter(item => item.category === catId);
+
+    body.innerHTML = filtered.map(item => `
+        <tr>
+            <td>
+                <div style="font-weight:600;">${item.name}</div>
+            </td>
+            <td><small style="color:#777;">${item.nameEn || ''}</small></td>
+            <td>
+                <input type="number" step="0.01" class="bulk-price-input" 
+                       data-key="${item.key}" value="${item.price || ''}" 
+                       style="border-color: var(--gold); background: rgba(197, 160, 34, 0.05);">
+            </td>
+        </tr>
+    `).join('');
+    
+    if(filtered.length === 0) {
+        body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:3rem; color:#666;">لا توجد أطباق في هذا القسم</td></tr>';
+    }
+}
+
+function saveBulkPrices() {
+    const inputs = document.querySelectorAll('.bulk-price-input');
+    const updates = {};
+    let count = 0;
+
+    inputs.forEach(input => {
+        const key = input.getAttribute('data-key');
+        const newPrice = input.value;
+        const originalItem = menuItems.find(i => i.key === key);
+        
+        if (originalItem && originalItem.price !== newPrice) {
+            updates[`${key}/price`] = newPrice;
+            count++;
+        }
+    });
+
+    if (count === 0) return showToast('لم يتم تغيير أي أسعار');
+
+    showLoading(true);
+    REFS.menu.update(updates).then(() => {
+        showLoading(false);
+        showToast(`تم تحديث أسعار ${count} طبق بنجاح ✨`);
+    }).catch(err => {
+        console.error(err);
+        showLoading(false);
+        showToast('حدث خطأ أثناء الحفظ', 'error');
+    });
+}
+
 // ── المساعدات ──
 function rebuildSelects() {
     const select = document.getElementById('item-cat');
@@ -383,6 +441,14 @@ function rebuildSelects() {
         filter.innerHTML = '<option value="all">كل الأقسام</option>' + 
             catItems.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
         filter.value = current || 'all';
+    }
+
+    const bulkFilter = document.getElementById('bulk-cat-filter');
+    if (bulkFilter) {
+        const current = bulkFilter.value;
+        bulkFilter.innerHTML = catItems.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
+        if (!current && catItems.length > 0) bulkFilter.value = catItems[0].id;
+        else bulkFilter.value = current;
     }
 }
 
