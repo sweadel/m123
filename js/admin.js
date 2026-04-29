@@ -390,6 +390,17 @@ window.closeModal = function(id) {
     document.getElementById(id).style.display = 'none';
 };
 
+window.previewImage = function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('img-prev').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+};
+
 // 6. التهيئة عند التحميل
 document.addEventListener('DOMContentLoaded', () => {
     // مزامنة حقول الألوان

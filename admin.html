@@ -550,7 +550,7 @@
                         <div style="display: flex; gap: 1rem; align-items: center; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 12px;">
                             <img id="img-prev" class="item-img" src="images/tallo-logo.png" style="width: 80px; height: 80px;">
                             <div style="flex: 1;">
-                                <input type="file" id="item-file" accept="image/*" style="margin-bottom: 0.5rem;">
+                                <input type="file" id="item-file" accept="image/*" style="margin-bottom: 0.5rem;" onchange="previewImage(event)">
                                 <p style="font-size: 0.7rem; color: #666;">اتركها فارغة لاستخدام الشعار الافتراضي</p>
                             </div>
                             <input type="hidden" id="item-img-url">
