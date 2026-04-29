@@ -219,7 +219,12 @@ function saveItem() {
 
     if (file) {
         const storageRef = firebase.storage().ref(`menu/${Date.now()}_${file.name}`);
-        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => performSave(url));
+        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => performSave(url)).catch(err => {
+            console.error('Upload Error:', err);
+            showToast('حدث خطأ أثناء رفع الصورة، قد تكون الصورة كبيرة أو هناك مشكلة بالاتصال', 'error');
+            showLoading(false);
+            isSaving = false;
+        });
     } else {
         performSave();
     }
