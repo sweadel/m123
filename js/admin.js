@@ -14,7 +14,7 @@ const fbCfg = {
     apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
     authDomain: "tallow-ahbabna.firebaseapp.com",
     projectId: "tallow-ahbabna",
-    storageBucket: "tallow-ahbabna.firebasestorage.app",
+    storageBucket: "tallow-ahbabna.appspot.com",
     messagingSenderId: "1025966646494",
     appId: "1:1025966646494:web:f89373fad63d988f298e4f",
     databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
@@ -22,6 +22,7 @@ const fbCfg = {
 
 if (!firebase.apps.length) firebase.initializeApp(fbCfg);
 const db = firebase.database();
+const storage = firebase.storage();
 
 const REFS = {
     menu: db.ref('menu_items'),
@@ -265,7 +266,7 @@ async function saveItem() {
         }).catch(err => {
             console.error(err);
             isSaving = false;
-            showToast('حدث خطأ أثناء الحفظ', 'error');
+            showToast('حدث خطأ أثناء الحفظ في قاعدة البيانات: ' + err.message, 'error');
         });
     };
 
@@ -273,7 +274,7 @@ async function saveItem() {
         if (file) {
             const compressedBlob = await compressImage(file);
             if (progressBar) progressBar.style.display = 'block';
-            const storageRef = firebase.storage().ref(`menu/${Date.now()}.jpg`);
+            const storageRef = storage.ref(`menu/${Date.now()}.jpg`);
             const uploadTask = storageRef.put(compressedBlob);
 
             uploadTask.on('state_changed', 
@@ -283,7 +284,7 @@ async function saveItem() {
                 },
                 (err) => {
                     console.error('Upload Error:', err);
-                    showToast('خطأ في الرفع', 'error');
+                    showToast('خطأ في رفع الصورة: ' + err.message, 'error');
                     isSaving = false;
                 },
                 () => {
@@ -296,7 +297,7 @@ async function saveItem() {
     } catch (e) {
         console.error(e);
         isSaving = false;
-        showToast('حدث خطأ غير متوقع', 'error');
+        showToast('حدث خطأ غير متوقع: ' + e.message, 'error');
     }
 }
 
