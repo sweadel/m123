@@ -501,14 +501,14 @@
                 if (d.font) document.body.style.fontFamily = d.font;
             });
             
-            // مزامنة شريط الإعلانات
-            db.ref('settings/home').on('value', s => {
-                const h = s.val() || {};
+            // مزامنة شريط الإعلانات (Ticker)
+            db.ref('settings/design').on('value', s => {
+                const d = s.val() || {};
                 const banner = document.getElementById('promo-banner');
                 const text = banner?.querySelector('.promo-text');
                 if (banner && text) {
-                    banner.style.display = h.promoShow ? 'flex' : 'none';
-                    text.textContent = h.promoText || '';
+                    banner.style.display = d.ticker ? 'flex' : 'none';
+                    text.textContent = d.ticker || '';
                 }
             });
         }

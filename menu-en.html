@@ -477,14 +477,14 @@
                 if (d.font) document.body.style.fontFamily = d.font;
             });
 
-            // Promo Banner Sync
-            db.ref('settings/home').on('value', s => {
-                const h = s.val() || {};
+            // Promo Banner Sync (Unified with settings/design)
+            db.ref('settings/design').on('value', s => {
+                const d = s.val() || {};
                 const banner = document.getElementById('promo-banner');
                 const text = banner?.querySelector('.promo-text');
                 if (banner && text) {
-                    banner.style.display = h.promoShow ? 'flex' : 'none';
-                    text.textContent = h.promoText || '';
+                    banner.style.display = d.ticker ? 'flex' : 'none';
+                    text.textContent = d.ticker || '';
                 }
             });
         }

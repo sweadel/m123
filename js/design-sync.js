@@ -68,13 +68,13 @@
         if (searchBox) searchBox.style.display = d.showSearch === false ? 'none' : 'flex';
     }
 
-    // Promo banner sync (separate path: settings/home)
-    db.ref('settings/home').on('value', snap => {
-        const h = snap.val() || {};
+    // Promo banner sync (Unified with settings/design)
+    db.ref('settings/design').on('value', snap => {
+        const d = snap.val() || {};
         const banner = document.getElementById('promo-banner');
         if (!banner) return;
         const text = banner.querySelector('.promo-text');
-        banner.style.display = h.promoShow ? 'flex' : 'none';
-        if (text) text.textContent = h.promoText || '';
+        banner.style.display = d.ticker ? 'flex' : 'none';
+        if (text) text.textContent = d.ticker || '';
     });
 })();
