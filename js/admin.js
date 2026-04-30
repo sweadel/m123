@@ -149,9 +149,10 @@ function renderTable() {
                 <td><span style="background:rgba(255,255,255,0.05); padding:4px 10px; border-radius:8px; font-size:0.8rem;">${catName}</span></td>
                 <td style="color:var(--gold); font-weight:700;">${item.price} JD</td>
                 <td>
-                    <span style="color: ${isActive ? '#28a745' : '#dc3545'}; font-size:0.85rem;">
-                        <i class="fas ${isActive ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${isActive ? 'نشط' : 'مخفي'}
-                    </span>
+                    <label class="switch">
+                        <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleItemStatus('${item.key}', this.checked)">
+                        <span class="slider"></span>
+                    </label>
                 </td>
                 <td>
                     <div style="display:flex; gap:0.5rem;">
@@ -163,13 +164,22 @@ function renderTable() {
     }).join('');
 }
 
+function toggleItemStatus(key, active) {
+    const status = active ? 'active' : 'inactive';
+    REFS.menu.child(key).update({ status }).then(() => {
+        showToast(active ? 'تم تفعيل الطبق' : 'تم إخفاء الطبق');
+    });
+}
+
 function openItemModal(key = null) {
     editKey = key;
     const modal = document.getElementById('item-modal');
     const form = document.getElementById('item-form');
     const title = document.getElementById('modal-title');
+    const progress = document.getElementById('upload-progress');
     
     form.reset();
+    if (progress) progress.style.display = 'none';
     title.textContent = key ? 'تعديل بيانات الطبق' : 'إضافة طبق جديد';
     document.getElementById('img-prev').src = 'images/tallo-logo.png';
 
@@ -198,9 +208,10 @@ function saveItem() {
     if (!name || !cat || !price) return showToast('يرجى تعبئة الحقول الأساسية', 'error');
 
     isSaving = true;
-    showLoading(true);
-
     const file = document.getElementById('item-file').files[0];
+    const progressBar = document.getElementById('upload-progress');
+    const progressFill = progressBar ? progressBar.querySelector('.progress-fill') : null;
+
     const data = {
         name,
         nameEn: document.getElementById('item-name-en').value.trim(),
@@ -209,9 +220,10 @@ function saveItem() {
         desc: document.getElementById('item-desc').value.trim(),
         descEn: document.getElementById('item-desc-en').value.trim(),
         image: document.getElementById('item-img-url').value || 'images/tallo-logo.png',
-        status: 'active',
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
+
+    if (!editKey) data.status = 'active';
 
     const performSave = (imgUrl = null) => {
         if (imgUrl) data.image = imgUrl;
@@ -219,23 +231,33 @@ function saveItem() {
         ref.update(data).then(() => {
             closeModal('item-modal');
             showToast('تم حفظ الطبق بنجاح ✨');
-            showLoading(false);
             isSaving = false;
         }).catch(err => {
             console.error(err);
-            showLoading(false);
             isSaving = false;
+            showToast('حدث خطأ أثناء الحفظ', 'error');
         });
     };
 
     if (file) {
+        if (progressBar) progressBar.style.display = 'block';
         const storageRef = firebase.storage().ref(`menu/${Date.now()}_${file.name}`);
-        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => performSave(url)).catch(err => {
-            console.error('Upload Error:', err);
-            showToast('حدث خطأ أثناء رفع الصورة، قد تكون الصورة كبيرة أو هناك مشكلة بالاتصال', 'error');
-            showLoading(false);
-            isSaving = false;
-        });
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on('state_changed', 
+            (snap) => {
+                const p = (snap.bytesTransferred / snap.totalBytes) * 100;
+                if (progressFill) progressFill.style.width = p + '%';
+            },
+            (err) => {
+                console.error('Upload Error:', err);
+                showToast('خطأ في الرفع', 'error');
+                isSaving = false;
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then(url => performSave(url));
+            }
+        );
     } else {
         performSave();
     }
