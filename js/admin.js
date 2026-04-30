@@ -41,7 +41,7 @@ let editKey = null, editCatKey = null, restoreKey = null, isSaving = false;
 // ══════════════════════════════════════════════
 
 window.navigateTo = function(id) {
-    console.log('Navigating to:', id);
+
     
     // 1. تحديث أزرار القائمة الجانبية
     document.querySelectorAll('.menu-item').forEach(btn => {
