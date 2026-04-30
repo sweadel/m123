@@ -205,33 +205,11 @@ function openItemModal(key = null) {
     modal.style.display = 'flex';
 }
 
-async function compressImage(file, maxWidth = 800) {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-                if (width > maxWidth) {
-                    height *= maxWidth / width;
-                    width = maxWidth;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
-            };
-        };
-    });
-}
-
 async function saveItem() {
     if (isSaving) return;
+    const saveBtn = document.querySelector('#item-form button[type="submit"]');
+    const originalBtnText = saveBtn.innerHTML;
+    
     const name = document.getElementById('item-name').value.trim();
     const cat = document.getElementById('item-cat').value;
     const price = document.getElementById('item-price').value;
@@ -239,6 +217,9 @@ async function saveItem() {
     if (!name || !cat || !price) return showToast('يرجى تعبئة الحقول الأساسية', 'error');
 
     isSaving = true;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+
     const file = document.getElementById('item-file').files[0];
     const progressBar = document.getElementById('upload-progress');
     const progressFill = progressBar ? progressBar.querySelector('.progress-fill') : null;
@@ -262,11 +243,13 @@ async function saveItem() {
         ref.update(data).then(() => {
             closeModal('item-modal');
             showToast('تم حفظ الطبق بنجاح ✨');
-            isSaving = false;
         }).catch(err => {
             console.error(err);
-            isSaving = false;
             showToast('حدث خطأ أثناء الحفظ في قاعدة البيانات: ' + err.message, 'error');
+        }).finally(() => {
+            isSaving = false;
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalBtnText;
         });
     };
 
@@ -286,6 +269,8 @@ async function saveItem() {
                     console.error('Upload Error:', err);
                     showToast('خطأ في رفع الصورة: ' + err.message, 'error');
                     isSaving = false;
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalBtnText;
                 },
                 () => {
                     uploadTask.snapshot.ref.getDownloadURL().then(url => performSave(url));
@@ -297,6 +282,8 @@ async function saveItem() {
     } catch (e) {
         console.error(e);
         isSaving = false;
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalBtnText;
         showToast('حدث خطأ غير متوقع: ' + e.message, 'error');
     }
 }
