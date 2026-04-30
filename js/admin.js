@@ -179,9 +179,14 @@ function openItemModal(key = null) {
     const progress = document.getElementById('upload-progress');
     
     form.reset();
-    if (progress) progress.style.display = 'none';
+    if (progress) {
+        progress.style.display = 'none';
+        progress.querySelector('.progress-fill').style.width = '0%';
+    }
+    
     title.textContent = key ? 'تعديل بيانات الطبق' : 'إضافة طبق جديد';
     document.getElementById('img-prev').src = 'images/tallo-logo.png';
+    document.getElementById('item-img-url').value = 'images/tallo-logo.png';
 
     if (key) {
         const item = menuItems.find(i => i.key === key);
@@ -192,14 +197,39 @@ function openItemModal(key = null) {
             document.getElementById('item-price').value = item.price || '';
             document.getElementById('item-desc').value = item.desc || '';
             document.getElementById('item-desc-en').value = item.descEn || '';
-            document.getElementById('item-img-url').value = item.image || '';
+            document.getElementById('item-img-url').value = item.image || 'images/tallo-logo.png';
             document.getElementById('img-prev').src = item.image || 'images/tallo-logo.png';
         }
     }
     modal.style.display = 'flex';
 }
 
-function saveItem() {
+async function compressImage(file, maxWidth = 800) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
+            };
+        };
+    });
+}
+
+async function saveItem() {
     if (isSaving) return;
     const name = document.getElementById('item-name').value.trim();
     const cat = document.getElementById('item-cat').value;
@@ -239,27 +269,34 @@ function saveItem() {
         });
     };
 
-    if (file) {
-        if (progressBar) progressBar.style.display = 'block';
-        const storageRef = firebase.storage().ref(`menu/${Date.now()}_${file.name}`);
-        const uploadTask = storageRef.put(file);
+    try {
+        if (file) {
+            const compressedBlob = await compressImage(file);
+            if (progressBar) progressBar.style.display = 'block';
+            const storageRef = firebase.storage().ref(`menu/${Date.now()}.jpg`);
+            const uploadTask = storageRef.put(compressedBlob);
 
-        uploadTask.on('state_changed', 
-            (snap) => {
-                const p = (snap.bytesTransferred / snap.totalBytes) * 100;
-                if (progressFill) progressFill.style.width = p + '%';
-            },
-            (err) => {
-                console.error('Upload Error:', err);
-                showToast('خطأ في الرفع', 'error');
-                isSaving = false;
-            },
-            () => {
-                uploadTask.snapshot.ref.getDownloadURL().then(url => performSave(url));
-            }
-        );
-    } else {
-        performSave();
+            uploadTask.on('state_changed', 
+                (snap) => {
+                    const p = (snap.bytesTransferred / snap.totalBytes) * 100;
+                    if (progressFill) progressFill.style.width = p + '%';
+                },
+                (err) => {
+                    console.error('Upload Error:', err);
+                    showToast('خطأ في الرفع', 'error');
+                    isSaving = false;
+                },
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then(url => performSave(url));
+                }
+            );
+        } else {
+            performSave();
+        }
+    } catch (e) {
+        console.error(e);
+        isSaving = false;
+        showToast('حدث خطأ غير متوقع', 'error');
     }
 }
 
