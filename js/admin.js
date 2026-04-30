@@ -14,7 +14,7 @@ const fbCfg = {
     apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
     authDomain: "tallow-ahbabna.firebaseapp.com",
     projectId: "tallow-ahbabna",
-    storageBucket: "tallow-ahbabna.appspot.com",
+    storageBucket: "tallow-ahbabna.firebasestorage.app",
     messagingSenderId: "1025966646494",
     appId: "1:1025966646494:web:f89373fad63d988f298e4f",
     databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
