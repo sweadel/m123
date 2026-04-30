@@ -27,12 +27,13 @@ const REFS = {
     menu: db.ref('menu_items'),
     cats: db.ref('categories_meta'),
     design: db.ref('settings/design'),
-    reviews: db.ref('feedback')
+    reviews: db.ref('feedback'),
+    deleted: db.ref('deleted_items')
 };
 
 // 3. المتغيرات العامة
-let menuItems = [], catItems = [], reviewItems = [];
-let editKey = null, editCatKey = null, isSaving = false;
+let menuItems = [], catItems = [], reviewItems = [], deletedItems = [];
+let editKey = null, editCatKey = null, restoreKey = null, isSaving = false;
 
 // ══════════════════════════════════════════════
 // 4. نظام التنقل
@@ -61,6 +62,7 @@ window.navigateTo = function(id) {
     if (id === 'view-design') loadDesign();
     if (id === 'view-reviews') renderReviews();
     if (id === 'view-bulk') renderBulkTable();
+    if (id === 'view-deleted') renderDeletedTable();
 };
 
 // ══════════════════════════════════════════════
@@ -96,6 +98,14 @@ REFS.reviews.on('value', snap => {
     reviewItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
     renderReviews();
     updateStats();
+});
+
+REFS.deleted.on('value', snap => {
+    deletedItems = [];
+    if (snap.exists()) {
+        Object.entries(snap.val()).forEach(([k, v]) => deletedItems.push({ key: k, ...v }));
+    }
+    renderDeletedTable();
 });
 
 function updateStats() {
@@ -232,8 +242,138 @@ function saveItem() {
 }
 
 function deleteItem(key) {
-    if (confirm('هل أنت متأكد من حذف هذا الطبق؟')) {
-        REFS.menu.child(key).remove().then(() => showToast('تم حذف الطبق'));
+    if (confirm('هل أنت متأكد من نقل هذا الطبق إلى سلة المهملات؟')) {
+        const item = menuItems.find(i => i.key === key);
+        if (!item) return;
+
+        const deletedData = {
+            ...item,
+            deletedAt: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        showLoading(true);
+        // 1. Move to deleted_items
+        REFS.deleted.child(key).set(deletedData).then(() => {
+            // 2. Remove from menu_items
+            return REFS.menu.child(key).remove();
+        }).then(() => {
+            showToast('تم نقل الطبق إلى السجل المحذوف');
+            showLoading(false);
+        }).catch(err => {
+            console.error(err);
+            showLoading(false);
+            showToast('حدث خطأ أثناء الحذف', 'error');
+        });
+    }
+}
+
+// ── سجل المحذوفات ──
+function renderDeletedTable() {
+    const body = document.getElementById('deleted-table-body');
+    if (!body) return;
+
+    if (deletedItems.length === 0) {
+        body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:3rem; color:#666;">لا توجد أصناف محذوفة حالياً</td></tr>';
+        return;
+    }
+
+    body.innerHTML = deletedItems.map(item => {
+        const cat = catItems.find(c => c.id === item.category);
+        const catName = cat ? cat.nameAr : item.category;
+        const date = item.deletedAt ? new Date(item.deletedAt).toLocaleString('ar-JO') : 'غير معروف';
+
+        return `
+            <tr>
+                <td>
+                    <div style="font-weight:600;">${item.name}</div>
+                    <small style="color:#777;">${item.category}</small>
+                </td>
+                <td><span style="background:rgba(255,255,255,0.05); padding:4px 10px; border-radius:8px; font-size:0.8rem;">${catName}</span></td>
+                <td>${date}</td>
+                <td>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-icon btn-edit" onclick="openRestoreModal('${item.key}')" title="تعديل واستعادة"><i class="fas fa-undo"></i></button>
+                        <button class="btn btn-icon btn-delete" onclick="permanentDelete('${item.key}')" title="حذف نهائي"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>`;
+    }).join('');
+}
+
+function openRestoreModal(key) {
+    restoreKey = key;
+    const item = deletedItems.find(i => i.key === key);
+    if (!item) return;
+
+    // Reuse existing item-modal
+    openItemModal();
+    const title = document.getElementById('modal-title');
+    title.innerHTML = '<i class="fas fa-trash-restore"></i> استعادة الصنف';
+    
+    // Override form fields
+    document.getElementById('item-name').value = item.name || '';
+    document.getElementById('item-name-en').value = item.nameEn || '';
+    document.getElementById('item-cat').value = item.category || '';
+    document.getElementById('item-price').value = item.price || '';
+    document.getElementById('item-desc').value = item.desc || '';
+    document.getElementById('item-desc-en').value = item.descEn || '';
+    document.getElementById('item-img-url').value = item.image || '';
+    document.getElementById('img-prev').src = item.image || 'images/tallo-logo.png';
+
+    // Override save button behavior
+    const form = document.getElementById('item-form');
+    const originalSubmit = form.onsubmit;
+    
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        confirmRestore(item);
+        form.onsubmit = originalSubmit; // Reset after done
+    };
+}
+
+function confirmRestore(originalData) {
+    const name = document.getElementById('item-name').value.trim();
+    const cat = document.getElementById('item-cat').value;
+    const price = document.getElementById('item-price').value;
+
+    if (!name || !cat || !price) return showToast('يرجى تعبئة الحقول الأساسية', 'error');
+
+    showLoading(true);
+    const newData = {
+        ...originalData,
+        name,
+        nameEn: document.getElementById('item-name-en').value.trim(),
+        category: cat,
+        price: price,
+        desc: document.getElementById('item-desc').value.trim(),
+        descEn: document.getElementById('item-desc-en').value.trim(),
+        status: 'active',
+        restoredAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    
+    // Remove extra keys from deleted_items node
+    delete newData.deletedAt;
+    delete newData.key;
+
+    // 1. Add back to menu_items
+    REFS.menu.child(restoreKey).set(newData).then(() => {
+        // 2. Remove from deleted_items
+        return REFS.deleted.child(restoreKey).remove();
+    }).then(() => {
+        closeModal('item-modal');
+        showToast('تمت استعادة الصنف بنجاح ✨');
+        showLoading(false);
+        restoreKey = null;
+    }).catch(err => {
+        console.error(err);
+        showLoading(false);
+        showToast('حدث خطأ أثناء الاستعادة', 'error');
+    });
+}
+
+function permanentDelete(key) {
+    if (confirm('هل أنت متأكد من حذف هذا الصنف نهائياً؟ لا يمكن التراجع عن هذه العملية.')) {
+        REFS.deleted.child(key).remove().then(() => showToast('تم الحذف النهائي'));
     }
 }
 
