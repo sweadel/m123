@@ -1,46 +1,42 @@
 <!DOCTYPE html>
 <!-- 
-  ==========================================================================
-  المشروع: مطعم طلوا حبابنا - منيو ديجيتال وصفحة هبوط
+  المشروع: طلوا حبابنا - المنيو الرقمي
   الملف: index.html
-  الوصف: هذه هي الصفحة الرئيسية (بوابة الموقع) التي تحتوي على فيديو الخلفية،
-         شعار المطعم، وأزرار الدخول للمنيو.
-  ==========================================================================
+  الوصف: الصفحة الرئيسية (صفحة الهبوط)
 -->
 <html lang="ar" dir="rtl">
 
 <head>
-    <!-- تعريف ترميز الحروف لدعم اللغة العربية -->
+    <!-- إعدادات اللغة والترميز -->
     <meta charset="UTF-8">
-    <!-- جعل الموقع متوافقاً مع شاشات الهواتف الذكية -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- لون شريط العنوان في المتصفح -->
+    <!-- لون شريط المتصفح -->
     <meta name="theme-color" content="#C5A022">
     <meta name="description" content="مطعم طلوا حبابنا - مادبا، الأردن. اكتشف قائمة طعامنا الكاملة وجرب أصنافنا المميزة.">
     <link rel="dns-prefetch" href="https://www.gstatic.com">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 
-    <!-- إعدادات الروابط عند مشاركة الموقع على فيسبوك وواتساب (Open Graph) -->
+    <!-- Open Graph (SEO & Social Media) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="طلوا حبابنا | مادبا">
     <meta property="og:description" content="تفضل وشوف قائمتنا الكاملة - تجربة طعام فريدة في قلب مادبا">
     <meta property="og:image" content="images/tallo-logo.png">
     <meta property="og:locale" content="ar_SA">
 
-    <!-- دعم تحويل الموقع إلى تطبيق (PWA) -->
+    <!-- PWA Setup -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/tallo-logo.png">
 
-    <title>طلوا حبابنا | مادبا</title>
+    <title>منيو طلو احبابنا | مادبا</title>
 
-    <!-- تحميل الخطوط من جوجل (خط IBM Plex Sans Arabic) -->
+    <!-- خطوط جوجل -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* تعريف المتغيرات (الألوان والخطوط) لتسهيل التغيير لاحقاً */
+        /* المتغيرات الأساسية للتصميم */
         :root {
             --gold: #C5A022; /* اللون الذهبي الأساسي */
             --gold-glow: rgba(197, 160, 34, 0.4); /* توهج ذهبي شفاف */
@@ -50,7 +46,7 @@
             --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
         }
 
-        /* تصفير الإعدادات الافتراضية للمتصفح لضمان تناسق التصميم */
+        /* Reset & Base Styles */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
@@ -67,7 +63,7 @@
             direction: rtl; /* الكتابة من اليمين لليسام */
         }
 
-        /* بوابة الدخول الفخمة (Splash Screen) */
+        /* شاشة البداية (Splash Screen) */
         #splash-entry {
             position: fixed;
             inset: 0;
@@ -139,14 +135,14 @@
         .vid-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; /* وضعه خلف كل العناصر */
+            z-index: -2;
             background: #000;
         }
         .vid-bg video {
-            width: 100%; height: 100%; object-fit: cover; /* تغطية كامل الشاشة دون تشويه */
-            opacity: 0.65; /* تقليل السطوع لبروز النص */
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.65;
         }
-        /* طبقة تظليل فوق الفيديو لتحسين الرؤية */
+        /* طبقة تظليل الفيديو */
         .vid-bg::after {
             content: '';
             position: absolute;
@@ -174,13 +170,13 @@
             transform: translateY(0);
         }
 
-        /* تأثيرات الشعار (اللوجو) */
+        /* تنسيق الشعار */
         .logo-wrap {
             margin-bottom: 45px;
         }
         .logo-wrap img {
             width: 240px;
-            filter: drop-shadow(0 15px 45px rgba(0,0,0,0.9)); /* ظل تحت اللوجو للفخامة */
+            filter: drop-shadow(0 15px 45px rgba(0,0,0,0.9));
         }
 
         /* تنسيق عمود الأزرار */
@@ -191,7 +187,7 @@
             gap: 16px; /* المسافة بين الأزرار */
         }
 
-        /* التصميم المشترك لجميع الأزرار (Glassmorphism) */
+        /* تنسيق الأزرار (Base Button Styles) */
         .main-btn {
             position: relative;
             display: flex;
@@ -217,7 +213,7 @@
             border-color: rgba(197, 160, 34, 0.35);
         }
         .main-btn.gold:active {
-            transform: scale(0.96); /* تصغير الزر قليلاً عند اللمس */
+            transform: scale(0.96);
             background: var(--gold);
             color: #000;
         }
@@ -247,7 +243,7 @@
         }
         .s-link:active {
             color: var(--gold);
-            transform: scale(1.2); /* تكبير الأيقونة عند اللمس */
+            transform: scale(1.2);
         }
 
         /* تعديلات خاصة للشاشات الصغيرة جداً */
@@ -261,27 +257,27 @@
 
 <body>
 
-    <!-- بوابة الدخول الفخمة -->
+    <!-- Splash Screen -->
     <div id="splash-entry">
         <img src="images/tallo-logo.png" alt="Logo" class="splash-logo">
         <button class="enter-btn" onclick="startExperience()">اكتشف التجربة</button>
     </div>
 
-    <!-- قسم فيديو الخلفية -->
+    <!-- Background Video -->
     <div class="vid-bg">
         <video id="bgVideo" muted loop playsinline preload="metadata">
             <source id="home-video-source" src="images/tallo-video-final.mp4" type="video/mp4">
         </video>
     </div>
 
-    <!-- الحاوية المركزية للمحتوى -->
+    <!-- Main Container -->
     <div class="container" id="main-container">
-        <!-- قسم الشعار -->
+        <!-- Logo -->
         <div class="logo-wrap">
             <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
         </div>
 
-        <!-- قسم أزرار التفاعل -->
+        <!-- Navigation Buttons -->
         <div class="btn-col">
             <a href="javascript:void(0)" onclick="navigateTo('menu.html#arabic')" id="btn_arabic" class="main-btn gold">
                 قائمة الطعام - عربي
@@ -307,7 +303,7 @@
         </div>
     </div>
 
-    <!-- ملف الصوت المخفي -->
+    <!-- Intro Audio -->
     <audio id="introAudio" preload="auto">
         <source src="intro-audio.m4a" type="audio/mp4">
     </audio>
@@ -342,7 +338,7 @@
         });
 
         /**
-         * بدء التجربة الكاملة (تشغيل الصوت وإظهار المحتوى)
+         * Hide splash and reveal main content
          */
         function startExperience() {
             const splash = document.getElementById('splash-entry');
@@ -360,19 +356,18 @@
         }
 
         /**
-         * 2. وظيفة الانتقال السريع والآمن
+         * Fast navigation
          */
         function navigateTo(url) {
             const video = document.getElementById('bgVideo');
-            if (video) video.pause(); // إيقاف الفيديو فوراً لتوفير المعالج
+            if (video) video.pause();
             
             document.body.style.opacity = '0';
-            // استخدام التنقل المباشر لسرعة الاستجابة
             setTimeout(() => { window.location.href = url; }, 50);
         }
 
         /**
-         * 3. تشغيل الفيديو بكفاءة
+         * Auto-play background video
          */
         function initVideo() {
             const video = document.getElementById('bgVideo');

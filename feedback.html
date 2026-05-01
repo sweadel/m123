@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>طلوا حبابنا | شاركنا رأيك</title>
+    <title>منيو طلو احبابنا | شاركنا رأيك</title>
     
-    <!-- الخطوط والأيقونات -->
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,7 @@
             padding-bottom: 40px;
         }
 
-        /* الهيدر */
+        /* Header Styles */
         header {
             padding: 40px 20px 20px;
             text-align: center;
@@ -49,7 +49,7 @@
             filter: drop-shadow(0 0 20px var(--gold-glow));
         }
 
-        /* حاوية الفورم الفخمة */
+        /* Form Container */
         .feedback-card {
             width: 92%;
             max-width: 550px;
@@ -87,7 +87,7 @@
             padding: 0 10px;
         }
 
-        /* المدخلات */
+        /* Form Inputs */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -130,7 +130,7 @@
             box-shadow: 0 0 25px rgba(197, 160, 34, 0.15);
         }
 
-        /* قسم التقييم بالنجوم */
+        /* Star Rating */
         .rating-box {
             background: rgba(255,255,255,0.03);
             border-radius: 24px;
@@ -179,7 +179,7 @@
             -webkit-text-stroke: 0;
         }
 
-        /* زر الإرسال */
+        /* Submit Button */
         .submit-btn {
             width: 100%;
             padding: 20px;
@@ -203,7 +203,7 @@
             box-shadow: 0 15px 35px rgba(197, 160, 34, 0.3);
         }
 
-        /* شاشة النجاح */
+        /* Success Screen */
         .success-overlay {
             position: fixed;
             inset: 0;
@@ -252,7 +252,7 @@
         }
         .home-btn:hover { background: var(--gold); color: #000; }
 
-        /* زر العودة */
+        /* Back Button */
         .back-link {
             position: absolute;
             top: 35px;
@@ -347,7 +347,7 @@
         </form>
     </div>
 
-    <!-- شاشة النجاح -->
+    <!-- Success Screen -->
     <div id="successPage" class="success-overlay">
         <div class="success-icon">
             <i class="fas fa-check"></i>
@@ -374,10 +374,10 @@
         };
         if (!firebase.apps.length) firebase.initializeApp(_cfg);
 
-        // الوقت الحالي
+        // Set current time
         document.getElementById('dateTime').value = new Date().toLocaleString('ar-EG');
 
-        // منطق النجوم
+        // Star Rating Logic
         document.querySelectorAll('.stars i').forEach(star => {
             star.addEventListener('click', function() {
                 const parent = this.parentElement;
