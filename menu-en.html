@@ -297,11 +297,17 @@
                     `;
                 });
                 priceHtml += `</div>`;
-                document.getElementById('modalPrice').innerHTML = priceHtml;
-                document.getElementById('modalPrice').style.display = 'block';
+                const pEl = document.getElementById('modalPrice');
+                pEl.innerHTML = priceHtml;
+                pEl.style.display = 'block';
+                pEl.style.background = 'none';
+                pEl.style.padding = '0';
             } else {
-                document.getElementById('modalPrice').textContent = price;
-                document.getElementById('modalPrice').style.display = price ? 'inline-block' : 'none';
+                const pEl = document.getElementById('modalPrice');
+                pEl.textContent = price;
+                pEl.style.display = price ? 'inline-block' : 'none';
+                pEl.style.background = '';
+                pEl.style.padding = '';
             }
             
             document.getElementById('modalDesc').textContent = desc;

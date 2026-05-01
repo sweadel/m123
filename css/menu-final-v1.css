@@ -1184,9 +1184,10 @@ section.active {
   gap: 8px;
   margin: 15px 0;
   padding: 15px 10px;
-  background: rgba(255, 215, 0, 0.05);
+  background: rgba(0, 0, 0, 0.4); /* خلفية داكنة للوضوح */
   border-radius: 16px;
-  border: 1px solid rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(197, 160, 34, 0.3); /* حدود ذهبية خفيفة */
+  backdrop-filter: blur(10px);
 }
 
 .m-opt {
@@ -1209,9 +1210,10 @@ section.active {
 }
 
 .opt-label {
-  font-size: 0.7rem;
-  color: var(--text-dim);
+  font-size: 0.75rem;
+  color: #fff; /* لون أبيض واضح */
   font-weight: 600;
+  opacity: 0.9;
 }
 
 .opt-val {
